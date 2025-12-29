@@ -152,12 +152,12 @@ const Navigation = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-login">
+                <Link to="/login" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-login">
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-6 py-2.5 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition-all"
+                  className="px-6 py-2.5 bg-stone-800 text-white rounded-full font-medium hover:bg-stone-700 transition-all"
                   data-testid="nav-signup"
                 >
                   Get Started
@@ -179,21 +179,21 @@ const Navigation = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-4 pb-4 border-t border-gray-100"
+              className="md:hidden mt-4 pb-4 border-t border-stone-200"
             >
               <div className="flex flex-col gap-4 pt-4">
-                <Link to="/agencies" className="text-gray-600 hover:text-black transition">Find Care</Link>
-                <Link to="/faq" className="text-gray-600 hover:text-black transition">FAQ</Link>
-                <Link to="/contact" className="text-gray-600 hover:text-black transition">Contact</Link>
+                <Link to="/agencies" className="text-stone-600 hover:text-stone-900 transition">Find Care</Link>
+                <Link to="/faq" className="text-stone-600 hover:text-stone-900 transition">FAQ</Link>
+                <Link to="/contact" className="text-stone-600 hover:text-stone-900 transition">Contact</Link>
                 {user ? (
                   <>
-                    <Link to="/dashboard" className="text-gray-600 hover:text-black transition">Dashboard</Link>
+                    <Link to="/dashboard" className="text-stone-600 hover:text-stone-900 transition">Dashboard</Link>
                     <button onClick={logout} className="text-left text-red-600">Logout</button>
                   </>
                 ) : (
                   <>
-                    <Link to="/login" className="text-gray-600 hover:text-black transition">Sign In</Link>
-                    <Link to="/signup" className="text-black font-medium">Get Started</Link>
+                    <Link to="/login" className="text-stone-600 hover:text-stone-900 transition">Sign In</Link>
+                    <Link to="/signup" className="text-stone-800 font-medium">Get Started</Link>
                   </>
                 )}
               </div>
