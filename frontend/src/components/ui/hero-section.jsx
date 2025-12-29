@@ -3,110 +3,18 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { InfiniteSlider } from '@/components/ui/infinite-slider'
-import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 import { cn } from '@/lib/utils'
-import { Menu, X, ChevronRight, Heart } from 'lucide-react'
+import { Menu, X, Heart, Activity } from 'lucide-react'
 import { useScroll, motion } from 'framer-motion'
 import { useAuth } from '@/App'
+import { ShuffleHero } from '@/components/ui/shuffle-grid'
 
 export function HeroSection() {
   return (
     <>
       <HeroHeader />
-      <main className="overflow-x-hidden">
-        <section>
-          <div className="py-24 md:pb-32 lg:pb-36 lg:pt-72">
-            <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-6 lg:block lg:px-12">
-              <div className="mx-auto max-w-lg text-center lg:ml-0 lg:max-w-full lg:text-left">
-                <h1 className="mt-8 max-w-2xl text-balance text-5xl md:text-6xl lg:mt-16 xl:text-7xl font-bold text-gray-900">
-                  Compassionate Care For Your Loved Ones
-                </h1>
-                <p className="mt-8 max-w-2xl text-balance text-lg text-gray-600">
-                  Connect with verified, professional in-home caregivers for elderly care, pediatric support, and specialized health services.
-                </p>
-                <div className="mt-12 flex flex-col items-center justify-center gap-2 sm:flex-row lg:justify-start">
-                  <Button
-                    asChild
-                    size="lg"
-                    className="h-12 rounded-full pl-5 pr-3 text-base bg-black text-white hover:bg-gray-800">
-                    <Link to="/agencies">
-                      <span className="text-nowrap">Find Care Now</span>
-                      <ChevronRight className="ml-1" />
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="ghost"
-                    className="h-12 rounded-full px-5 text-base hover:bg-zinc-950/5">
-                    <Link to="/contact">
-                      <span className="text-nowrap">Contact Us</span>
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-            <div className="aspect-[2/3] absolute inset-1 top-0 overflow-hidden rounded-3xl border border-black/10 sm:aspect-video lg:rounded-[3rem]">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="size-full object-cover opacity-40"
-                src="https://videos.pexels.com/video-files/8460059/8460059-hd_1920_1080_25fps.mp4"
-                poster="https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=1920"
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-white pb-2">
-          <div className="group relative m-auto max-w-7xl px-6">
-            <div className="flex flex-col items-center md:flex-row">
-              <div className="md:max-w-44 md:border-r md:pr-6">
-                <p className="text-end text-sm text-gray-600">Trusted by leading healthcare providers</p>
-              </div>
-              <div className="relative py-6 md:w-[calc(100%-11rem)]">
-                <InfiniteSlider
-                  speedOnHover={20}
-                  speed={40}
-                  gap={112}>
-                  <div className="flex items-center">
-                    <span className="text-xl font-bold text-gray-400 tracking-tight">MediCare+</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-xl font-bold text-gray-400 tracking-tight">HealthFirst</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-xl font-bold text-gray-400 tracking-tight">CareShield</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-xl font-bold text-gray-400 tracking-tight">WellCare</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-xl font-bold text-gray-400 tracking-tight">LifeGuard</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-xl font-bold text-gray-400 tracking-tight">SafeHands</span>
-                  </div>
-                </InfiniteSlider>
-                <div className="bg-gradient-to-r from-white absolute inset-y-0 left-0 w-20"></div>
-                <div className="bg-gradient-to-l from-white absolute inset-y-0 right-0 w-20"></div>
-                <ProgressiveBlur
-                  className="pointer-events-none absolute left-0 top-0 h-full w-20"
-                  direction="left"
-                  blurIntensity={1}
-                />
-                <ProgressiveBlur
-                  className="pointer-events-none absolute right-0 top-0 h-full w-20"
-                  direction="right"
-                  blurIntensity={1}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
+      <main className="overflow-x-hidden pt-24">
+        <ShuffleHero />
       </main>
     </>
   )
@@ -146,7 +54,7 @@ const HeroHeader = () => {
                 to="/"
                 aria-label="home"
                 className="flex items-center space-x-2">
-                <NurseNowLogo />
+                <AdltrackLogo />
               </Link>
 
               <button
@@ -236,13 +144,13 @@ const HeroHeader = () => {
   )
 }
 
-const NurseNowLogo = ({ className }) => {
+const AdltrackLogo = ({ className }) => {
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
-        <Heart className="w-5 h-5 text-white" />
+      <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+        <Activity className="w-5 h-5 text-white" />
       </div>
-      <span className="text-xl font-bold text-gray-900">NurseNow</span>
+      <span className="text-xl font-bold text-gray-900">Adltrack</span>
     </div>
   )
 }
