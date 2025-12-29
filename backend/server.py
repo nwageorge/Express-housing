@@ -266,7 +266,7 @@ async def create_agency(agency_data: AgencyBase, user: dict = Depends(get_curren
 # Booking Routes
 @api_router.post("/bookings")
 async def create_booking(booking_data: BookingCreate, user: dict = Depends(get_current_user)):
-    agency = await db.agencies.find_one({"id": booking_data.agency_id})
+    agency = await db.agencies.find_one({"id": booking_data.agency_id}, {"_id": 0})
     if not agency:
         raise HTTPException(status_code=404, detail="Agency not found")
     
@@ -274,13 +274,21 @@ async def create_booking(booking_data: BookingCreate, user: dict = Depends(get_c
     booking_doc = {
         "id": booking_id,
         "user_id": user['id'],
-        **booking_data.model_dump(),
+        "agency_id": booking_data.agency_id,
+        "service_type": booking_data.service_type,
+        "date": booking_data.date,
+        "time_slot": booking_data.time_slot,
+        "notes": booking_data.notes,
+        "patient_name": booking_data.patient_name,
+        "patient_age": booking_data.patient_age,
+        "care_needs": booking_data.care_needs,
         "total_price": agency.get('price_per_hour', 50),
         "status": "pending",
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.bookings.insert_one(booking_doc)
-    return booking_doc
+    # Return without _id
+    return {k: v for k, v in booking_doc.items() if k != '_id'}
 
 @api_router.get("/bookings")
 async def get_bookings(user: dict = Depends(get_current_user)):
