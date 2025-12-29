@@ -571,8 +571,8 @@ const HomePage = () => {
       <div className="max-w-7xl mx-auto px-6">
         {loading ? (
           <div className="py-20 text-center">
-            <div className="animate-spin w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full mx-auto" />
-            <p className="mt-4 text-gray-500">Loading care agencies...</p>
+            <div className="animate-spin w-12 h-12 border-4 border-stone-700 border-t-transparent rounded-full mx-auto" />
+            <p className="mt-4 text-stone-500">Loading care agencies...</p>
           </div>
         ) : (
           cities.map((city) => {
@@ -594,12 +594,12 @@ const HomePage = () => {
       <TestimonialsSection />
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-16">
+      <footer className="bg-stone-800 text-stone-400 py-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center">
                   <Activity className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold text-white">Adltrack</span>
@@ -633,7 +633,7 @@ const HomePage = () => {
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
+          <div className="border-t border-stone-700 pt-8 text-center text-sm">
             <p>© 2025 Adltrack. All rights reserved.</p>
           </div>
         </div>
@@ -642,7 +642,7 @@ const HomePage = () => {
   );
 };
 
-// Login Page - Black & White Theme
+// Login Page - Warm Nature Theme
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -669,32 +669,32 @@ const LoginPage = () => {
   return (
     <PageBackground className="flex items-center justify-center p-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-stone-100">
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-stone-800 rounded-xl flex items-center justify-center">
                 <Heart className="w-6 h-6 text-white" />
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="text-gray-500 mt-2">Sign in to your Adltrack account</p>
+            <h1 className="text-2xl font-bold text-stone-800">Welcome Back</h1>
+            <p className="text-stone-500 mt-2">Sign in to your Adltrack account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">{error}</div>}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" placeholder="you@example.com" required data-testid="login-email" />
+              <label className="block text-sm font-medium text-stone-700 mb-2">Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" placeholder="you@example.com" required data-testid="login-email" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" placeholder="••••••••" required data-testid="login-password" />
+              <label className="block text-sm font-medium text-stone-700 mb-2">Password</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" placeholder="••••••••" required data-testid="login-password" />
             </div>
-            <button type="submit" disabled={loading} className="w-full py-3 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50" data-testid="login-submit">
+            <button type="submit" disabled={loading} className="w-full py-3 bg-stone-800 text-white rounded-xl font-semibold hover:bg-stone-700 transition-all disabled:opacity-50" data-testid="login-submit">
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
-          <p className="text-center mt-6 text-gray-500">Don't have an account? <Link to="/signup" className="text-black font-medium hover:underline">Sign up</Link></p>
+          <p className="text-center mt-6 text-stone-500">Don't have an account? <Link to="/signup" className="text-stone-800 font-medium hover:underline">Sign up</Link></p>
         </div>
       </motion.div>
     </PageBackground>
