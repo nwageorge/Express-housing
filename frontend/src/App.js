@@ -206,6 +206,8 @@ const Navigation = () => {
 };
 
 // Agency Card Component - Black & White Theme
+import { GlareCard } from "@/components/ui/glare-card";
+
 const AgencyCard = ({ agency, index }) => {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const navigate = useNavigate();
@@ -215,107 +217,99 @@ const AgencyCard = ({ agency, index }) => {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
-      whileHover={{ y: -12, scale: 1.02 }}
       className="group cursor-pointer"
       onClick={() => navigate(`/agencies/${agency.id}`)}
       data-testid={`agency-card-${agency.id}`}
     >
-      <div className="relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100">
-        {/* Image Container */}
-        <div className="relative aspect-[3/4] overflow-hidden">
-          <motion.img
-            src={agency.image_url}
-            alt={agency.name}
-            className="w-full h-full object-cover"
-            whileHover={{ scale: 1.08 }}
-            transition={{ duration: 0.6 }}
-          />
-          
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
-          {/* Badges */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
-            {agency.is_verified && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="px-3 py-1.5 bg-black text-white text-xs font-semibold rounded-full flex items-center gap-1"
-              >
-                <Shield className="w-3 h-3" />
-                Verified
-              </motion.div>
-            )}
-            {agency.is_new && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.1 }}
-                className="px-3 py-1.5 bg-gray-700 text-white text-xs font-semibold rounded-full flex items-center gap-1"
-              >
-                <Sparkles className="w-3 h-3" />
-                New
-              </motion.div>
-            )}
-          </div>
-
-          {/* Wishlist Button */}
-          <motion.button
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleWishlist(agency.id);
-            }}
-            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition"
-            data-testid={`wishlist-btn-${agency.id}`}
-          >
-            <Heart
-              className={`w-5 h-5 transition-colors ${
-                isWishlisted(agency.id) ? "fill-red-500 text-red-500" : "text-gray-400"
-              }`}
-            />
-          </motion.button>
-
-          {/* Price Tag */}
-          <div className="absolute bottom-4 right-4 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg">
-            <span className="text-lg font-bold text-gray-900">${agency.price_per_hour}</span>
-            <span className="text-sm text-gray-500">/hr</span>
-          </div>
+      <GlareCard className="relative">
+        {/* Background Image */}
+        <img
+          src={agency.image_url}
+          alt={agency.name}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        
+        {/* Dark Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        
+        {/* Top Badges */}
+        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+          {agency.is_verified && (
+            <div className="px-3 py-1.5 bg-white/20 backdrop-blur-md text-white text-xs font-semibold rounded-full flex items-center gap-1 border border-white/30">
+              <Shield className="w-3 h-3" />
+              Verified
+            </div>
+          )}
+          {agency.is_new && (
+            <div className="px-3 py-1.5 bg-indigo-500/80 backdrop-blur-md text-white text-xs font-semibold rounded-full flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              New
+            </div>
+          )}
         </div>
 
-        {/* Content */}
-        <div className="p-5">
+        {/* Wishlist Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleWishlist(agency.id);
+          }}
+          className="absolute top-4 right-4 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/40 transition z-10"
+          data-testid={`wishlist-btn-${agency.id}`}
+        >
+          <Heart
+            className={`w-5 h-5 transition-colors ${
+              isWishlisted(agency.id) ? "fill-red-500 text-red-500" : "text-white"
+            }`}
+          />
+        </button>
+
+        {/* Content at Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+          {/* Rating */}
           <div className="flex items-center gap-2 mb-2">
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-gray-900 text-gray-900" />
-              <span className="font-semibold text-gray-900">{agency.rating}</span>
+            <div className="flex items-center gap-1 px-2 py-1 bg-white/20 backdrop-blur-md rounded-full">
+              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+              <span className="font-semibold text-white text-sm">{agency.rating}</span>
             </div>
-            <span className="text-gray-400">•</span>
-            <span className="text-sm text-gray-500">{agency.review_count} reviews</span>
+            <span className="text-white/70 text-sm">({agency.review_count} reviews)</span>
           </div>
           
-          <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-gray-600 transition-colors">
+          {/* Agency Name */}
+          <h3 className="font-bold text-white text-xl mb-1 drop-shadow-lg">
             {agency.name}
           </h3>
           
-          <div className="flex items-center gap-1 text-gray-500 text-sm mb-3">
+          {/* Location */}
+          <div className="flex items-center gap-1 text-white/80 text-sm mb-3">
             <MapPin className="w-3.5 h-3.5" />
             <span>{agency.city}</span>
           </div>
 
-          <div className="flex flex-wrap gap-1.5">
+          {/* Specialties */}
+          <div className="flex flex-wrap gap-1.5 mb-4">
             {agency.specialties?.slice(0, 2).map((specialty, idx) => (
               <span
                 key={idx}
-                className="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
+                className="px-2.5 py-1 bg-white/10 backdrop-blur-md text-white/90 text-xs font-medium rounded-full border border-white/20"
               >
                 {specialty}
               </span>
             ))}
           </div>
+
+          {/* Price */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold text-white">${agency.price_per_hour}</span>
+              <span className="text-white/70 text-sm">/hour</span>
+            </div>
+            <div className="px-4 py-2 bg-white text-slate-900 rounded-full text-sm font-semibold hover:bg-white/90 transition">
+              View Details
+            </div>
+          </div>
         </div>
-      </div>
+      </GlareCard>
     </motion.div>
   );
 };
