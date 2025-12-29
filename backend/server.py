@@ -997,17 +997,9 @@ async def seed_data():
     
     await db.agencies.insert_many(agencies_data)
     return {"message": "Data seeded successfully", "count": len(agencies_data)}
-            "rating": 4.7,
-            "review_count": 156,
-            "image_url": "https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&h=500&fit=crop",
-            "is_verified": True,
-            "is_new": False
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "HomeWell Care Services",
-            "bio": "Comprehensive home healthcare including skilled nursing, physical therapy, and personal care. Serving the greater Philadelphia area with excellence.",
-            "location": "123 Broad Street, Philadelphia, PA 19102",
+
+# Include the router in the main app
+app.include_router(api_router)
             "city": "Philadelphia, PA",
             "experience_years": 8,
             "certifications": ["Medicare Certified", "State Licensed", "Joint Commission Accredited"],
