@@ -131,6 +131,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "Full-screen gallery modal with left/right navigation, close button, and pagination dots. Shows all agency photos in a lightbox view."
+      - working: true
+        agent: "testing"
+        comment: "TESTED SUCCESSFULLY: Fullscreen gallery modal opens with dark background overlay. Navigation arrows (left/right) work correctly for image browsing. Pagination dots at bottom show current image position. Close button (X) in top-right closes modal properly. Gallery displays all 6 agency photos in lightbox format. Minor: 'View all photos' link occasionally requires second click to trigger modal."
 
   - task: "Family Reviews Display"
     implemented: true
