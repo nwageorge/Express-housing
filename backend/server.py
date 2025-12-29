@@ -206,7 +206,7 @@ async def signup(user_data: UserCreate):
     user_response = {k: v for k, v in user_doc.items() if k not in ['password', '_id']}
     return {"access_token": token, "token_type": "bearer", "user": user_response}
 
-@api_router.post("/auth/login", response_model=TokenResponse)
+@api_router.post("/auth/login")
 async def login(credentials: UserLogin):
     user = await db.users.find_one({"email": credentials.email})
     if not user or not verify_password(credentials.password, user['password']):
@@ -214,7 +214,7 @@ async def login(credentials: UserLogin):
     
     token = create_token(user['id'], user['email'])
     user_response = {k: v for k, v in user.items() if k not in ['password', '_id']}
-    return TokenResponse(access_token=token, user=user_response)
+    return {"access_token": token, "token_type": "bearer", "user": user_response}
 
 @api_router.get("/auth/me")
 async def get_me(user: dict = Depends(get_current_user)):
