@@ -541,47 +541,6 @@ const HeroSection = () => {
 };
 
 // Features Section - Black & White Theme
-const FeaturesSection = () => {
-  const features = [
-    { icon: Shield, title: "Verified Caregivers", description: "All caregivers undergo thorough background checks and credential verification" },
-    { icon: Clock, title: "24/7 Availability", description: "Find care whenever you need it - day or night, weekdays or weekends" },
-    { icon: Award, title: "Quality Assured", description: "Our caregivers meet rigorous standards and receive ongoing training" },
-    { icon: Users, title: "Personalized Match", description: "We match you with caregivers based on your specific needs and preferences" },
-  ];
-
-  return (
-    <section className="py-20">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose NurseNow?</h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
-            We're committed to providing the highest quality in-home care services
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="text-center p-6 bg-white rounded-2xl border border-gray-100 hover:shadow-xl transition-all"
-            >
-              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <feature.icon className="w-8 h-8 text-gray-900" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
 // Home Page
 const HomePage = () => {
   const [agencies, setAgencies] = useState([]);
