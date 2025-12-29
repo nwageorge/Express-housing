@@ -608,7 +608,6 @@ const HomePage = () => {
     <PageBackground>
       {/* New Hero Section with integrated header */}
       <NewHeroSection />
-      <FeaturesSection />
       
       <div className="max-w-7xl mx-auto px-6">
         {loading ? (
@@ -634,28 +633,6 @@ const HomePage = () => {
       </div>
 
       <TestimonialsSection />
-      
-      {/* CTA Section - Black & White */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="bg-black rounded-3xl p-12 shadow-xl">
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-              Ready to Find the Perfect Caregiver?
-            </h2>
-            <p className="text-gray-300 text-lg mb-8">
-              Join thousands of families who trust NurseNow for quality in-home care
-            </p>
-            <Link
-              to="/agencies"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full font-semibold hover:bg-gray-100 transition-all"
-              data-testid="cta-find-care"
-            >
-              Find Care Now
-              <ChevronRight className="w-5 h-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-16">
@@ -663,10 +640,10 @@ const HomePage = () => {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-black" />
+                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">NurseNow</span>
+                <span className="text-xl font-bold text-white">Adltrack</span>
               </div>
               <p className="text-sm leading-relaxed">
                 Connecting families with compassionate, professional in-home caregivers.
@@ -692,13 +669,13 @@ const HomePage = () => {
             <div>
               <h4 className="text-white font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> 1-800-NURSE-NOW</li>
-                <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> support@nursenow.com</li>
+                <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> 1-800-ADL-TRACK</li>
+                <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> support@adltrack.com</li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>© 2025 NurseNow. All rights reserved.</p>
+            <p>© 2025 Adltrack. All rights reserved.</p>
           </div>
         </div>
       </footer>
