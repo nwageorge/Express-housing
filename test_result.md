@@ -189,6 +189,7 @@ test_plan:
     - "Enhanced Agency Detail Page"
     - "Image Gallery Component"
     - "Family Reviews Display"
+    - "GlareCard Agency Cards"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
