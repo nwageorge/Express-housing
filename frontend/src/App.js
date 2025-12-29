@@ -879,7 +879,7 @@ const AgenciesPage = () => {
   );
 };
 
-// Agency Detail Page - Black & White Theme
+// Agency Detail Page - Warm Nature Theme
 const AgencyDetailPage = () => {
   const { id } = useParams();
   const [agency, setAgency] = useState(null);
@@ -921,8 +921,8 @@ const AgencyDetailPage = () => {
     }
   };
 
-  if (loading) return <PageBackground className="flex items-center justify-center"><div className="animate-spin w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full" /></PageBackground>;
-  if (!agency) return <PageBackground className="flex items-center justify-center"><p className="text-gray-500">Agency not found</p></PageBackground>;
+  if (loading) return <PageBackground className="flex items-center justify-center"><div className="animate-spin w-12 h-12 border-4 border-stone-700 border-t-transparent rounded-full" /></PageBackground>;
+  if (!agency) return <PageBackground className="flex items-center justify-center"><p className="text-stone-500">Agency not found</p></PageBackground>;
 
   const allImages = [agency.image_url, ...(agency.gallery_images || [])];
   const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
@@ -1006,7 +1006,7 @@ const AgencyDetailPage = () => {
             </div>
             <button 
               onClick={() => setShowGallery(true)}
-              className="mt-3 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition text-sm"
+              className="mt-3 flex items-center gap-2 text-stone-600 hover:text-stone-800 transition text-sm"
             >
               <Image className="w-4 h-4" />
               View all {allImages.length} photos
