@@ -76,15 +76,15 @@ const WishlistProvider = ({ children }) => {
   );
 };
 
-// Radial Gradient Background Component (keeping the indigo gradient)
+// Radial Gradient Background Component (warm brown/nature theme)
 const PageBackground = ({ children, className = "" }) => {
   return (
     <div className={`min-h-screen w-full relative ${className}`}>
-      {/* Radial Gradient Background from Top - White to Indigo */}
+      {/* Radial Gradient Background - Warm Stone/Nature Theme */}
       <div
         className="fixed inset-0 z-0"
         style={{
-          background: "radial-gradient(125% 125% at 50% 10%, #fff 40%, #6366f1 100%)",
+          background: "radial-gradient(125% 125% at 50% 10%, #faf8f5 40%, #a8998a 100%)",
         }}
       />
       {/* Content */}
@@ -93,7 +93,7 @@ const PageBackground = ({ children, className = "" }) => {
   );
 };
 
-// Navigation Component - Black & White Theme
+// Navigation Component - Warm Nature Theme
 const Navigation = () => {
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -110,27 +110,27 @@ const Navigation = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : "bg-transparent"
+        isScrolled ? "bg-stone-50/95 backdrop-blur-md shadow-lg" : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-stone-700 rounded-xl flex items-center justify-center">
               <Activity className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Adltrack</span>
+            <span className="text-xl font-bold text-stone-800">Adltrack</span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/agencies" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-agencies">
+            <Link to="/agencies" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-agencies">
               Find Care
             </Link>
-            <Link to="/faq" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-faq">
+            <Link to="/faq" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-faq">
               FAQ
             </Link>
-            <Link to="/contact" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-contact">
+            <Link to="/contact" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-contact">
               Contact
             </Link>
           </div>
@@ -138,12 +138,12 @@ const Navigation = () => {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <Link to="/dashboard" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-dashboard">
+                <Link to="/dashboard" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-dashboard">
                   Dashboard
                 </Link>
                 <button
                   onClick={logout}
-                  className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-red-600 transition"
+                  className="flex items-center gap-2 px-4 py-2 text-stone-600 hover:text-red-600 transition"
                   data-testid="logout-btn"
                 >
                   <LogOut className="w-4 h-4" />
