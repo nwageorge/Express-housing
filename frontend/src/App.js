@@ -241,7 +241,7 @@ const AgencyCard = ({ agency, index }) => {
             </div>
           )}
           {agency.is_new && (
-            <div className="px-3 py-1.5 bg-indigo-500/80 backdrop-blur-md text-white text-xs font-semibold rounded-full flex items-center gap-1">
+            <div className="px-3 py-1.5 bg-amber-600/80 backdrop-blur-md text-white text-xs font-semibold rounded-full flex items-center gap-1">
               <Sparkles className="w-3 h-3" />
               New
             </div>
