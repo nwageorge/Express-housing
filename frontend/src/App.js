@@ -152,7 +152,7 @@ const Navigation = () => {
                 </Link>
                 <button
                   onClick={logout}
-                  className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-red-600 transition"
+                  className="flex items-center gap-2 px-4 py-2 text-muted-foreground hover:text-destructive transition"
                   data-testid="logout-btn"
                 >
                   <LogOut className="w-4 h-4" />
@@ -161,12 +161,12 @@ const Navigation = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-login">
+                <Link to="/login" className="text-muted-foreground hover:text-foreground transition font-medium" data-testid="nav-login">
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-6 py-2.5 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition-all"
+                  className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-all"
                   data-testid="nav-signup"
                 >
                   Get Started
@@ -176,7 +176,7 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="md:hidden text-foreground" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -188,21 +188,21 @@ const Navigation = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-4 pb-4 border-t border-gray-100"
+              className="md:hidden mt-4 pb-4 border-t border-border"
             >
               <div className="flex flex-col gap-4 pt-4">
-                <Link to="/agencies" className="text-gray-600 hover:text-black transition">Find Care</Link>
-                <Link to="/faq" className="text-gray-600 hover:text-black transition">FAQ</Link>
-                <Link to="/contact" className="text-gray-600 hover:text-black transition">Contact</Link>
+                <Link to="/agencies" className="text-muted-foreground hover:text-foreground transition">Find Care</Link>
+                <Link to="/faq" className="text-muted-foreground hover:text-foreground transition">FAQ</Link>
+                <Link to="/contact" className="text-muted-foreground hover:text-foreground transition">Contact</Link>
                 {user ? (
                   <>
-                    <Link to="/dashboard" className="text-gray-600 hover:text-black transition">Dashboard</Link>
-                    <button onClick={logout} className="text-left text-red-600">Logout</button>
+                    <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition">Dashboard</Link>
+                    <button onClick={logout} className="text-left text-destructive">Logout</button>
                   </>
                 ) : (
                   <>
-                    <Link to="/login" className="text-gray-600 hover:text-black transition">Sign In</Link>
-                    <Link to="/signup" className="text-black font-medium">Get Started</Link>
+                    <Link to="/login" className="text-muted-foreground hover:text-foreground transition">Sign In</Link>
+                    <Link to="/signup" className="text-primary font-medium">Get Started</Link>
                   </>
                 )}
               </div>
