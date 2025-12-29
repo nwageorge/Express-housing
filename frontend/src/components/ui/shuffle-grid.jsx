@@ -65,7 +65,7 @@ const shuffle = (array) => {
   return array;
 };
 
-// In-home care related images
+// In-home care related images - 9 images for 3x3 grid
 const squareData = [
   {
     id: 1,
@@ -93,43 +93,15 @@ const squareData = [
   },
   {
     id: 7,
-    src: "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 8,
-    src: "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 9,
     src: "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
-    id: 10,
+    id: 8,
     src: "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
-    id: 11,
+    id: 9,
     src: "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 12,
-    src: "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 13,
-    src: "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 14,
-    src: "https://images.pexels.com/photos/7176319/pexels-photo-7176319.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 15,
-    src: "https://images.pexels.com/photos/7176026/pexels-photo-7176026.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 16,
-    src: "https://images.pexels.com/photos/7176317/pexels-photo-7176317.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
 ];
 
