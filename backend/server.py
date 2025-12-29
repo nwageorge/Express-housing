@@ -184,7 +184,7 @@ async def root():
     return {"message": "NurseNow - In-Home Care Marketplace API"}
 
 # Auth Routes
-@api_router.post("/auth/signup", response_model=TokenResponse)
+@api_router.post("/auth/signup")
 async def signup(user_data: UserCreate):
     existing = await db.users.find_one({"email": user_data.email})
     if existing:
@@ -203,8 +203,8 @@ async def signup(user_data: UserCreate):
     await db.users.insert_one(user_doc)
     
     token = create_token(user_id, user_data.email)
-    user_response = {k: v for k, v in user_doc.items() if k != 'password'}
-    return TokenResponse(access_token=token, user=user_response)
+    user_response = {k: v for k, v in user_doc.items() if k not in ['password', '_id']}
+    return {"access_token": token, "token_type": "bearer", "user": user_response}
 
 @api_router.post("/auth/login", response_model=TokenResponse)
 async def login(credentials: UserLogin):
