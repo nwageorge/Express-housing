@@ -954,6 +954,8 @@ const AgencyDetailPage = () => {
   const { id } = useParams();
   const [agency, setAgency] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [showGallery, setShowGallery] = useState(false);
   const [bookingData, setBookingData] = useState({ service_type: "", date: "", time_slot: "", patient_name: "", patient_age: "", care_needs: "", notes: "" });
   const [bookingLoading, setBookingLoading] = useState(false);
   const { user } = useAuth();
@@ -992,55 +994,375 @@ const AgencyDetailPage = () => {
   if (loading) return <PageBackground className="flex items-center justify-center"><div className="animate-spin w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full" /></PageBackground>;
   if (!agency) return <PageBackground className="flex items-center justify-center"><p className="text-gray-500">Agency not found</p></PageBackground>;
 
+  const allImages = [agency.image_url, ...(agency.gallery_images || [])];
   const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
 
   return (
     <PageBackground>
       <Navigation />
+      
+      {/* Full-screen Image Gallery Modal */}
+      <AnimatePresence>
+        {showGallery && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+            onClick={() => setShowGallery(false)}
+          >
+            <button 
+              className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full"
+              onClick={() => setShowGallery(false)}
+            >
+              <X className="w-8 h-8" />
+            </button>
+            <button 
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white p-2 hover:bg-white/10 rounded-full"
+              onClick={(e) => { e.stopPropagation(); setSelectedImage(prev => prev > 0 ? prev - 1 : allImages.length - 1); }}
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+            <button 
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white p-2 hover:bg-white/10 rounded-full"
+              onClick={(e) => { e.stopPropagation(); setSelectedImage(prev => prev < allImages.length - 1 ? prev + 1 : 0); }}
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+            <img 
+              src={allImages[selectedImage]} 
+              alt="Gallery" 
+              className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {allImages.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={`w-2 h-2 rounded-full transition ${idx === selectedImage ? 'bg-white' : 'bg-white/40'}`}
+                  onClick={(e) => { e.stopPropagation(); setSelectedImage(idx); }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100">
-                <div className="relative h-80">
-                  <img src={agency.image_url} alt={agency.name} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-6 left-6 text-white">
-                    <div className="flex items-center gap-2 mb-2">
-                      {agency.is_verified && <span className="px-3 py-1 bg-black text-white text-xs font-semibold rounded-full flex items-center gap-1"><Shield className="w-3 h-3" />Verified</span>}
-                      {agency.is_new && <span className="px-3 py-1 bg-gray-700 text-white text-xs font-semibold rounded-full">New</span>}
+          
+          {/* Image Gallery Section - Booking.com Style */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <div className="grid grid-cols-4 gap-2 h-[400px] rounded-2xl overflow-hidden cursor-pointer" onClick={() => setShowGallery(true)}>
+              <div className="col-span-2 row-span-2 relative group">
+                <img src={allImages[0]} alt={agency.name} className="w-full h-full object-cover transition group-hover:brightness-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              </div>
+              {allImages.slice(1, 5).map((img, idx) => (
+                <div key={idx} className="relative group overflow-hidden">
+                  <img src={img} alt={`${agency.name} ${idx + 2}`} className="w-full h-full object-cover transition group-hover:brightness-90" />
+                  {idx === 3 && allImages.length > 5 && (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-semibold">
+                      <Camera className="w-5 h-5 mr-2" />
+                      +{allImages.length - 5} photos
                     </div>
-                    <h1 className="text-3xl font-bold">{agency.name}</h1>
-                  </div>
-                </div>
-                <div className="p-8">
-                  <div className="flex flex-wrap items-center gap-6 mb-6">
-                    <div className="flex items-center gap-2"><Star className="w-5 h-5 fill-gray-900 text-gray-900" /><span className="font-bold text-lg">{agency.rating}</span><span className="text-gray-500">({agency.review_count} reviews)</span></div>
-                    <div className="flex items-center gap-2 text-gray-500"><MapPin className="w-5 h-5" /><span>{agency.location}</span></div>
-                    <div className="flex items-center gap-2 text-gray-500"><Clock className="w-5 h-5" /><span>{agency.experience_years} years experience</span></div>
-                  </div>
-                  <div className="mb-6"><h2 className="text-xl font-bold text-gray-900 mb-3">About</h2><p className="text-gray-600 leading-relaxed">{agency.bio}</p></div>
-                  <div className="mb-6"><h2 className="text-xl font-bold text-gray-900 mb-3">Specialties</h2><div className="flex flex-wrap gap-2">{agency.specialties?.map((s, i) => (<span key={i} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">{s}</span>))}</div></div>
-                  <div className="mb-6"><h2 className="text-xl font-bold text-gray-900 mb-3">Certifications</h2><div className="flex flex-wrap gap-2">{agency.certifications?.map((c, i) => (<span key={i} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium flex items-center gap-1"><CheckCircle className="w-4 h-4 text-green-500" />{c}</span>))}</div></div>
-                  {agency.reviews && agency.reviews.length > 0 && (
-                    <div><h2 className="text-xl font-bold text-gray-900 mb-4">Reviews</h2><div className="space-y-4">{agency.reviews.map((review) => (<div key={review.id} className="p-4 bg-gray-50 rounded-xl"><div className="flex items-center justify-between mb-2"><span className="font-medium text-gray-900">{review.user_name}</span><div className="flex gap-0.5">{[...Array(review.rating)].map((_, i) => (<Star key={i} className="w-4 h-4 fill-gray-900 text-gray-900" />))}</div></div><p className="text-gray-600">{review.comment}</p></div>))}</div></div>
                   )}
                 </div>
+              ))}
+            </div>
+            <button 
+              onClick={() => setShowGallery(true)}
+              className="mt-3 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition text-sm"
+            >
+              <Image className="w-4 h-4" />
+              View all {allImages.length} photos
+            </button>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-6">
+              
+              {/* Header Info */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      {agency.is_verified && (
+                        <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full flex items-center gap-1">
+                          <BadgeCheck className="w-3 h-3" />Verified Agency
+                        </span>
+                      )}
+                      {agency.is_new && (
+                        <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full flex items-center gap-1">
+                          <Sparkles className="w-3 h-3" />New
+                        </span>
+                      )}
+                    </div>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{agency.name}</h1>
+                    <div className="flex items-center gap-2 text-gray-500">
+                      <MapPin className="w-4 h-4" />
+                      <span>{agency.location}</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="flex items-center gap-1 bg-gray-900 text-white px-3 py-1.5 rounded-lg">
+                      <Star className="w-4 h-4 fill-white" />
+                      <span className="font-bold">{agency.rating}</span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">{agency.review_count} reviews</p>
+                  </div>
+                </div>
+
+                {/* Quick Stats - TripAdvisor Style */}
+                <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-100">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-900">{agency.years_in_business || agency.experience_years}</div>
+                    <div className="text-xs text-gray-500">Years in Business</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-900">{agency.total_caregivers || 20}+</div>
+                    <div className="text-xs text-gray-500">Caregivers</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-900">{agency.families_served || 500}+</div>
+                    <div className="text-xs text-gray-500">Families Served</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">${agency.price_per_hour}</div>
+                    <div className="text-xs text-gray-500">Per Hour</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* About Section */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              >
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <Building2 className="w-5 h-5" />
+                  About {agency.name}
+                </h2>
+                <p className="text-gray-600 leading-relaxed mb-4">{agency.bio}</p>
+                {agency.description && <p className="text-gray-600 leading-relaxed">{agency.description}</p>}
+              </motion.div>
+
+              {/* Services & Certifications */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="grid md:grid-cols-2 gap-6"
+              >
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4">Care Services</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {agency.specialties?.map((s, i) => (
+                      <span key={i} className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">{s}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                  <h2 className="text-lg font-bold text-gray-900 mb-4">Certifications</h2>
+                  <div className="space-y-2">
+                    {agency.certifications?.map((c, i) => (
+                      <div key={i} className="flex items-center gap-2 text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span className="text-sm">{c}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Reviews Section - TripAdvisor Style */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    Family Reviews
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-5 h-5 ${i < Math.round(agency.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                      ))}
+                    </div>
+                    <span className="font-bold text-gray-900">{agency.rating}</span>
+                    <span className="text-gray-500">({agency.review_count} reviews)</span>
+                  </div>
+                </div>
+
+                {agency.reviews && agency.reviews.length > 0 ? (
+                  <div className="space-y-4">
+                    {agency.reviews.map((review, idx) => (
+                      <motion.div 
+                        key={review.id || idx}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="p-4 bg-gray-50 rounded-xl border border-gray-100"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                              <span className="text-gray-600 font-semibold">{review.user_name?.charAt(0) || 'U'}</span>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-900">{review.user_name}</p>
+                              <p className="text-xs text-gray-500">{review.relationship} • {review.care_type}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-gray-600 text-sm leading-relaxed">"{review.comment}"</p>
+                        <p className="text-xs text-gray-400 mt-2">{review.date}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-8">No reviews yet. Be the first to share your experience!</p>
+                )}
               </motion.div>
             </div>
+
+            {/* Booking Sidebar */}
             <div className="lg:col-span-1">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white rounded-3xl shadow-lg p-6 sticky top-28 border border-gray-100">
-                <div className="text-center mb-6"><div className="text-3xl font-bold text-gray-900">${agency.price_per_hour}<span className="text-lg font-normal text-gray-500">/hour</span></div></div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                transition={{ delay: 0.2 }} 
+                className="bg-white rounded-2xl shadow-lg p-6 sticky top-28 border border-gray-100"
+              >
+                <div className="text-center mb-6 pb-6 border-b border-gray-100">
+                  <div className="text-4xl font-bold text-gray-900">
+                    ${agency.price_per_hour}
+                    <span className="text-lg font-normal text-gray-500">/hour</span>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-1">Per caregiver</p>
+                </div>
+
                 <form onSubmit={handleBooking} className="space-y-4">
-                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Service Type</label><select value={bookingData.service_type} onChange={(e) => setBookingData({ ...bookingData, service_type: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 outline-none" required data-testid="booking-service"><option value="">Select service</option>{agency.specialties?.map((s) => (<option key={s} value={s}>{s}</option>))}</select></div>
-                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Date</label><input type="date" value={bookingData.date} onChange={(e) => setBookingData({ ...bookingData, date: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 outline-none" required min={new Date().toISOString().split("T")[0]} data-testid="booking-date" /></div>
-                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Time Slot</label><select value={bookingData.time_slot} onChange={(e) => setBookingData({ ...bookingData, time_slot: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 outline-none" required data-testid="booking-time"><option value="">Select time</option>{timeSlots.map((slot) => (<option key={slot} value={slot}>{slot}</option>))}</select></div>
-                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Patient Name</label><input type="text" value={bookingData.patient_name} onChange={(e) => setBookingData({ ...bookingData, patient_name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 outline-none" placeholder="Who will receive care?" required data-testid="booking-patient" /></div>
-                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Patient Age</label><input type="number" value={bookingData.patient_age} onChange={(e) => setBookingData({ ...bookingData, patient_age: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 outline-none" placeholder="Age" data-testid="booking-age" /></div>
-                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Care Needs (Optional)</label><textarea value={bookingData.care_needs} onChange={(e) => setBookingData({ ...bookingData, care_needs: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 outline-none resize-none" rows={3} placeholder="Describe any specific care requirements..." data-testid="booking-needs" /></div>
-                  <button type="submit" disabled={bookingLoading} className="w-full py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50" data-testid="booking-submit">{bookingLoading ? "Booking..." : "Book Consultation"}</button>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Care Service Needed</label>
+                    <select 
+                      value={bookingData.service_type} 
+                      onChange={(e) => setBookingData({ ...bookingData, service_type: e.target.value })} 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 outline-none bg-white" 
+                      required 
+                      data-testid="booking-service"
+                    >
+                      <option value="">Select service type</option>
+                      {agency.specialties?.map((s) => (<option key={s} value={s}>{s}</option>))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Consultation Date</label>
+                    <input 
+                      type="date" 
+                      value={bookingData.date} 
+                      onChange={(e) => setBookingData({ ...bookingData, date: e.target.value })} 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 outline-none" 
+                      required 
+                      min={new Date().toISOString().split("T")[0]} 
+                      data-testid="booking-date" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Time</label>
+                    <select 
+                      value={bookingData.time_slot} 
+                      onChange={(e) => setBookingData({ ...bookingData, time_slot: e.target.value })} 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 outline-none bg-white" 
+                      required 
+                      data-testid="booking-time"
+                    >
+                      <option value="">Select time slot</option>
+                      {timeSlots.map((slot) => (<option key={slot} value={slot}>{slot}</option>))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Who Needs Care?</label>
+                    <input 
+                      type="text" 
+                      value={bookingData.patient_name} 
+                      onChange={(e) => setBookingData({ ...bookingData, patient_name: e.target.value })} 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 outline-none" 
+                      placeholder="Patient's name" 
+                      required 
+                      data-testid="booking-patient" 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Care Needs (Optional)</label>
+                    <textarea 
+                      value={bookingData.care_needs} 
+                      onChange={(e) => setBookingData({ ...bookingData, care_needs: e.target.value })} 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 outline-none resize-none" 
+                      rows={3} 
+                      placeholder="Describe any specific care requirements..." 
+                      data-testid="booking-needs" 
+                    />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={bookingLoading} 
+                    className="w-full py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2" 
+                    data-testid="booking-submit"
+                  >
+                    {bookingLoading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Booking...
+                      </>
+                    ) : (
+                      <>
+                        <Calendar className="w-5 h-5" />
+                        Book Free Consultation
+                      </>
+                    )}
+                  </button>
                 </form>
-                <p className="text-center text-sm text-gray-500 mt-4">You won't be charged until the service is confirmed</p>
+
+                <div className="mt-6 pt-6 border-t border-gray-100 space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span>Free consultation - no commitment</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span>Cancel anytime before confirmation</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span>Personalized care matching</span>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </div>
