@@ -5,6 +5,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Heart, Star, MapPin, Clock, Shield, Phone, Mail, ChevronLeft, ChevronRight, Menu, X, Search, Calendar, User, LogOut, Home, Users, CheckCircle, Award, Sparkles } from "lucide-react";
+import React from "react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -76,17 +77,98 @@ const WishlistProvider = ({ children }) => {
   );
 };
 
-// Nurse/Caregiver Images - Professional medical staff photos
-const nurseImages = [
-  "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=400&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&h=500&fit=crop",
-  "https://images.unsplash.com/photo-1527613426441-4da17471b66d?w=400&h=500&fit=crop",
-];
+// Background Component with Soft Yellow Glow
+const GlowBackground = ({ children, className = "", variant = "default" }) => {
+  const variants = {
+    default: (
+      <>
+        {/* Soft Yellow Glow - Top Left */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(ellipse at 20% 10%, #FFF991 0%, transparent 50%)`,
+            opacity: 0.5,
+          }}
+        />
+        {/* Soft Teal Glow - Bottom Right */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(ellipse at 80% 90%, #5eead4 0%, transparent 50%)`,
+            opacity: 0.3,
+          }}
+        />
+      </>
+    ),
+    yellow: (
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at center, #FFF991 0%, transparent 70%)`,
+          opacity: 0.6,
+          mixBlendMode: "multiply",
+        }}
+      />
+    ),
+    blue: (
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(circle at center, #93c5fd, transparent)`,
+        }}
+      />
+    ),
+    hero: (
+      <>
+        {/* Large Yellow Glow - Center */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(ellipse at 50% 30%, #FFF991 0%, transparent 60%)`,
+            opacity: 0.5,
+          }}
+        />
+        {/* Soft Blue accent - Right */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(ellipse at 90% 60%, #93c5fd 0%, transparent 40%)`,
+            opacity: 0.3,
+          }}
+        />
+      </>
+    ),
+    auth: (
+      <>
+        {/* Centered Yellow Glow */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(circle at 50% 50%, #FFF991 0%, transparent 50%)`,
+            opacity: 0.5,
+          }}
+        />
+        {/* Soft Blue Edge */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(ellipse at 100% 100%, #93c5fd 0%, transparent 50%)`,
+            opacity: 0.3,
+          }}
+        />
+      </>
+    ),
+  };
+
+  return (
+    <div className={`min-h-screen w-full bg-white relative overflow-hidden ${className}`}>
+      {variants[variant]}
+      <div className="relative z-10">
+        {children}
+      </div>
+    </div>
+  );
+};
 
 // Navigation Component
 const Navigation = () => {
@@ -106,13 +188,13 @@ const Navigation = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg" : "bg-transparent"
+        isScrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-200">
               <Heart className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900">NurseNow</span>
@@ -120,13 +202,13 @@ const Navigation = () => {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/agencies" className="text-gray-600 hover:text-teal-600 transition font-medium" data-testid="nav-agencies">
+            <Link to="/agencies" className="text-gray-600 hover:text-amber-600 transition font-medium" data-testid="nav-agencies">
               Find Care
             </Link>
-            <Link to="/faq" className="text-gray-600 hover:text-teal-600 transition font-medium" data-testid="nav-faq">
+            <Link to="/faq" className="text-gray-600 hover:text-amber-600 transition font-medium" data-testid="nav-faq">
               FAQ
             </Link>
-            <Link to="/contact" className="text-gray-600 hover:text-teal-600 transition font-medium" data-testid="nav-contact">
+            <Link to="/contact" className="text-gray-600 hover:text-amber-600 transition font-medium" data-testid="nav-contact">
               Contact
             </Link>
           </div>
@@ -134,7 +216,7 @@ const Navigation = () => {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <Link to="/dashboard" className="text-gray-600 hover:text-teal-600 transition font-medium" data-testid="nav-dashboard">
+                <Link to="/dashboard" className="text-gray-600 hover:text-amber-600 transition font-medium" data-testid="nav-dashboard">
                   Dashboard
                 </Link>
                 <button
@@ -148,12 +230,12 @@ const Navigation = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-gray-600 hover:text-teal-600 transition font-medium" data-testid="nav-login">
+                <Link to="/login" className="text-gray-600 hover:text-amber-600 transition font-medium" data-testid="nav-login">
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-6 py-2.5 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-full font-medium hover:shadow-lg hover:shadow-teal-500/30 transition-all"
+                  className="px-6 py-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-full font-medium hover:shadow-lg hover:shadow-amber-300/50 transition-all"
                   data-testid="nav-signup"
                 >
                   Get Started
@@ -178,18 +260,18 @@ const Navigation = () => {
               className="md:hidden mt-4 pb-4 border-t border-gray-100"
             >
               <div className="flex flex-col gap-4 pt-4">
-                <Link to="/agencies" className="text-gray-600 hover:text-teal-600 transition">Find Care</Link>
-                <Link to="/faq" className="text-gray-600 hover:text-teal-600 transition">FAQ</Link>
-                <Link to="/contact" className="text-gray-600 hover:text-teal-600 transition">Contact</Link>
+                <Link to="/agencies" className="text-gray-600 hover:text-amber-600 transition">Find Care</Link>
+                <Link to="/faq" className="text-gray-600 hover:text-amber-600 transition">FAQ</Link>
+                <Link to="/contact" className="text-gray-600 hover:text-amber-600 transition">Contact</Link>
                 {user ? (
                   <>
-                    <Link to="/dashboard" className="text-gray-600 hover:text-teal-600 transition">Dashboard</Link>
+                    <Link to="/dashboard" className="text-gray-600 hover:text-amber-600 transition">Dashboard</Link>
                     <button onClick={logout} className="text-left text-red-600">Logout</button>
                   </>
                 ) : (
                   <>
-                    <Link to="/login" className="text-gray-600 hover:text-teal-600 transition">Sign In</Link>
-                    <Link to="/signup" className="text-teal-600 font-medium">Get Started</Link>
+                    <Link to="/login" className="text-gray-600 hover:text-amber-600 transition">Sign In</Link>
+                    <Link to="/signup" className="text-amber-600 font-medium">Get Started</Link>
                   </>
                 )}
               </div>
@@ -216,7 +298,7 @@ const AgencyCard = ({ agency, index }) => {
       onClick={() => navigate(`/agencies/${agency.id}`)}
       data-testid={`agency-card-${agency.id}`}
     >
-      <div className="relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500">
+      <div className="relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100">
         {/* Image Container */}
         <div className="relative aspect-[3/4] overflow-hidden">
           <motion.img
@@ -236,7 +318,7 @@ const AgencyCard = ({ agency, index }) => {
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="px-3 py-1.5 bg-teal-500 text-white text-xs font-semibold rounded-full flex items-center gap-1"
+                className="px-3 py-1.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-semibold rounded-full flex items-center gap-1 shadow-lg"
               >
                 <Shield className="w-3 h-3" />
                 Verified
@@ -247,7 +329,7 @@ const AgencyCard = ({ agency, index }) => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.1 }}
-                className="px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-full flex items-center gap-1"
+                className="px-3 py-1.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white text-xs font-semibold rounded-full flex items-center gap-1 shadow-lg"
               >
                 <Sparkles className="w-3 h-3" />
                 New
@@ -291,7 +373,7 @@ const AgencyCard = ({ agency, index }) => {
             <span className="text-sm text-gray-500">{agency.review_count} reviews</span>
           </div>
           
-          <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-teal-600 transition-colors">
+          <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-amber-600 transition-colors">
             {agency.name}
           </h3>
           
@@ -304,7 +386,7 @@ const AgencyCard = ({ agency, index }) => {
             {agency.specialties?.slice(0, 2).map((specialty, idx) => (
               <span
                 key={idx}
-                className="px-2.5 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full"
+                className="px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded-full"
               >
                 {specialty}
               </span>
@@ -343,20 +425,20 @@ const AgencyCarousel = ({ title, subtitle, agencies, viewAllLink }) => {
         <div className="flex items-center gap-3">
           <Link
             to={viewAllLink}
-            className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 font-medium transition-colors"
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-amber-50 hover:bg-amber-100 rounded-full text-amber-700 font-medium transition-colors"
           >
             View All
             <ChevronRight className="w-4 h-4" />
           </Link>
           <button
             onClick={() => scroll("left")}
-            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition shadow-sm"
+            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-amber-50 hover:border-amber-200 transition shadow-sm"
           >
             <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition shadow-sm"
+            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-amber-50 hover:border-amber-200 transition shadow-sm"
           >
             <ChevronRight className="w-5 h-5 text-gray-600" />
           </button>
@@ -389,15 +471,24 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 mb-12">
+    <section className="py-20 overflow-hidden relative">
+      {/* Yellow Glow Background for Testimonials */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage: `radial-gradient(ellipse at 50% 50%, #FFF991 0%, transparent 60%)`,
+          opacity: 0.4,
+        }}
+      />
+      
+      <div className="max-w-7xl mx-auto px-6 mb-12 relative z-10">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">What Families Say</h2>
         <p className="text-gray-500 text-center max-w-2xl mx-auto">
           Join thousands of families who trust NurseNow for their in-home care needs
         </p>
       </div>
 
-      <div className="relative">
+      <div className="relative z-10">
         <motion.div
           animate={{ x: ["-50%", "0%"] }}
           transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -406,7 +497,7 @@ const TestimonialsSection = () => {
           {[...testimonials, ...testimonials].map((testimonial, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-96 bg-white p-6 rounded-2xl shadow-lg border border-gray-100"
+              className="flex-shrink-0 w-96 bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-amber-100"
             >
               <div className="flex items-center gap-4 mb-4">
                 <img
@@ -443,13 +534,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-gradient-to-br from-teal-50 via-white to-amber-50">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-teal-200 rounded-full opacity-30 blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-amber-200 rounded-full opacity-30 blur-3xl" />
-      </div>
-
+    <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
@@ -457,14 +542,14 @@ const HeroSection = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 text-teal-700 rounded-full text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-sm font-medium mb-6">
               <Shield className="w-4 h-4" />
               Trusted by 10,000+ families
             </div>
             
             <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
               Compassionate
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-600"> Home Care </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500"> Home Care </span>
               For Your Loved Ones
             </h1>
             
@@ -481,13 +566,13 @@ const HeroSection = () => {
                   placeholder="Search by city or care type..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition shadow-sm"
+                  className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition shadow-sm"
                   data-testid="hero-search-input"
                 />
               </div>
               <button
                 type="submit"
-                className="px-8 py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-2xl font-semibold hover:shadow-lg hover:shadow-teal-500/30 transition-all"
+                className="px-8 py-4 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-2xl font-semibold hover:shadow-lg hover:shadow-amber-300/50 transition-all"
                 data-testid="hero-search-btn"
               >
                 Search
@@ -496,13 +581,17 @@ const HeroSection = () => {
 
             <div className="flex items-center gap-6">
               <div className="flex -space-x-3">
-                {[1, 2, 3, 4].map((i) => (
+                {[
+                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=40&h=40&fit=crop",
+                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop",
+                  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop",
+                  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop"
+                ].map((img, i) => (
                   <img
                     key={i}
-                    src={`https://images.unsplash.com/photo-${1500000000000 + i * 10000000000}?w=40&h=40&fit=crop&faces`}
+                    src={img}
                     alt="User"
                     className="w-10 h-10 rounded-full border-2 border-white object-cover"
-                    onError={(e) => e.target.src = nurseImages[i % nurseImages.length]}
                   />
                 ))}
               </div>
@@ -582,7 +671,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 relative">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose NurseNow?</h2>
@@ -599,10 +688,10 @@ const FeaturesSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="text-center p-6"
+              className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-amber-100 hover:shadow-lg hover:shadow-amber-100 transition-all"
             >
-              <div className="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <feature.icon className="w-8 h-8 text-teal-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <feature.icon className="w-8 h-8 text-amber-600" />
               </div>
               <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
               <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
@@ -639,7 +728,7 @@ const HomePage = () => {
   const cities = ["Philadelphia, PA", "Washington, D.C.", "Pittsburgh, PA", "Newark, NJ"];
 
   return (
-    <div className="min-h-screen bg-white">
+    <GlowBackground variant="hero">
       <Navigation />
       <HeroSection />
       <FeaturesSection />
@@ -647,7 +736,7 @@ const HomePage = () => {
       <div className="max-w-7xl mx-auto px-6">
         {loading ? (
           <div className="py-20 text-center">
-            <div className="animate-spin w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full mx-auto" />
+            <div className="animate-spin w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full mx-auto" />
             <p className="mt-4 text-gray-500">Loading care agencies...</p>
           </div>
         ) : (
@@ -670,17 +759,24 @@ const HomePage = () => {
       <TestimonialsSection />
       
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-teal-500 to-teal-600">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+      <section className="py-20 relative">
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `radial-gradient(ellipse at center, #FFF991 0%, transparent 70%)`,
+            opacity: 0.5,
+          }}
+        />
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
             Ready to Find the Perfect Caregiver?
           </h2>
-          <p className="text-teal-100 text-lg mb-8">
+          <p className="text-gray-600 text-lg mb-8">
             Join thousands of families who trust NurseNow for quality in-home care
           </p>
           <Link
             to="/agencies"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-teal-600 rounded-full font-semibold hover:shadow-lg transition-all"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-amber-300/50 transition-all"
             data-testid="cta-find-care"
           >
             Find Care Now
@@ -695,7 +791,7 @@ const HomePage = () => {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-xl flex items-center justify-center">
                   <Heart className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold text-white">NurseNow</span>
@@ -707,18 +803,18 @@ const HomePage = () => {
             <div>
               <h4 className="text-white font-semibold mb-4">Services</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/agencies" className="hover:text-white transition">Elderly Care</Link></li>
-                <li><Link to="/agencies" className="hover:text-white transition">Pediatric Care</Link></li>
-                <li><Link to="/agencies" className="hover:text-white transition">Post-Surgery Care</Link></li>
-                <li><Link to="/agencies" className="hover:text-white transition">24-Hour Care</Link></li>
+                <li><Link to="/agencies" className="hover:text-amber-400 transition">Elderly Care</Link></li>
+                <li><Link to="/agencies" className="hover:text-amber-400 transition">Pediatric Care</Link></li>
+                <li><Link to="/agencies" className="hover:text-amber-400 transition">Post-Surgery Care</Link></li>
+                <li><Link to="/agencies" className="hover:text-amber-400 transition">24-Hour Care</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/faq" className="hover:text-white transition">FAQ</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition">Contact Us</Link></li>
-                <li><Link to="/agencies" className="hover:text-white transition">Find Care</Link></li>
+                <li><Link to="/faq" className="hover:text-amber-400 transition">FAQ</Link></li>
+                <li><Link to="/contact" className="hover:text-amber-400 transition">Contact Us</Link></li>
+                <li><Link to="/agencies" className="hover:text-amber-400 transition">Find Care</Link></li>
               </ul>
             </div>
             <div>
@@ -734,7 +830,7 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
-    </div>
+    </GlowBackground>
   );
 };
 
@@ -763,16 +859,16 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-amber-50 flex items-center justify-center p-6">
+    <GlowBackground variant="auth" className="flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/50">
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-amber-100">
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Heart className="w-6 h-6 text-white" />
               </div>
             </Link>
@@ -793,7 +889,7 @@ const LoginPage = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                 placeholder="you@example.com"
                 required
                 data-testid="login-email"
@@ -806,7 +902,7 @@ const LoginPage = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                 placeholder="••••••••"
                 required
                 data-testid="login-password"
@@ -816,7 +912,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50"
+              className="w-full py-3 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-amber-300/50 transition-all disabled:opacity-50"
               data-testid="login-submit"
             >
               {loading ? "Signing in..." : "Sign In"}
@@ -825,13 +921,13 @@ const LoginPage = () => {
 
           <p className="text-center mt-6 text-gray-500">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-teal-600 font-medium hover:underline">
+            <Link to="/signup" className="text-amber-600 font-medium hover:underline">
               Sign up
             </Link>
           </p>
         </div>
       </motion.div>
-    </div>
+    </GlowBackground>
   );
 };
 
@@ -871,16 +967,16 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-amber-50 flex items-center justify-center p-6">
+    <GlowBackground variant="auth" className="flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/50">
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-amber-100">
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Heart className="w-6 h-6 text-white" />
               </div>
             </Link>
@@ -894,7 +990,7 @@ const SignupPage = () => {
               <div
                 key={s}
                 className={`flex-1 h-1.5 rounded-full transition-colors ${
-                  s <= step ? "bg-teal-500" : "bg-gray-200"
+                  s <= step ? "bg-gradient-to-r from-amber-400 to-yellow-500" : "bg-gray-200"
                 }`}
               />
             ))}
@@ -924,11 +1020,11 @@ const SignupPage = () => {
                         onClick={() => setFormData({ ...formData, role: "client" })}
                         className={`p-4 rounded-xl border-2 transition-all ${
                           formData.role === "client"
-                            ? "border-teal-500 bg-teal-50"
+                            ? "border-amber-400 bg-amber-50"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
-                        <User className="w-6 h-6 mx-auto mb-2 text-teal-600" />
+                        <User className="w-6 h-6 mx-auto mb-2 text-amber-600" />
                         <span className="text-sm font-medium">Care Services</span>
                       </button>
                       <button
@@ -936,11 +1032,11 @@ const SignupPage = () => {
                         onClick={() => setFormData({ ...formData, role: "agency" })}
                         className={`p-4 rounded-xl border-2 transition-all ${
                           formData.role === "agency"
-                            ? "border-teal-500 bg-teal-50"
+                            ? "border-amber-400 bg-amber-50"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
-                        <Users className="w-6 h-6 mx-auto mb-2 text-teal-600" />
+                        <Users className="w-6 h-6 mx-auto mb-2 text-amber-600" />
                         <span className="text-sm font-medium">To Provide Care</span>
                       </button>
                     </div>
@@ -962,7 +1058,7 @@ const SignupPage = () => {
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                       placeholder="John Doe"
                       required
                       data-testid="signup-name"
@@ -974,7 +1070,7 @@ const SignupPage = () => {
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                       placeholder="(555) 555-5555"
                       data-testid="signup-phone"
                     />
@@ -996,7 +1092,7 @@ const SignupPage = () => {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                       placeholder="you@example.com"
                       required
                       data-testid="signup-email"
@@ -1008,7 +1104,7 @@ const SignupPage = () => {
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                       placeholder="••••••••"
                       required
                       minLength={6}
@@ -1032,7 +1128,7 @@ const SignupPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50"
+                className="flex-1 py-3 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-amber-300/50 transition-all disabled:opacity-50"
                 data-testid="signup-submit"
               >
                 {loading ? "Creating..." : step < 3 ? "Continue" : "Create Account"}
@@ -1042,13 +1138,13 @@ const SignupPage = () => {
 
           <p className="text-center mt-6 text-gray-500">
             Already have an account?{" "}
-            <Link to="/login" className="text-teal-600 font-medium hover:underline">
+            <Link to="/login" className="text-amber-600 font-medium hover:underline">
               Sign in
             </Link>
           </p>
         </div>
       </motion.div>
-    </div>
+    </GlowBackground>
   );
 };
 
@@ -1090,7 +1186,7 @@ const AgenciesPage = () => {
   }, [selectedCity, selectedSpecialty]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <GlowBackground variant="default">
       <Navigation />
       <div className="pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-6">
@@ -1104,7 +1200,7 @@ const AgenciesPage = () => {
             <select
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
-              className="px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-teal-500 outline-none"
+              className="px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-amber-400 outline-none shadow-sm"
               data-testid="filter-city"
             >
               <option value="">All Cities</option>
@@ -1115,7 +1211,7 @@ const AgenciesPage = () => {
             <select
               value={selectedSpecialty}
               onChange={(e) => setSelectedSpecialty(e.target.value)}
-              className="px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-teal-500 outline-none"
+              className="px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-amber-400 outline-none shadow-sm"
               data-testid="filter-specialty"
             >
               <option value="">All Specialties</option>
@@ -1127,7 +1223,7 @@ const AgenciesPage = () => {
 
           {loading ? (
             <div className="py-20 text-center">
-              <div className="animate-spin w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full mx-auto" />
+              <div className="animate-spin w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full mx-auto" />
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -1144,7 +1240,7 @@ const AgenciesPage = () => {
           )}
         </div>
       </div>
-    </div>
+    </GlowBackground>
   );
 };
 
@@ -1208,24 +1304,24 @@ const AgencyDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full" />
-      </div>
+      <GlowBackground variant="default" className="flex items-center justify-center">
+        <div className="animate-spin w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full" />
+      </GlowBackground>
     );
   }
 
   if (!agency) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <GlowBackground variant="default" className="flex items-center justify-center">
         <p className="text-gray-500">Agency not found</p>
-      </div>
+      </GlowBackground>
     );
   }
 
   const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <GlowBackground variant="default">
       <Navigation />
       <div className="pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-6">
@@ -1235,7 +1331,7 @@ const AgencyDetailPage = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl overflow-hidden shadow-lg"
+                className="bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg border border-amber-100"
               >
                 <div className="relative h-80">
                   <img
@@ -1247,13 +1343,13 @@ const AgencyDetailPage = () => {
                   <div className="absolute bottom-6 left-6 text-white">
                     <div className="flex items-center gap-2 mb-2">
                       {agency.is_verified && (
-                        <span className="px-3 py-1 bg-teal-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+                        <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
                           <Shield className="w-3 h-3" />
                           Verified
                         </span>
                       )}
                       {agency.is_new && (
-                        <span className="px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full">
+                        <span className="px-3 py-1 bg-gradient-to-r from-sky-400 to-blue-500 text-white text-xs font-semibold rounded-full">
                           New
                         </span>
                       )}
@@ -1288,7 +1384,7 @@ const AgencyDetailPage = () => {
                     <h2 className="text-xl font-bold text-gray-900 mb-3">Specialties</h2>
                     <div className="flex flex-wrap gap-2">
                       {agency.specialties?.map((s, i) => (
-                        <span key={i} className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">
+                        <span key={i} className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">
                           {s}
                         </span>
                       ))}
@@ -1313,7 +1409,7 @@ const AgencyDetailPage = () => {
                       <h2 className="text-xl font-bold text-gray-900 mb-4">Reviews</h2>
                       <div className="space-y-4">
                         {agency.reviews.map((review) => (
-                          <div key={review.id} className="p-4 bg-gray-50 rounded-xl">
+                          <div key={review.id} className="p-4 bg-amber-50/50 rounded-xl">
                             <div className="flex items-center justify-between mb-2">
                               <span className="font-medium text-gray-900">{review.user_name}</span>
                               <div className="flex gap-0.5">
@@ -1338,7 +1434,7 @@ const AgencyDetailPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-3xl shadow-lg p-6 sticky top-28"
+                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-6 sticky top-28 border border-amber-100"
               >
                 <div className="text-center mb-6">
                   <div className="text-3xl font-bold text-gray-900">
@@ -1353,7 +1449,7 @@ const AgencyDetailPage = () => {
                     <select
                       value={bookingData.service_type}
                       onChange={(e) => setBookingData({ ...bookingData, service_type: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 outline-none"
                       required
                       data-testid="booking-service"
                     >
@@ -1370,7 +1466,7 @@ const AgencyDetailPage = () => {
                       type="date"
                       value={bookingData.date}
                       onChange={(e) => setBookingData({ ...bookingData, date: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 outline-none"
                       required
                       min={new Date().toISOString().split("T")[0]}
                       data-testid="booking-date"
@@ -1382,7 +1478,7 @@ const AgencyDetailPage = () => {
                     <select
                       value={bookingData.time_slot}
                       onChange={(e) => setBookingData({ ...bookingData, time_slot: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 outline-none"
                       required
                       data-testid="booking-time"
                     >
@@ -1399,7 +1495,7 @@ const AgencyDetailPage = () => {
                       type="text"
                       value={bookingData.patient_name}
                       onChange={(e) => setBookingData({ ...bookingData, patient_name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 outline-none"
                       placeholder="Who will receive care?"
                       required
                       data-testid="booking-patient"
@@ -1412,7 +1508,7 @@ const AgencyDetailPage = () => {
                       type="number"
                       value={bookingData.patient_age}
                       onChange={(e) => setBookingData({ ...bookingData, patient_age: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 outline-none"
                       placeholder="Age"
                       data-testid="booking-age"
                     />
@@ -1423,7 +1519,7 @@ const AgencyDetailPage = () => {
                     <textarea
                       value={bookingData.care_needs}
                       onChange={(e) => setBookingData({ ...bookingData, care_needs: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 outline-none resize-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 outline-none resize-none"
                       rows={3}
                       placeholder="Describe any specific care requirements..."
                       data-testid="booking-needs"
@@ -1433,7 +1529,7 @@ const AgencyDetailPage = () => {
                   <button
                     type="submit"
                     disabled={bookingLoading}
-                    className="w-full py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50"
+                    className="w-full py-4 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-amber-300/50 transition-all disabled:opacity-50"
                     data-testid="booking-submit"
                   >
                     {bookingLoading ? "Booking..." : "Book Consultation"}
@@ -1448,7 +1544,7 @@ const AgencyDetailPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </GlowBackground>
   );
 };
 
@@ -1488,7 +1584,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <GlowBackground variant="default">
       <Navigation />
       <div className="pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-6">
@@ -1498,10 +1594,10 @@ const DashboardPage = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-amber-100">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-teal-600" />
+                <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-amber-600" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Total Bookings</p>
@@ -1509,7 +1605,7 @@ const DashboardPage = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-green-100">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
                   <CheckCircle className="w-6 h-6 text-green-600" />
@@ -1522,7 +1618,7 @@ const DashboardPage = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-amber-100">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
                   <Clock className="w-6 h-6 text-amber-600" />
@@ -1537,20 +1633,20 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-amber-100">
             <div className="p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-gray-900">Your Bookings</h2>
             </div>
             {loading ? (
               <div className="p-12 text-center">
-                <div className="animate-spin w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full mx-auto" />
+                <div className="animate-spin w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full mx-auto" />
               </div>
             ) : bookings.length === 0 ? (
               <div className="p-12 text-center">
                 <p className="text-gray-500 mb-4">You haven't made any bookings yet.</p>
                 <Link
                   to="/agencies"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-teal-500 text-white rounded-xl font-medium hover:bg-teal-600 transition"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-xl font-medium hover:shadow-lg transition"
                 >
                   Find Care
                   <ChevronRight className="w-4 h-4" />
@@ -1559,7 +1655,7 @@ const DashboardPage = () => {
             ) : (
               <div className="divide-y divide-gray-100">
                 {bookings.map((booking) => (
-                  <div key={booking.id} className="p-6 hover:bg-gray-50 transition">
+                  <div key={booking.id} className="p-6 hover:bg-amber-50/50 transition">
                     <div className="flex items-start justify-between">
                       <div className="flex gap-4">
                         {booking.agency && (
@@ -1600,7 +1696,7 @@ const DashboardPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </GlowBackground>
   );
 };
 
@@ -1615,11 +1711,11 @@ const BookingSuccessPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-amber-50 flex items-center justify-center p-6">
+    <GlowBackground variant="auth" className="flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-3xl shadow-2xl p-12 text-center max-w-md"
+        className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-12 text-center max-w-md border border-amber-100"
       >
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <CheckCircle className="w-10 h-10 text-green-500" />
@@ -1631,7 +1727,7 @@ const BookingSuccessPage = () => {
         <div className="flex flex-col gap-3">
           <Link
             to="/dashboard"
-            className="px-6 py-3 bg-teal-500 text-white rounded-xl font-medium hover:bg-teal-600 transition"
+            className="px-6 py-3 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-xl font-medium hover:shadow-lg transition"
           >
             View My Bookings
           </Link>
@@ -1643,7 +1739,7 @@ const BookingSuccessPage = () => {
           </Link>
         </div>
       </motion.div>
-    </div>
+    </GlowBackground>
   );
 };
 
@@ -1673,7 +1769,7 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <GlowBackground variant="default">
       <Navigation />
       <div className="pt-24 pb-12">
         <div className="max-w-3xl mx-auto px-6">
@@ -1686,7 +1782,7 @@ const ContactPage = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl shadow-lg p-12 text-center"
+              className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-12 text-center border border-amber-100"
             >
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-500" />
@@ -1695,13 +1791,13 @@ const ContactPage = () => {
               <p className="text-gray-500 mb-6">We'll get back to you within 24 hours.</p>
               <button
                 onClick={() => setSuccess(false)}
-                className="px-6 py-3 bg-teal-500 text-white rounded-xl font-medium hover:bg-teal-600 transition"
+                className="px-6 py-3 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-xl font-medium hover:shadow-lg transition"
               >
                 Send Another Message
               </button>
             </motion.div>
           ) : (
-            <div className="bg-white rounded-3xl shadow-lg p-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-8 border border-amber-100">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
@@ -1710,7 +1806,7 @@ const ContactPage = () => {
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                       required
                       data-testid="contact-name"
                     />
@@ -1721,7 +1817,7 @@ const ContactPage = () => {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                       required
                       data-testid="contact-email"
                     />
@@ -1733,7 +1829,7 @@ const ContactPage = () => {
                     type="text"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition"
                     required
                     data-testid="contact-subject"
                   />
@@ -1743,7 +1839,7 @@ const ContactPage = () => {
                   <textarea
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 outline-none transition resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition resize-none"
                     rows={6}
                     required
                     data-testid="contact-message"
@@ -1752,7 +1848,7 @@ const ContactPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50"
+                  className="w-full py-4 bg-gradient-to-r from-amber-400 to-yellow-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-amber-300/50 transition-all disabled:opacity-50"
                   data-testid="contact-submit"
                 >
                   {loading ? "Sending..." : "Send Message"}
@@ -1762,23 +1858,23 @@ const ContactPage = () => {
           )}
 
           <div className="grid md:grid-cols-3 gap-6 mt-12">
-            <div className="bg-white rounded-2xl p-6 text-center shadow-sm">
-              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Phone className="w-6 h-6 text-teal-600" />
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center shadow-sm border border-amber-100">
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Phone className="w-6 h-6 text-amber-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
               <p className="text-gray-500">1-800-NURSE-NOW</p>
             </div>
-            <div className="bg-white rounded-2xl p-6 text-center shadow-sm">
-              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Mail className="w-6 h-6 text-teal-600" />
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center shadow-sm border border-amber-100">
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Mail className="w-6 h-6 text-amber-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
               <p className="text-gray-500">support@nursenow.com</p>
             </div>
-            <div className="bg-white rounded-2xl p-6 text-center shadow-sm">
-              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-6 h-6 text-teal-600" />
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center shadow-sm border border-amber-100">
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-6 h-6 text-amber-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-1">Hours</h3>
               <p className="text-gray-500">24/7 Support</p>
@@ -1786,7 +1882,7 @@ const ContactPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </GlowBackground>
   );
 };
 
@@ -1830,7 +1926,7 @@ const FAQPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <GlowBackground variant="yellow">
       <Navigation />
       <div className="pt-24 pb-12">
         <div className="max-w-3xl mx-auto px-6">
@@ -1846,11 +1942,11 @@ const FAQPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white rounded-2xl shadow-sm overflow-hidden"
+                className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm overflow-hidden border border-amber-100"
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition"
+                  className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-amber-50/50 transition"
                   data-testid={`faq-${index}`}
                 >
                   <span className="font-semibold text-gray-900 pr-4">{faq.question}</span>
@@ -1858,7 +1954,7 @@ const FAQPage = () => {
                     animate={{ rotate: openIndex === index ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <ChevronRight className="w-5 h-5 text-gray-400 rotate-90" />
+                    <ChevronRight className="w-5 h-5 text-amber-500 rotate-90" />
                   </motion.div>
                 </button>
                 <AnimatePresence>
@@ -1879,24 +1975,21 @@ const FAQPage = () => {
             ))}
           </div>
 
-          <div className="mt-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-3xl p-8 text-center text-white">
+          <div className="mt-12 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-3xl p-8 text-center text-white shadow-lg shadow-amber-300/30">
             <h2 className="text-2xl font-bold mb-4">Still have questions?</h2>
-            <p className="text-teal-100 mb-6">Our team is here to help you find the perfect care solution.</p>
+            <p className="text-amber-100 mb-6">Our team is here to help you find the perfect care solution.</p>
             <Link
               to="/contact"
-              className="inline-block px-8 py-3 bg-white text-teal-600 rounded-xl font-semibold hover:shadow-lg transition"
+              className="inline-block px-8 py-3 bg-white text-amber-600 rounded-xl font-semibold hover:shadow-lg transition"
             >
               Contact Us
             </Link>
           </div>
         </div>
       </div>
-    </div>
+    </GlowBackground>
   );
 };
-
-// Import React for useRef
-import React from "react";
 
 // Main App Component
 function App() {
