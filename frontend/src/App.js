@@ -75,16 +75,19 @@ const WishlistProvider = ({ children }) => {
   );
 };
 
-// Grid + Purple Gradient Background Component (from background-snippets)
+// Radial Gradient Background Component (from gradient-backgrounds.tsx)
 const PageBackground = ({ children, className = "" }) => {
   return (
-    <div className={`relative min-h-screen w-full ${className}`}>
-      {/* Grid pattern with purple accent - exact copy from background-snippets.tsx */}
-      <div className="fixed inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]">
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_800px_at_100%_200px,#d5c5ff,transparent)]"></div>
-      </div>
+    <div className={`min-h-screen w-full relative ${className}`}>
+      {/* Radial Gradient Background from Top - White to Indigo */}
+      <div
+        className="fixed inset-0 z-0"
+        style={{
+          background: "radial-gradient(125% 125% at 50% 10%, #fff 40%, #6366f1 100%)",
+        }}
+      />
       {/* Content */}
-      {children}
+      <div className="relative z-10">{children}</div>
     </div>
   );
 };
