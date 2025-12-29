@@ -701,7 +701,7 @@ const LoginPage = () => {
   );
 };
 
-// Signup Page - Black & White Theme
+// Signup Page - Warm Nature Theme
 const SignupPage = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", password: "", role: "client" });
@@ -730,20 +730,20 @@ const SignupPage = () => {
   return (
     <PageBackground className="flex items-center justify-center p-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-stone-100">
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-stone-800 rounded-xl flex items-center justify-center">
                 <Heart className="w-6 h-6 text-white" />
               </div>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-            <p className="text-gray-500 mt-2">Step {step} of 3</p>
+            <h1 className="text-2xl font-bold text-stone-800">Create Account</h1>
+            <p className="text-stone-500 mt-2">Step {step} of 3</p>
           </div>
 
           <div className="flex gap-2 mb-8">
             {[1, 2, 3].map((s) => (
-              <div key={s} className={`flex-1 h-1.5 rounded-full transition-colors ${s <= step ? "bg-black" : "bg-gray-200"}`} />
+              <div key={s} className={`flex-1 h-1.5 rounded-full transition-colors ${s <= step ? "bg-stone-800" : "bg-stone-200"}`} />
             ))}
           </div>
 
@@ -754,14 +754,14 @@ const SignupPage = () => {
               {step === 1 && (
                 <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">I am looking for...</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-2">I am looking for...</label>
                     <div className="grid grid-cols-2 gap-3">
-                      <button type="button" onClick={() => setFormData({ ...formData, role: "client" })} className={`p-4 rounded-xl border-2 transition-all ${formData.role === "client" ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-300"}`}>
-                        <User className="w-6 h-6 mx-auto mb-2 text-gray-900" />
+                      <button type="button" onClick={() => setFormData({ ...formData, role: "client" })} className={`p-4 rounded-xl border-2 transition-all ${formData.role === "client" ? "border-stone-800 bg-stone-50" : "border-stone-200 hover:border-stone-300"}`}>
+                        <User className="w-6 h-6 mx-auto mb-2 text-stone-800" />
                         <span className="text-sm font-medium">Care Services</span>
                       </button>
-                      <button type="button" onClick={() => setFormData({ ...formData, role: "agency" })} className={`p-4 rounded-xl border-2 transition-all ${formData.role === "agency" ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-300"}`}>
-                        <Users className="w-6 h-6 mx-auto mb-2 text-gray-900" />
+                      <button type="button" onClick={() => setFormData({ ...formData, role: "agency" })} className={`p-4 rounded-xl border-2 transition-all ${formData.role === "agency" ? "border-stone-800 bg-stone-50" : "border-stone-200 hover:border-stone-300"}`}>
+                        <Users className="w-6 h-6 mx-auto mb-2 text-stone-800" />
                         <span className="text-sm font-medium">To Provide Care</span>
                       </button>
                     </div>
@@ -771,44 +771,44 @@ const SignupPage = () => {
               {step === 2 && (
                 <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                    <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" placeholder="John Doe" required data-testid="signup-name" />
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Full Name</label>
+                    <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" placeholder="John Doe" required data-testid="signup-name" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                    <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" placeholder="(555) 555-5555" data-testid="signup-phone" />
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Phone Number</label>
+                    <input type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" placeholder="(555) 555-5555" data-testid="signup-phone" />
                   </div>
                 </motion.div>
               )}
               {step === 3 && (
                 <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" placeholder="you@example.com" required data-testid="signup-email" />
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Email</label>
+                    <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" placeholder="you@example.com" required data-testid="signup-email" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" placeholder="••••••••" required minLength={6} data-testid="signup-password" />
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Password</label>
+                    <input type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" placeholder="••••••••" required minLength={6} data-testid="signup-password" />
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
             <div className="flex gap-3">
-              {step > 1 && <button type="button" onClick={() => setStep(step - 1)} className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition">Back</button>}
-              <button type="submit" disabled={loading} className="flex-1 py-3 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50" data-testid="signup-submit">
+              {step > 1 && <button type="button" onClick={() => setStep(step - 1)} className="flex-1 py-3 bg-stone-100 text-stone-700 rounded-xl font-semibold hover:bg-stone-200 transition">Back</button>}
+              <button type="submit" disabled={loading} className="flex-1 py-3 bg-stone-800 text-white rounded-xl font-semibold hover:bg-stone-700 transition-all disabled:opacity-50" data-testid="signup-submit">
                 {loading ? "Creating..." : step < 3 ? "Continue" : "Create Account"}
               </button>
             </div>
           </form>
-          <p className="text-center mt-6 text-gray-500">Already have an account? <Link to="/login" className="text-black font-medium hover:underline">Sign in</Link></p>
+          <p className="text-center mt-6 text-stone-500">Already have an account? <Link to="/login" className="text-stone-800 font-medium hover:underline">Sign in</Link></p>
         </div>
       </motion.div>
     </PageBackground>
   );
 };
 
-// Agencies Page - Black & White Theme
+// Agencies Page - Warm Nature Theme
 const AgenciesPage = () => {
   const [agencies, setAgencies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -850,29 +850,29 @@ const AgenciesPage = () => {
       <div className="pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Find In-Home Care</h1>
-            <p className="text-gray-500">Browse verified care agencies in your area</p>
+            <h1 className="text-3xl font-bold text-stone-800 mb-2">Find In-Home Care</h1>
+            <p className="text-stone-500">Browse verified care agencies in your area</p>
           </div>
 
           <div className="flex flex-wrap gap-4 mb-8">
-            <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} className="px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 outline-none shadow-sm" data-testid="filter-city">
+            <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} className="px-4 py-3 bg-white rounded-xl border border-stone-200 focus:border-stone-400 outline-none shadow-sm" data-testid="filter-city">
               <option value="">All Cities</option>
               {cities.map((city) => (<option key={city} value={city}>{city}</option>))}
             </select>
-            <select value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)} className="px-4 py-3 bg-white rounded-xl border border-gray-200 focus:border-gray-400 outline-none shadow-sm" data-testid="filter-specialty">
+            <select value={selectedSpecialty} onChange={(e) => setSelectedSpecialty(e.target.value)} className="px-4 py-3 bg-white rounded-xl border border-stone-200 focus:border-stone-400 outline-none shadow-sm" data-testid="filter-specialty">
               <option value="">All Specialties</option>
               {specialties.map((s) => (<option key={s} value={s}>{s}</option>))}
             </select>
           </div>
 
           {loading ? (
-            <div className="py-20 text-center"><div className="animate-spin w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full mx-auto" /></div>
+            <div className="py-20 text-center"><div className="animate-spin w-12 h-12 border-4 border-stone-700 border-t-transparent rounded-full mx-auto" /></div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {agencies.map((agency, index) => (<AgencyCard key={agency.id} agency={agency} index={index} />))}
             </div>
           )}
-          {!loading && agencies.length === 0 && <div className="text-center py-20"><p className="text-gray-500">No agencies found matching your criteria.</p></div>}
+          {!loading && agencies.length === 0 && <div className="text-center py-20"><p className="text-stone-500">No agencies found matching your criteria.</p></div>}
         </div>
       </div>
     </PageBackground>
