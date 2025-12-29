@@ -62,10 +62,21 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     user: dict
 
+class AgencyReview(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_name: str
+    rating: int
+    comment: str
+    date: str
+    care_type: str  # e.g., "Elderly Care", "Post-Surgery"
+    relationship: str  # e.g., "Daughter", "Son", "Spouse"
+
 class AgencyBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
     name: str
     bio: str
+    description: str = ""  # Longer description for detail page
     location: str
     city: str
     experience_years: int
@@ -74,9 +85,14 @@ class AgencyBase(BaseModel):
     price_per_hour: float
     rating: float = 4.5
     review_count: int = 0
-    image_url: str
+    image_url: str  # Main/primary image
+    gallery_images: List[str] = []  # Multiple images: office, caregivers, care scenes
     is_verified: bool = False
     is_new: bool = False
+    total_caregivers: int = 10
+    years_in_business: int = 5
+    families_served: int = 100
+    reviews: List[dict] = []  # Embedded reviews from families
 
 class Agency(AgencyBase):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
