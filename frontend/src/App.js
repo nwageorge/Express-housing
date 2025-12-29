@@ -389,8 +389,8 @@ const TestimonialsSection = () => {
   return (
     <section className="py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 mb-12">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">What Families Say</h2>
-        <p className="text-gray-500 text-center max-w-2xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-stone-800 mb-4">What Families Say</h2>
+        <p className="text-stone-500 text-center max-w-2xl mx-auto">
           Join thousands of families who trust Adltrack for their in-home care needs
         </p>
       </div>
@@ -404,7 +404,7 @@ const TestimonialsSection = () => {
           {[...testimonials, ...testimonials].map((testimonial, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-96 bg-white p-6 rounded-2xl shadow-lg border border-gray-100"
+              className="flex-shrink-0 w-96 bg-white p-6 rounded-2xl shadow-lg border border-stone-100"
             >
               <div className="flex items-center gap-4 mb-4">
                 <img
@@ -413,15 +413,15 @@ const TestimonialsSection = () => {
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div>
-                  <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
+                  <h4 className="font-semibold text-stone-800">{testimonial.name}</h4>
                   <div className="flex gap-0.5">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-gray-900 text-gray-900" />
+                      <Star key={i} className="w-4 h-4 fill-amber-500 text-amber-500" />
                     ))}
                   </div>
                 </div>
               </div>
-              <p className="text-gray-600 leading-relaxed">"{testimonial.text}"</p>
+              <p className="text-stone-600 leading-relaxed">"{testimonial.text}"</p>
             </div>
           ))}
         </motion.div>
