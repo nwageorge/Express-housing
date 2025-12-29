@@ -186,10 +186,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Enhanced Agency Detail Page"
-    - "Image Gallery Component"
-    - "Family Reviews Display"
-    - "GlareCard Agency Cards"
+    - "New Adltrack Homepage with ShuffleHero"
+    - "ShuffleGrid Component Animation"
+    - "Adltrack Branding Update"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
