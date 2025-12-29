@@ -102,7 +102,7 @@ const PageBackground = ({ children, className = "" }) => {
   );
 };
 
-// Navigation Component - Black & White Theme
+// Navigation Component - New Theme
 const Navigation = () => {
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -119,27 +119,27 @@ const Navigation = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : "bg-transparent"
+        isScrolled ? "bg-background/90 backdrop-blur-md shadow-lg" : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
-              <Activity className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+              <Activity className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Adltrack</span>
+            <span className="text-xl font-bold text-foreground">Adltrack</span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/agencies" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-agencies">
+            <Link to="/agencies" className="text-muted-foreground hover:text-foreground transition font-medium" data-testid="nav-agencies">
               Find Care
             </Link>
-            <Link to="/faq" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-faq">
+            <Link to="/faq" className="text-muted-foreground hover:text-foreground transition font-medium" data-testid="nav-faq">
               FAQ
             </Link>
-            <Link to="/contact" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-contact">
+            <Link to="/contact" className="text-muted-foreground hover:text-foreground transition font-medium" data-testid="nav-contact">
               Contact
             </Link>
           </div>
@@ -147,7 +147,7 @@ const Navigation = () => {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <Link to="/dashboard" className="text-gray-600 hover:text-black transition font-medium" data-testid="nav-dashboard">
+                <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition font-medium" data-testid="nav-dashboard">
                   Dashboard
                 </Link>
                 <button
