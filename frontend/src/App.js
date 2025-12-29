@@ -1302,7 +1302,7 @@ const AgencyDetailPage = () => {
   );
 };
 
-// Dashboard Page - Black & White Theme
+// Dashboard Page - Warm Nature Theme
 const DashboardPage = () => {
   const { user } = useAuth();
   const [bookings, setBookings] = useState([]);
@@ -1325,29 +1325,29 @@ const DashboardPage = () => {
     fetchBookings();
   }, [user, navigate]);
 
-  const statusColors = { pending: "bg-amber-100 text-amber-700", confirmed: "bg-green-100 text-green-700", completed: "bg-gray-100 text-gray-700", cancelled: "bg-red-100 text-red-700" };
+  const statusColors = { pending: "bg-amber-100 text-amber-700", confirmed: "bg-green-100 text-green-700", completed: "bg-stone-100 text-stone-700", cancelled: "bg-red-100 text-red-700" };
 
   return (
     <PageBackground>
       <Navigation />
       <div className="pt-24 pb-12">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-8"><h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.name}!</h1><p className="text-gray-500">Manage your care bookings and account</p></div>
+          <div className="mb-8"><h1 className="text-3xl font-bold text-stone-800 mb-2">Welcome back, {user?.name}!</h1><p className="text-stone-500">Manage your care bookings and account</p></div>
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"><div className="flex items-center gap-4"><div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center"><Calendar className="w-6 h-6 text-gray-900" /></div><div><p className="text-sm text-gray-500">Total Bookings</p><p className="text-2xl font-bold text-gray-900">{bookings.length}</p></div></div></div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"><div className="flex items-center gap-4"><div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center"><CheckCircle className="w-6 h-6 text-green-600" /></div><div><p className="text-sm text-gray-500">Confirmed</p><p className="text-2xl font-bold text-gray-900">{bookings.filter(b => b.status === "confirmed").length}</p></div></div></div>
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"><div className="flex items-center gap-4"><div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center"><Clock className="w-6 h-6 text-amber-600" /></div><div><p className="text-sm text-gray-500">Pending</p><p className="text-2xl font-bold text-gray-900">{bookings.filter(b => b.status === "pending").length}</p></div></div></div>
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100"><div className="flex items-center gap-4"><div className="w-12 h-12 bg-stone-100 rounded-xl flex items-center justify-center"><Calendar className="w-6 h-6 text-stone-800" /></div><div><p className="text-sm text-stone-500">Total Bookings</p><p className="text-2xl font-bold text-stone-800">{bookings.length}</p></div></div></div>
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100"><div className="flex items-center gap-4"><div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center"><CheckCircle className="w-6 h-6 text-green-600" /></div><div><p className="text-sm text-stone-500">Confirmed</p><p className="text-2xl font-bold text-stone-800">{bookings.filter(b => b.status === "confirmed").length}</p></div></div></div>
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100"><div className="flex items-center gap-4"><div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center"><Clock className="w-6 h-6 text-amber-600" /></div><div><p className="text-sm text-stone-500">Pending</p><p className="text-2xl font-bold text-stone-800">{bookings.filter(b => b.status === "pending").length}</p></div></div></div>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
-            <div className="p-6 border-b border-gray-100"><h2 className="text-xl font-bold text-gray-900">Your Bookings</h2></div>
-            {loading ? (<div className="p-12 text-center"><div className="animate-spin w-8 h-8 border-4 border-gray-900 border-t-transparent rounded-full mx-auto" /></div>) : bookings.length === 0 ? (
-              <div className="p-12 text-center"><p className="text-gray-500 mb-4">You haven't made any bookings yet.</p><Link to="/agencies" className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition">Find Care<ChevronRight className="w-4 h-4" /></Link></div>
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-100">
+            <div className="p-6 border-b border-stone-100"><h2 className="text-xl font-bold text-stone-800">Your Bookings</h2></div>
+            {loading ? (<div className="p-12 text-center"><div className="animate-spin w-8 h-8 border-4 border-stone-700 border-t-transparent rounded-full mx-auto" /></div>) : bookings.length === 0 ? (
+              <div className="p-12 text-center"><p className="text-stone-500 mb-4">You haven't made any bookings yet.</p><Link to="/agencies" className="inline-flex items-center gap-2 px-6 py-3 bg-stone-800 text-white rounded-xl font-medium hover:bg-stone-700 transition">Find Care<ChevronRight className="w-4 h-4" /></Link></div>
             ) : (
-              <div className="divide-y divide-gray-100">{bookings.map((booking) => (
-                <div key={booking.id} className="p-6 hover:bg-gray-50 transition">
+              <div className="divide-y divide-stone-100">{bookings.map((booking) => (
+                <div key={booking.id} className="p-6 hover:bg-stone-50 transition">
                   <div className="flex items-start justify-between">
-                    <div className="flex gap-4">{booking.agency && <img src={booking.agency.image_url} alt={booking.agency.name} className="w-16 h-16 rounded-xl object-cover" />}<div><h3 className="font-semibold text-gray-900">{booking.agency?.name || "Care Agency"}</h3><p className="text-sm text-gray-500">{booking.service_type}</p><div className="flex items-center gap-4 mt-2 text-sm text-gray-500"><span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{booking.date}</span><span className="flex items-center gap-1"><Clock className="w-4 h-4" />{booking.time_slot}</span></div></div></div>
-                    <div className="text-right"><span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[booking.status]}`}>{booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span><p className="mt-2 font-semibold text-gray-900">${booking.total_price}/hr</p></div>
+                    <div className="flex gap-4">{booking.agency && <img src={booking.agency.image_url} alt={booking.agency.name} className="w-16 h-16 rounded-xl object-cover" />}<div><h3 className="font-semibold text-stone-800">{booking.agency?.name || "Care Agency"}</h3><p className="text-sm text-stone-500">{booking.service_type}</p><div className="flex items-center gap-4 mt-2 text-sm text-stone-500"><span className="flex items-center gap-1"><Calendar className="w-4 h-4" />{booking.date}</span><span className="flex items-center gap-1"><Clock className="w-4 h-4" />{booking.time_slot}</span></div></div></div>
+                    <div className="text-right"><span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[booking.status]}`}>{booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span><p className="mt-2 font-semibold text-stone-800">${booking.total_price}/hr</p></div>
                   </div>
                 </div>
               ))}</div>
@@ -1364,20 +1364,20 @@ const BookingSuccessPage = () => {
   useEffect(() => { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }, []);
   return (
     <PageBackground className="flex items-center justify-center p-6">
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl p-12 text-center max-w-md border border-gray-100">
+      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl p-12 text-center max-w-md border border-stone-100">
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"><CheckCircle className="w-10 h-10 text-green-500" /></div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h1>
-        <p className="text-gray-500 mb-8">Your care consultation has been successfully booked. The agency will contact you shortly to confirm details.</p>
+        <h1 className="text-3xl font-bold text-stone-800 mb-4">Booking Confirmed!</h1>
+        <p className="text-stone-500 mb-8">Your care consultation has been successfully booked. The agency will contact you shortly to confirm details.</p>
         <div className="flex flex-col gap-3">
-          <Link to="/dashboard" className="px-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition">View My Bookings</Link>
-          <Link to="/" className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition">Back to Home</Link>
+          <Link to="/dashboard" className="px-6 py-3 bg-stone-800 text-white rounded-xl font-medium hover:bg-stone-700 transition">View My Bookings</Link>
+          <Link to="/" className="px-6 py-3 bg-stone-100 text-stone-700 rounded-xl font-medium hover:bg-stone-200 transition">Back to Home</Link>
         </div>
       </motion.div>
     </PageBackground>
   );
 };
 
-// Contact Page - Black & White Theme
+// Contact Page - Warm Nature Theme
 const ContactPage = () => {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [loading, setLoading] = useState(false);
@@ -1402,31 +1402,31 @@ const ContactPage = () => {
       <Navigation />
       <div className="pt-24 pb-12">
         <div className="max-w-3xl mx-auto px-6">
-          <div className="text-center mb-12"><h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1><p className="text-gray-500">Have questions? We're here to help!</p></div>
+          <div className="text-center mb-12"><h1 className="text-4xl font-bold text-stone-800 mb-4">Contact Us</h1><p className="text-stone-500">Have questions? We're here to help!</p></div>
           {success ? (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-lg p-12 text-center border border-gray-100">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-lg p-12 text-center border border-stone-100">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><CheckCircle className="w-8 h-8 text-green-500" /></div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h2>
-              <p className="text-gray-500 mb-6">We'll get back to you within 24 hours.</p>
-              <button onClick={() => setSuccess(false)} className="px-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition">Send Another Message</button>
+              <h2 className="text-2xl font-bold text-stone-800 mb-2">Message Sent!</h2>
+              <p className="text-stone-500 mb-6">We'll get back to you within 24 hours.</p>
+              <button onClick={() => setSuccess(false)} className="px-6 py-3 bg-stone-800 text-white rounded-xl font-medium hover:bg-stone-700 transition">Send Another Message</button>
             </motion.div>
           ) : (
-            <div className="bg-white rounded-3xl shadow-lg p-8 border border-gray-100">
+            <div className="bg-white rounded-3xl shadow-lg p-8 border border-stone-100">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Name</label><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" required data-testid="contact-name" /></div>
-                  <div><label className="block text-sm font-medium text-gray-700 mb-2">Email</label><input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" required data-testid="contact-email" /></div>
+                  <div><label className="block text-sm font-medium text-stone-700 mb-2">Name</label><input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" required data-testid="contact-name" /></div>
+                  <div><label className="block text-sm font-medium text-stone-700 mb-2">Email</label><input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" required data-testid="contact-email" /></div>
                 </div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">Subject</label><input type="text" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition" required data-testid="contact-subject" /></div>
-                <div><label className="block text-sm font-medium text-gray-700 mb-2">Message</label><textarea value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition resize-none" rows={6} required data-testid="contact-message" /></div>
-                <button type="submit" disabled={loading} className="w-full py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all disabled:opacity-50" data-testid="contact-submit">{loading ? "Sending..." : "Send Message"}</button>
+                <div><label className="block text-sm font-medium text-stone-700 mb-2">Subject</label><input type="text" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" required data-testid="contact-subject" /></div>
+                <div><label className="block text-sm font-medium text-stone-700 mb-2">Message</label><textarea value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition resize-none" rows={6} required data-testid="contact-message" /></div>
+                <button type="submit" disabled={loading} className="w-full py-4 bg-stone-800 text-white rounded-xl font-semibold hover:bg-stone-700 transition-all disabled:opacity-50" data-testid="contact-submit">{loading ? "Sending..." : "Send Message"}</button>
               </form>
             </div>
           )}
           <div className="grid md:grid-cols-3 gap-6 mt-12">
-            <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100"><div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4"><Phone className="w-6 h-6 text-gray-900" /></div><h3 className="font-semibold text-gray-900 mb-1">Phone</h3><p className="text-gray-500">1-800-NURSE-NOW</p></div>
-            <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100"><div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4"><Mail className="w-6 h-6 text-gray-900" /></div><h3 className="font-semibold text-gray-900 mb-1">Email</h3><p className="text-gray-500">support@nursenow.com</p></div>
-            <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100"><div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4"><Clock className="w-6 h-6 text-gray-900" /></div><h3 className="font-semibold text-gray-900 mb-1">Hours</h3><p className="text-gray-500">24/7 Support</p></div>
+            <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-stone-100"><div className="w-12 h-12 bg-stone-100 rounded-xl flex items-center justify-center mx-auto mb-4"><Phone className="w-6 h-6 text-stone-800" /></div><h3 className="font-semibold text-stone-800 mb-1">Phone</h3><p className="text-stone-500">1-800-ADL-TRACK</p></div>
+            <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-stone-100"><div className="w-12 h-12 bg-stone-100 rounded-xl flex items-center justify-center mx-auto mb-4"><Mail className="w-6 h-6 text-stone-800" /></div><h3 className="font-semibold text-stone-800 mb-1">Email</h3><p className="text-stone-500">support@adltrack.com</p></div>
+            <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-stone-100"><div className="w-12 h-12 bg-stone-100 rounded-xl flex items-center justify-center mx-auto mb-4"><Clock className="w-6 h-6 text-stone-800" /></div><h3 className="font-semibold text-stone-800 mb-1">Hours</h3><p className="text-stone-500">24/7 Support</p></div>
           </div>
         </div>
       </div>
@@ -1434,13 +1434,13 @@ const ContactPage = () => {
   );
 };
 
-// FAQ Page - Black & White Theme
+// FAQ Page - Warm Nature Theme
 const FAQPage = () => {
   const [openIndex, setOpenIndex] = useState(null);
   const faqs = [
     { question: "What types of in-home care services do you offer?", answer: "We connect families with caregivers offering a wide range of services including elderly care, pediatric care, post-surgery recovery, chronic disease management, dementia/Alzheimer's care, 24-hour care, respite care, and skilled nursing services." },
     { question: "How are caregivers vetted?", answer: "All caregivers on our platform undergo comprehensive background checks, credential verification, and reference checks. We verify licenses, certifications, and work history to ensure only qualified professionals are listed." },
-    { question: "How much does in-home care cost?", answer: "Costs vary based on the type of care needed, location, and caregiver experience. Our rates typically range from $24-65 per hour. You can see exact pricing on each caregiver's profile." },
+    { question: "How much does in-home care cost?", answer: "Costs vary based on the type of care needed, location, and caregiver experience. Our rates typically range from $15-18 per hour. You can see exact pricing on each agency's profile." },
     { question: "Can I meet the caregiver before booking?", answer: "Yes! We encourage families to schedule an initial consultation to meet the caregiver, discuss care needs, and ensure a good match before committing to ongoing care." },
     { question: "What if I need to cancel or reschedule?", answer: "We understand plans change. You can cancel or reschedule up to 24 hours before your appointment without any fees. Last-minute changes may incur a small cancellation fee." },
     { question: "Is care covered by insurance?", answer: "Many insurance plans, including Medicare and Medicaid, may cover certain home healthcare services. We recommend checking with your insurance provider. Many of our agencies also assist with insurance coordination." },
@@ -1453,28 +1453,28 @@ const FAQPage = () => {
       <Navigation />
       <div className="pt-24 pb-12">
         <div className="max-w-3xl mx-auto px-6">
-          <div className="text-center mb-12"><h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1><p className="text-gray-500">Everything you need to know about our services</p></div>
+          <div className="text-center mb-12"><h1 className="text-4xl font-bold text-stone-800 mb-4">Frequently Asked Questions</h1><p className="text-stone-500">Everything you need to know about our services</p></div>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-                <button onClick={() => setOpenIndex(openIndex === index ? null : index)} className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition" data-testid={`faq-${index}`}>
-                  <span className="font-semibold text-gray-900 pr-4">{faq.question}</span>
-                  <motion.div animate={{ rotate: openIndex === index ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronRight className="w-5 h-5 text-gray-500 rotate-90" /></motion.div>
+              <motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }} className="bg-white rounded-2xl shadow-sm overflow-hidden border border-stone-100">
+                <button onClick={() => setOpenIndex(openIndex === index ? null : index)} className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-stone-50 transition" data-testid={`faq-${index}`}>
+                  <span className="font-semibold text-stone-800 pr-4">{faq.question}</span>
+                  <motion.div animate={{ rotate: openIndex === index ? 180 : 0 }} transition={{ duration: 0.2 }}><ChevronRight className="w-5 h-5 text-stone-500 rotate-90" /></motion.div>
                 </button>
                 <AnimatePresence>
                   {openIndex === index && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}>
-                      <div className="px-6 pb-5 text-gray-600 leading-relaxed">{faq.answer}</div>
+                      <div className="px-6 pb-5 text-stone-600 leading-relaxed">{faq.answer}</div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </motion.div>
             ))}
           </div>
-          <div className="mt-12 bg-black rounded-3xl p-8 text-center text-white">
+          <div className="mt-12 bg-stone-800 rounded-3xl p-8 text-center text-white">
             <h2 className="text-2xl font-bold mb-4">Still have questions?</h2>
-            <p className="text-gray-300 mb-6">Our team is here to help you find the perfect care solution.</p>
-            <Link to="/contact" className="inline-block px-8 py-3 bg-white text-black rounded-xl font-semibold hover:bg-gray-100 transition">Contact Us</Link>
+            <p className="text-stone-300 mb-6">Our team is here to help you find the perfect care solution.</p>
+            <Link to="/contact" className="inline-block px-8 py-3 bg-white text-stone-800 rounded-xl font-semibold hover:bg-stone-100 transition">Contact Us</Link>
           </div>
         </div>
       </div>
