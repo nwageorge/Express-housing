@@ -194,6 +194,42 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "New Adltrack Homepage with ShuffleHero"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/ui/hero-section.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented new homepage with ShuffleHero component featuring Adltrack branding, 4x4 shuffling grid of caregiving images, headline 'Find Quality Care For Your Loved Ones', and Find Care Now/Contact Us buttons."
+
+  - task: "ShuffleGrid Component Animation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/ui/shuffle-grid.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented 4x4 grid component with 16 caregiving images that shuffle/animate positions every 3 seconds using framer-motion."
+
+  - task: "Adltrack Branding Update"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated all branding from NurseNow to Adltrack including header, footer, logo with indigo Activity icon, phone (1-800-ADL-TRACK), email (support@adltrack.com), and copyright."
+
 agent_communication:
   - agent: "main"
     message: "Implemented Booking.com-style agency profiles. Test: 1) Agency list page shows caregiving photos and $15-$18/hr pricing, 2) Click agency to see detail page with 5-photo grid gallery, 3) Click 'View all photos' to open fullscreen gallery with navigation, 4) Scroll down to see Care Services, Certifications, and Family Reviews with star ratings and relationship info, 5) Booking sidebar with 'Book Free Consultation' button."
@@ -201,3 +237,5 @@ agent_communication:
     message: "COMPREHENSIVE TESTING COMPLETED: ✅ Agency list shows 44 agencies with correct $15-$18/hr pricing and caregiving photos. ✅ Agency detail page has 5-image gallery grid and quick stats (Years, Caregivers, Families Served, Price). ✅ Fullscreen gallery opens with navigation arrows, pagination dots, and close button. ✅ Family Reviews section displays with 4.9 star rating and 4 individual reviews with reviewer names, relationships, and quoted comments. ✅ Booking form fully functional with all fields working (service dropdown, date picker, time slots, patient name, care needs) and enabled 'Book Free Consultation' button. MINOR ISSUES: Gallery modal doesn't always open on first click of 'View all photos' link, some review cards missing care type info and dates. Core functionality works perfectly."
   - agent: "testing"
     message: "GLARECARD TESTING COMPLETED: ✅ All 44 agency cards display in dark premium GlareCard format with holographic glare effects and 3D tilt on hover. ✅ Cards show agency image, name, location, pricing ($15-$18/hr), reviews count, and specialty tags. ✅ 'View Details' button navigation works correctly. ✅ Wishlist heart button functionality working. ✅ Mobile responsiveness confirmed - cards display and function properly at 375px width. ✅ GlareCard component properly implemented with perspective transforms, opacity effects, and hover animations. All core functionality working as expected."
+  - agent: "main"
+    message: "NEW HOMEPAGE IMPLEMENTATION: Implemented new Adltrack homepage with ShuffleHero component. Features: 1) Updated branding to Adltrack with indigo Activity icon, 2) ShuffleGrid 4x4 grid with 16 caregiving images that shuffle every 3 seconds, 3) Headline 'Find Quality Care For Your Loved Ones', 4) Find Care Now and Contact Us buttons, 5) Updated footer with Adltrack branding, phone 1-800-ADL-TRACK, email support@adltrack.com, copyright 2025 Adltrack. Need comprehensive testing of new homepage functionality."
