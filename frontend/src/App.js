@@ -391,7 +391,7 @@ const TestimonialsSection = () => {
       <div className="max-w-7xl mx-auto px-6 mb-12">
         <h2 className="text-3xl font-bold text-center text-gray-900 mb-4">What Families Say</h2>
         <p className="text-gray-500 text-center max-w-2xl mx-auto">
-          Join thousands of families who trust NurseNow for their in-home care needs
+          Join thousands of families who trust Adltrack for their in-home care needs
         </p>
       </div>
 
