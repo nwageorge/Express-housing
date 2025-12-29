@@ -7,28 +7,14 @@ import { cn } from '@/lib/utils'
 import { Menu, X, Activity } from 'lucide-react'
 import { useScroll, motion } from 'framer-motion'
 import { useAuth } from '@/App'
-import { FinancialHero } from '@/components/ui/financial-hero'
+import { ShuffleHero } from '@/components/ui/shuffle-grid'
 
 export function HeroSection() {
   return (
     <>
       <HeroHeader />
-      <main className="overflow-x-hidden pt-20">
-        <FinancialHero
-          title={
-            <>
-              Find Quality Care For <br />
-              <span className="text-primary">Your Loved Ones</span>
-            </>
-          }
-          description="Connect with verified, professional in-home care agencies for elderly care, pediatric support, and specialized health services. Book a free consultation today."
-          buttonText="Find Care Now"
-          buttonLink="/agencies"
-          secondaryButtonText="Download App"
-          secondaryButtonLink="#download"
-          imageUrl1="https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=800"
-          imageUrl2="https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=800"
-        />
+      <main className="overflow-x-hidden pt-24">
+        <ShuffleHero />
       </main>
     </>
   )
@@ -60,7 +46,7 @@ const HeroHeader = () => {
       <nav
         data-state={menuState && 'active'}
         className="group fixed z-20 w-full pt-2">
-        <div className={cn('mx-auto max-w-7xl rounded-3xl px-6 transition-all duration-300 lg:px-12', scrolled && 'bg-background/80 backdrop-blur-2xl shadow-lg')}>
+        <div className={cn('mx-auto max-w-7xl rounded-3xl px-6 transition-all duration-300 lg:px-12', scrolled && 'bg-white/80 backdrop-blur-2xl shadow-lg')}>
           <motion.div
             className={cn('relative flex flex-wrap items-center justify-between gap-6 py-3 duration-200 lg:gap-0 lg:py-6', scrolled && 'lg:py-4')}>
             <div className="flex w-full items-center justify-between gap-12 lg:w-auto">
@@ -75,8 +61,8 @@ const HeroHeader = () => {
                 onClick={() => setMenuState(!menuState)}
                 aria-label={menuState === true ? 'Close Menu' : 'Open Menu'}
                 className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden">
-                <Menu className={cn('m-auto size-6 duration-200 text-foreground', menuState && 'rotate-180 scale-0 opacity-0')} />
-                <X className={cn('absolute inset-0 m-auto size-6 duration-200 text-foreground', !menuState && '-rotate-180 scale-0 opacity-0')} />
+                <Menu className={cn('m-auto size-6 duration-200', menuState && 'rotate-180 scale-0 opacity-0')} />
+                <X className={cn('absolute inset-0 m-auto size-6 duration-200', !menuState && '-rotate-180 scale-0 opacity-0')} />
               </button>
 
               <div className="hidden lg:block">
@@ -85,7 +71,7 @@ const HeroHeader = () => {
                     <li key={index}>
                       <Link
                         to={item.href}
-                        className="text-muted-foreground hover:text-foreground block duration-150 font-medium">
+                        className="text-gray-600 hover:text-gray-900 block duration-150 font-medium">
                         <span>{item.name}</span>
                       </Link>
                     </li>
@@ -94,7 +80,7 @@ const HeroHeader = () => {
               </div>
             </div>
 
-            <div className={cn('bg-background mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border border-border p-6 shadow-2xl md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none', menuState && 'block')}>
+            <div className={cn('bg-white mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none', menuState && 'block')}>
               <div className="lg:hidden">
                 <ul className="space-y-6 text-base">
                   {menuItems.map((item, index) => (
@@ -102,7 +88,7 @@ const HeroHeader = () => {
                       <Link
                         to={item.href}
                         onClick={() => setMenuState(false)}
-                        className="text-muted-foreground hover:text-foreground block duration-150">
+                        className="text-gray-600 hover:text-gray-900 block duration-150">
                         <span>{item.name}</span>
                       </Link>
                     </li>
@@ -115,14 +101,16 @@ const HeroHeader = () => {
                     <Button
                       asChild
                       variant="outline"
-                      size="sm">
+                      size="sm"
+                      className="border-gray-300 text-gray-700 hover:bg-gray-50">
                       <Link to="/dashboard">
                         <span>Dashboard</span>
                       </Link>
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => { logout(); navigate('/'); }}>
+                      onClick={() => { logout(); navigate('/'); }}
+                      className="bg-black text-white hover:bg-gray-800">
                       <span>Logout</span>
                     </Button>
                   </>
@@ -131,14 +119,16 @@ const HeroHeader = () => {
                     <Button
                       asChild
                       variant="outline"
-                      size="sm">
+                      size="sm"
+                      className="border-gray-300 text-gray-700 hover:bg-gray-50">
                       <Link to="/login">
                         <span>Login</span>
                       </Link>
                     </Button>
                     <Button
                       asChild
-                      size="sm">
+                      size="sm"
+                      className="bg-black text-white hover:bg-gray-800">
                       <Link to="/signup">
                         <span>Sign Up</span>
                       </Link>
@@ -157,10 +147,10 @@ const HeroHeader = () => {
 const AdltrackLogo = ({ className }) => {
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-        <Activity className="w-5 h-5 text-primary-foreground" />
+      <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+        <Activity className="w-5 h-5 text-white" />
       </div>
-      <span className="text-xl font-bold text-foreground">Adltrack</span>
+      <span className="text-xl font-bold text-gray-900">Adltrack</span>
     </div>
   )
 }
