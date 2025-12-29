@@ -65,7 +65,7 @@ const shuffle = (array) => {
   return array;
 };
 
-// In-home care related images - 9 images for 3x3 grid
+// In-home care related images - 4 images for 2x2 grid
 const squareData = [
   {
     id: 1,
@@ -77,31 +77,11 @@ const squareData = [
   },
   {
     id: 3,
-    src: "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 4,
-    src: "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 5,
-    src: "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 6,
-    src: "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 7,
     src: "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
-    id: 8,
-    src: "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
-  },
-  {
-    id: 9,
-    src: "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
+    id: 4,
+    src: "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
 ];
 
