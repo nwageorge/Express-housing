@@ -603,19 +603,26 @@ const HomePage = () => {
       <TestimonialsSection />
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-16">
+      <footer className="bg-slate-900 text-slate-400 py-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <span className="text-xl font-bold text-white">Adltrack</span>
               </div>
               <p className="text-sm leading-relaxed">
                 Connecting families with compassionate, professional in-home caregivers.
               </p>
+              <a 
+                href="#download" 
+                className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition"
+              >
+                <Download className="w-4 h-4" />
+                Download App
+              </a>
             </div>
             <div>
               <h4 className="text-white font-semibold mb-4">Services</h4>
@@ -642,7 +649,7 @@ const HomePage = () => {
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
+          <div className="border-t border-slate-800 pt-8 text-center text-sm">
             <p>© 2025 Adltrack. All rights reserved.</p>
           </div>
         </div>
