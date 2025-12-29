@@ -505,10 +505,10 @@ const HeroSection = () => {
               <div>
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-gray-900 text-gray-900" />
+                    <Star key={i} className="w-4 h-4 fill-amber-500 text-amber-500" />
                   ))}
                 </div>
-                <p className="text-sm text-gray-500">4.9 average from 2,000+ reviews</p>
+                <p className="text-sm text-stone-500">4.9 average from 2,000+ reviews</p>
               </div>
             </div>
           </motion.div>
