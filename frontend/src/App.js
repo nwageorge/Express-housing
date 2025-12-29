@@ -612,8 +612,8 @@ const HomePage = () => {
 
   return (
     <PageBackground>
-      <Navigation />
-      <HeroSection />
+      {/* New Hero Section with integrated header */}
+      <NewHeroSection />
       <FeaturesSection />
       
       <div className="max-w-7xl mx-auto px-6">
