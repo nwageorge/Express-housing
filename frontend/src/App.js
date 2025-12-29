@@ -718,7 +718,7 @@ const LoginPage = () => {
               </div>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="text-gray-500 mt-2">Sign in to your NurseNow account</p>
+            <p className="text-gray-500 mt-2">Sign in to your Adltrack account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
