@@ -254,9 +254,9 @@ async def get_agency(agency_id: str):
     if not agency:
         raise HTTPException(status_code=404, detail="Agency not found")
     
-    # Get reviews for this agency
-    reviews = await db.reviews.find({"agency_id": agency_id}, {"_id": 0}).to_list(100)
-    agency["reviews"] = reviews
+    # Reviews are now embedded in the agency document
+    # No need to fetch from a separate collection
+    return agency
     
     # Get services
     services = await db.services.find({"agency_id": agency_id}, {"_id": 0}).to_list(20)
