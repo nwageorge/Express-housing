@@ -54,8 +54,8 @@ export function HeroSection() {
                 muted
                 playsInline
                 className="size-full object-cover opacity-40"
-                src="https://videos.pexels.com/video-files/8436341/8436341-hd_1920_1080_25fps.mp4"
-                poster="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=1920&h=1080&fit=crop"
+                src="https://videos.pexels.com/video-files/8460059/8460059-hd_1920_1080_25fps.mp4"
+                poster="https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=1920"
               />
             </div>
           </div>
