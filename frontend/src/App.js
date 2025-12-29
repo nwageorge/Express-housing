@@ -377,56 +377,17 @@ const AgencyCarousel = ({ title, subtitle, agencies, viewAllLink }) => {
   );
 };
 
-// Testimonials Component
+// Testimonials Section - Using Split Testimonial Component
 const TestimonialsSection = () => {
-  const testimonials = [
-    { name: "Sarah M.", text: "Adltrack helped us find the perfect caregiver for my mother. The care quality is exceptional!", rating: 5, image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" },
-    { name: "James R.", text: "Professional, compassionate, and reliable. Our family couldn't be happier with the service.", rating: 5, image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" },
-    { name: "Emily T.", text: "The caregivers are so patient with my father. They treat him like family. Highly recommend!", rating: 5, image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" },
-    { name: "Michael K.", text: "After my surgery, Adltrack provided excellent recovery care. I'm back on my feet thanks to them.", rating: 5, image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" },
-    { name: "Lisa P.", text: "Finding quality infant care was stressful until we found Adltrack. Now we have peace of mind.", rating: 5, image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop" },
-  ];
-
   return (
     <section className="py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 mb-12">
         <h2 className="text-3xl font-bold text-center text-stone-800 mb-4">What Families Say</h2>
-        <p className="text-stone-500 text-center max-w-2xl mx-auto">
+        <p className="text-stone-500 text-center max-w-2xl mx-auto mb-12">
           Join thousands of families who trust Adltrack for their in-home care needs
         </p>
       </div>
-
-      <div className="relative">
-        <motion.div
-          animate={{ x: ["-50%", "0%"] }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          className="flex gap-6"
-        >
-          {[...testimonials, ...testimonials].map((testimonial, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 w-96 bg-white p-6 rounded-2xl shadow-lg border border-stone-100"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div>
-                  <h4 className="font-semibold text-stone-800">{testimonial.name}</h4>
-                  <div className="flex gap-0.5">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-500 text-amber-500" />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <p className="text-stone-600 leading-relaxed">"{testimonial.text}"</p>
-            </div>
-          ))}
-        </motion.div>
-      </div>
+      <TestimonialsSplit />
     </section>
   );
 };
