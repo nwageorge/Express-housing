@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Heart, Star, MapPin, Clock, Shield, Phone, Mail, ChevronLeft, ChevronRight, Menu, X, Search, Calendar, User, LogOut, Users, CheckCircle, Award, Sparkles } from "lucide-react";
 import React from "react";
+import { HeroSection as NewHeroSection } from "@/components/ui/hero-section";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
