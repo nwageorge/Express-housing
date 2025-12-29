@@ -72,59 +72,23 @@ export function HeroSection() {
                   speedOnHover={20}
                   speed={40}
                   gap={112}>
-                  <div className="flex">
-                    <img
-                      className="mx-auto h-8 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/AARP_logo.svg/2560px-AARP_logo.svg.png"
-                      alt="AARP Logo"
-                      height="32"
-                      width="auto"
-                    />
+                  <div className="flex items-center">
+                    <span className="text-xl font-bold text-gray-400 tracking-tight">MediCare+</span>
                   </div>
-                  <div className="flex">
-                    <img
-                      className="mx-auto h-6 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Blue_Cross_Blue_Shield_Association_logo.svg/1200px-Blue_Cross_Blue_Shield_Association_logo.svg.png"
-                      alt="Blue Cross Logo"
-                      height="24"
-                      width="auto"
-                    />
+                  <div className="flex items-center">
+                    <span className="text-xl font-bold text-gray-400 tracking-tight">HealthFirst</span>
                   </div>
-                  <div className="flex">
-                    <img
-                      className="mx-auto h-7 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Aetna_logo.svg/2560px-Aetna_logo.svg.png"
-                      alt="Aetna Logo"
-                      height="28"
-                      width="auto"
-                    />
+                  <div className="flex items-center">
+                    <span className="text-xl font-bold text-gray-400 tracking-tight">CareShield</span>
                   </div>
-                  <div className="flex">
-                    <img
-                      className="mx-auto h-6 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Humana_logo.svg/2560px-Humana_logo.svg.png"
-                      alt="Humana Logo"
-                      height="24"
-                      width="auto"
-                    />
+                  <div className="flex items-center">
+                    <span className="text-xl font-bold text-gray-400 tracking-tight">WellCare</span>
                   </div>
-                  <div className="flex">
-                    <img
-                      className="mx-auto h-8 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/UnitedHealth_Group_logo.svg/2560px-UnitedHealth_Group_logo.svg.png"
-                      alt="UnitedHealth Logo"
-                      height="32"
-                      width="auto"
-                    />
+                  <div className="flex items-center">
+                    <span className="text-xl font-bold text-gray-400 tracking-tight">LifeGuard</span>
                   </div>
-                  <div className="flex">
-                    <img
-                      className="mx-auto h-7 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Cigna_logo.svg/2560px-Cigna_logo.svg.png"
-                      alt="Cigna Logo"
-                      height="28"
-                      width="auto"
-                    />
+                  <div className="flex items-center">
+                    <span className="text-xl font-bold text-gray-400 tracking-tight">SafeHands</span>
                   </div>
                 </InfiniteSlider>
                 <div className="bg-gradient-to-r from-white absolute inset-y-0 left-0 w-20"></div>
