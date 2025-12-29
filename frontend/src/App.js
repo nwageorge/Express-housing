@@ -335,28 +335,28 @@ const AgencyCarousel = ({ title, subtitle, agencies, viewAllLink }) => {
     <section className="py-12">
       <div className="flex items-end justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">{title}</h2>
-          {subtitle && <p className="text-gray-500">{subtitle}</p>}
+          <h2 className="text-3xl font-bold text-stone-800 mb-2">{title}</h2>
+          {subtitle && <p className="text-stone-500">{subtitle}</p>}
         </div>
         <div className="flex items-center gap-3">
           <Link
             to={viewAllLink}
-            className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 font-medium transition-colors"
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-stone-100 hover:bg-stone-200 rounded-full text-stone-700 font-medium transition-colors"
           >
             View All
             <ChevronRight className="w-4 h-4" />
           </Link>
           <button
             onClick={() => scroll("left")}
-            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition shadow-sm"
+            className="w-10 h-10 bg-white border border-stone-200 rounded-full flex items-center justify-center hover:bg-stone-50 hover:border-stone-300 transition shadow-sm"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
+            <ChevronLeft className="w-5 h-5 text-stone-600" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 transition shadow-sm"
+            className="w-10 h-10 bg-white border border-stone-200 rounded-full flex items-center justify-center hover:bg-stone-50 hover:border-stone-300 transition shadow-sm"
           >
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+            <ChevronRight className="w-5 h-5 text-stone-600" />
           </button>
         </div>
       </div>
