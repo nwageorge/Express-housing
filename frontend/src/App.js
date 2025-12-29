@@ -382,8 +382,8 @@ const TestimonialsSection = () => {
     { name: "Sarah M.", text: "Adltrack helped us find the perfect caregiver for my mother. The care quality is exceptional!", rating: 5, image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" },
     { name: "James R.", text: "Professional, compassionate, and reliable. Our family couldn't be happier with the service.", rating: 5, image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" },
     { name: "Emily T.", text: "The caregivers are so patient with my father. They treat him like family. Highly recommend!", rating: 5, image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" },
-    { name: "Michael K.", text: "After my surgery, NurseNow provided excellent recovery care. I'm back on my feet thanks to them.", rating: 5, image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" },
-    { name: "Lisa P.", text: "Finding quality infant care was stressful until we found NurseNow. Now we have peace of mind.", rating: 5, image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop" },
+    { name: "Michael K.", text: "After my surgery, Adltrack provided excellent recovery care. I'm back on my feet thanks to them.", rating: 5, image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" },
+    { name: "Lisa P.", text: "Finding quality infant care was stressful until we found Adltrack. Now we have peace of mind.", rating: 5, image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop" },
   ];
 
   return (
