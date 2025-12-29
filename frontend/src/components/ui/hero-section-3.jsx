@@ -32,38 +32,42 @@ export default function HeroSection3({
     <div className="min-h-screen w-full antialiased text-white relative">
       <header className="absolute inset-x-0 top-0 p-6 md:p-8 z-10">
         <div className="container mx-auto flex justify-between items-center">
-          <Link to="/" className="text-3xl font-bold">{logoText}</Link>
-          <nav className="hidden md:flex space-x-8 text-sm">
+          <Link to="/" className="text-3xl font-bold drop-shadow-lg">{logoText}</Link>
+          <nav className="hidden md:flex items-center space-x-2 bg-black/40 backdrop-blur-md rounded-full px-6 py-3">
             {navLinks.map((link) => (
-              <Link key={link.href} to={link.href} className="hover:text-gray-300 transition-colors">
+              <Link 
+                key={link.href} 
+                to={link.href} 
+                className="px-4 py-2 text-white font-semibold text-sm hover:bg-white/20 rounded-full transition-all duration-200"
+              >
                 {link.label}
               </Link>
             ))}
           </nav>
-          <div className="flex items-center space-x-4">
-            <button type="button" aria-label="Search" className="hover:text-gray-300">
+          <div className="flex items-center space-x-3 bg-black/40 backdrop-blur-md rounded-full px-4 py-2">
+            <button type="button" aria-label="Search" className="p-2 hover:bg-white/20 rounded-full transition-colors">
               <SearchIcon />
             </button>
             {user ? (
               <>
-                <Link to="/dashboard" className="text-sm hover:text-gray-300 transition-colors">
+                <Link to="/dashboard" className="px-4 py-2 text-white font-semibold text-sm hover:bg-white/20 rounded-full transition-colors">
                   Dashboard
                 </Link>
                 <button 
                   onClick={onLogout}
-                  className="border border-white rounded-full px-6 py-2 text-sm font-medium hover:bg-white hover:text-black transition-colors"
+                  className="bg-white text-stone-800 rounded-full px-5 py-2 text-sm font-bold hover:bg-stone-100 transition-colors"
                 >
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-sm hover:text-gray-300 transition-colors">
+                <Link to="/login" className="px-4 py-2 text-white font-semibold text-sm hover:bg-white/20 rounded-full transition-colors">
                   Login
                 </Link>
                 <Link 
                   to="/signup"
-                  className="border border-white rounded-full px-6 py-2 text-sm font-medium hover:bg-white hover:text-black transition-colors"
+                  className="bg-white text-stone-800 rounded-full px-5 py-2 text-sm font-bold hover:bg-stone-100 transition-colors"
                 >
                   Join
                 </Link>
