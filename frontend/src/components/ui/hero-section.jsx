@@ -1,0 +1,286 @@
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import { InfiniteSlider } from '@/components/ui/infinite-slider'
+import { ProgressiveBlur } from '@/components/ui/progressive-blur'
+import { cn } from '@/lib/utils'
+import { Menu, X, ChevronRight, Heart } from 'lucide-react'
+import { useScroll, motion } from 'framer-motion'
+import { useAuth } from '@/App'
+
+export function HeroSection() {
+  return (
+    <>
+      <HeroHeader />
+      <main className="overflow-x-hidden">
+        <section>
+          <div className="py-24 md:pb-32 lg:pb-36 lg:pt-72">
+            <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-6 lg:block lg:px-12">
+              <div className="mx-auto max-w-lg text-center lg:ml-0 lg:max-w-full lg:text-left">
+                <h1 className="mt-8 max-w-2xl text-balance text-5xl md:text-6xl lg:mt-16 xl:text-7xl font-bold text-gray-900">
+                  Compassionate Care For Your Loved Ones
+                </h1>
+                <p className="mt-8 max-w-2xl text-balance text-lg text-gray-600">
+                  Connect with verified, professional in-home caregivers for elderly care, pediatric support, and specialized health services.
+                </p>
+                <div className="mt-12 flex flex-col items-center justify-center gap-2 sm:flex-row lg:justify-start">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="h-12 rounded-full pl-5 pr-3 text-base bg-black text-white hover:bg-gray-800">
+                    <Link to="/agencies">
+                      <span className="text-nowrap">Find Care Now</span>
+                      <ChevronRight className="ml-1" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="ghost"
+                    className="h-12 rounded-full px-5 text-base hover:bg-zinc-950/5">
+                    <Link to="/contact">
+                      <span className="text-nowrap">Contact Us</span>
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className="aspect-[2/3] absolute inset-1 top-0 overflow-hidden rounded-3xl border border-black/10 sm:aspect-video lg:rounded-[3rem]">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="size-full object-cover opacity-40"
+                src="https://videos.pexels.com/video-files/8436341/8436341-hd_1920_1080_25fps.mp4"
+                poster="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=1920&h=1080&fit=crop"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white pb-2">
+          <div className="group relative m-auto max-w-7xl px-6">
+            <div className="flex flex-col items-center md:flex-row">
+              <div className="md:max-w-44 md:border-r md:pr-6">
+                <p className="text-end text-sm text-gray-600">Trusted by leading healthcare providers</p>
+              </div>
+              <div className="relative py-6 md:w-[calc(100%-11rem)]">
+                <InfiniteSlider
+                  speedOnHover={20}
+                  speed={40}
+                  gap={112}>
+                  <div className="flex">
+                    <img
+                      className="mx-auto h-8 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/AARP_logo.svg/2560px-AARP_logo.svg.png"
+                      alt="AARP Logo"
+                      height="32"
+                      width="auto"
+                    />
+                  </div>
+                  <div className="flex">
+                    <img
+                      className="mx-auto h-6 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Blue_Cross_Blue_Shield_Association_logo.svg/1200px-Blue_Cross_Blue_Shield_Association_logo.svg.png"
+                      alt="Blue Cross Logo"
+                      height="24"
+                      width="auto"
+                    />
+                  </div>
+                  <div className="flex">
+                    <img
+                      className="mx-auto h-7 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Aetna_logo.svg/2560px-Aetna_logo.svg.png"
+                      alt="Aetna Logo"
+                      height="28"
+                      width="auto"
+                    />
+                  </div>
+                  <div className="flex">
+                    <img
+                      className="mx-auto h-6 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Humana_logo.svg/2560px-Humana_logo.svg.png"
+                      alt="Humana Logo"
+                      height="24"
+                      width="auto"
+                    />
+                  </div>
+                  <div className="flex">
+                    <img
+                      className="mx-auto h-8 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/UnitedHealth_Group_logo.svg/2560px-UnitedHealth_Group_logo.svg.png"
+                      alt="UnitedHealth Logo"
+                      height="32"
+                      width="auto"
+                    />
+                  </div>
+                  <div className="flex">
+                    <img
+                      className="mx-auto h-7 w-fit grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Cigna_logo.svg/2560px-Cigna_logo.svg.png"
+                      alt="Cigna Logo"
+                      height="28"
+                      width="auto"
+                    />
+                  </div>
+                </InfiniteSlider>
+                <div className="bg-gradient-to-r from-white absolute inset-y-0 left-0 w-20"></div>
+                <div className="bg-gradient-to-l from-white absolute inset-y-0 right-0 w-20"></div>
+                <ProgressiveBlur
+                  className="pointer-events-none absolute left-0 top-0 h-full w-20"
+                  direction="left"
+                  blurIntensity={1}
+                />
+                <ProgressiveBlur
+                  className="pointer-events-none absolute right-0 top-0 h-full w-20"
+                  direction="right"
+                  blurIntensity={1}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </>
+  )
+}
+
+const menuItems = [
+  { name: 'Find Care', href: '/agencies' },
+  { name: 'How It Works', href: '/faq' },
+  { name: 'Pricing', href: '/agencies' },
+  { name: 'Contact', href: '/contact' },
+]
+
+const HeroHeader = () => {
+  const [menuState, setMenuState] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const { scrollYProgress } = useScroll()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on('change', (latest) => {
+      setScrolled(latest > 0.05)
+    })
+    return () => unsubscribe()
+  }, [scrollYProgress])
+
+  return (
+    <header>
+      <nav
+        data-state={menuState && 'active'}
+        className="group fixed z-20 w-full pt-2">
+        <div className={cn('mx-auto max-w-7xl rounded-3xl px-6 transition-all duration-300 lg:px-12', scrolled && 'bg-white/80 backdrop-blur-2xl shadow-lg')}>
+          <motion.div
+            className={cn('relative flex flex-wrap items-center justify-between gap-6 py-3 duration-200 lg:gap-0 lg:py-6', scrolled && 'lg:py-4')}>
+            <div className="flex w-full items-center justify-between gap-12 lg:w-auto">
+              <Link
+                to="/"
+                aria-label="home"
+                className="flex items-center space-x-2">
+                <NurseNowLogo />
+              </Link>
+
+              <button
+                onClick={() => setMenuState(!menuState)}
+                aria-label={menuState === true ? 'Close Menu' : 'Open Menu'}
+                className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden">
+                <Menu className={cn('m-auto size-6 duration-200', menuState && 'rotate-180 scale-0 opacity-0')} />
+                <X className={cn('absolute inset-0 m-auto size-6 duration-200', !menuState && '-rotate-180 scale-0 opacity-0')} />
+              </button>
+
+              <div className="hidden lg:block">
+                <ul className="flex gap-8 text-sm">
+                  {menuItems.map((item, index) => (
+                    <li key={index}>
+                      <Link
+                        to={item.href}
+                        className="text-gray-600 hover:text-gray-900 block duration-150 font-medium">
+                        <span>{item.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={cn('bg-white mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none', menuState && 'block')}>
+              <div className="lg:hidden">
+                <ul className="space-y-6 text-base">
+                  {menuItems.map((item, index) => (
+                    <li key={index}>
+                      <Link
+                        to={item.href}
+                        onClick={() => setMenuState(false)}
+                        className="text-gray-600 hover:text-gray-900 block duration-150">
+                        <span>{item.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+                {user ? (
+                  <>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                      <Link to="/dashboard">
+                        <span>Dashboard</span>
+                      </Link>
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => { logout(); navigate('/'); }}
+                      className="bg-black text-white hover:bg-gray-800">
+                      <span>Logout</span>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                      <Link to="/login">
+                        <span>Login</span>
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="sm"
+                      className="bg-black text-white hover:bg-gray-800">
+                      <Link to="/signup">
+                        <span>Sign Up</span>
+                      </Link>
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </nav>
+    </header>
+  )
+}
+
+const NurseNowLogo = ({ className }) => {
+  return (
+    <div className={cn('flex items-center gap-2', className)}>
+      <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
+        <Heart className="w-5 h-5 text-white" />
+      </div>
+      <span className="text-xl font-bold text-gray-900">NurseNow</span>
+    </div>
+  )
+}
+
+export default HeroSection;
