@@ -79,12 +79,21 @@ const WishlistProvider = ({ children }) => {
 // Radial Gradient Background Component (keeping the indigo gradient)
 const PageBackground = ({ children, className = "" }) => {
   return (
-    <div className={`min-h-screen w-full relative ${className}`}>
-      {/* Radial Gradient Background from Top - White to Indigo */}
+    <div className={`min-h-screen w-full relative bg-background ${className}`}>
+      {/* Grid Background Pattern */}
       <div
         className="fixed inset-0 z-0"
         style={{
-          background: "radial-gradient(125% 125% at 50% 10%, #fff 40%, #6366f1 100%)",
+          backgroundImage:
+            'linear-gradient(hsl(214.3 31.8% 91.4%) 1px, transparent 1px), linear-gradient(to right, hsl(214.3 31.8% 91.4%) 1px, transparent 1px)',
+          backgroundSize: '3rem 3rem',
+        }}
+      />
+      {/* Gradient Overlay */}
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          background: 'linear-gradient(to bottom, hsl(0 0% 100%), hsl(0 0% 100% / 0.9), hsl(0 0% 100% / 0.95))',
         }}
       />
       {/* Content */}
