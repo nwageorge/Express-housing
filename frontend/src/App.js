@@ -430,7 +430,7 @@ const TestimonialsSection = () => {
   );
 };
 
-// Hero Section - Black & White Theme
+// Hero Section - Warm Nature Theme
 const HeroSection = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -449,37 +449,37 @@ const HeroSection = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-stone-100 text-stone-700 rounded-full text-sm font-medium mb-6">
               <Shield className="w-4 h-4" />
               Trusted by 10,000+ families
             </div>
             
-            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+            <h1 className="text-5xl lg:text-6xl font-bold text-stone-800 leading-tight mb-6">
               Compassionate
-              <span className="text-gray-600"> Home Care </span>
+              <span className="text-stone-500"> Home Care </span>
               For Your Loved Ones
             </h1>
             
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-stone-600 mb-8 leading-relaxed">
               Connect with verified, professional in-home caregivers for elderly care, 
               pediatric support, and specialized health services.
             </p>
 
             <form onSubmit={handleSearch} className="flex gap-3 mb-8">
               <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
                 <input
                   type="text"
                   placeholder="Search by city or care type..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-200 outline-none transition shadow-sm"
+                  className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-200 outline-none transition shadow-sm"
                   data-testid="hero-search-input"
                 />
               </div>
               <button
                 type="submit"
-                className="px-8 py-4 bg-black text-white rounded-2xl font-semibold hover:bg-gray-800 transition-all"
+                className="px-8 py-4 bg-stone-800 text-white rounded-2xl font-semibold hover:bg-stone-700 transition-all"
                 data-testid="hero-search-btn"
               >
                 Search
