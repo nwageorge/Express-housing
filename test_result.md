@@ -244,6 +244,18 @@ test_plan:
         agent: "testing"
         comment: "FINAL VERIFICATION COMPLETED: ✅ Adltrack logo with indigo Activity icon confirmed in header and footer. ✅ Primary color scheme (indigo) consistently applied throughout - logo background, buttons, and accent text. ✅ 'Get Started' button (Sign Up) has indigo styling. ✅ Footer shows complete Adltrack branding with Activity icon, company name, and 'Download App' button. ✅ Contact information correctly updated to '1-800-ADL-TRACK' and 'support@adltrack.com'. ✅ Copyright shows '© 2025 Adltrack'. All branding requirements successfully implemented."
 
+  - task: "Warm Brown/Nature Color Theme Implementation"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "CRITICAL THEME ISSUES FOUND: ❌ Homepage using HeroSection3 with background image instead of warm brown theme. ❌ Navigation missing bg-black/40 pill-shaped container. ❌ Warm radial gradient (radial-gradient(125% 125% at 50% 10%, #faf8f5 40%, #a8998a 100%)) not visible on most pages. ❌ Footer missing stone-800 background class. ✅ Stone-800 buttons and text colors working. ✅ Amber-500 star ratings working. ✅ Form inputs have stone-200 borders. ✅ Contact info cards have stone-100 borders. ✅ Footer logo has amber-600 background. MAJOR ISSUE: Homepage shows background image instead of warm theme - HeroSection3 component overriding PageBackground."
+
 agent_communication:
   - agent: "main"
     message: "Implemented Booking.com-style agency profiles. Test: 1) Agency list page shows caregiving photos and $15-$18/hr pricing, 2) Click agency to see detail page with 5-photo grid gallery, 3) Click 'View all photos' to open fullscreen gallery with navigation, 4) Scroll down to see Care Services, Certifications, and Family Reviews with star ratings and relationship info, 5) Booking sidebar with 'Book Free Consultation' button."
@@ -255,3 +267,5 @@ agent_communication:
     message: "NEW ADLTRACK HOMEPAGE TESTING COMPLETED: ✅ All requirements from review request successfully verified. ✅ Header shows 'Adltrack' branding with indigo Activity icon. ✅ ShuffleGrid 4x4 component working perfectly - 16 caregiving images shuffle/animate every 3-4 seconds (confirmed through multiple screenshots showing different arrangements). ✅ Headline 'Find Quality Care For Your Loved Ones' displays correctly. ✅ 'Find Care Now' and 'Contact Us' buttons functional and navigate correctly (/agencies and /contact). ✅ All removed sections verified absent: no 'Why Choose NurseNow?', 'Trusted by leading healthcare providers', or 'Ready to Find the Perfect Caregiver?' sections found. ✅ Footer shows correct Adltrack branding, phone '1-800-ADL-TRACK', email 'support@adltrack.com', copyright '© 2025 Adltrack'. ✅ Navigation fully functional: logo click, Login/Sign Up buttons work. All homepage functionality working as expected."
   - agent: "testing"
     message: "ADLTRACK HOMEPAGE WITH FINANCIALHERO TESTING COMPLETED: ✅ Test 1 - Homepage Hero: Grid background pattern visible, headline 'Find Quality Care For Your Loved Ones' with 'Your Loved Ones' in indigo confirmed, 'Find Care Now' button (indigo) navigates to /agencies successfully, 'Download App' button (outline) visible, two tilted care images displayed correctly. ✅ Test 2 - Color Scheme: Adltrack logo has indigo Activity icon, 'Get Started' button is indigo, primary indigo color consistent throughout. ✅ Test 3 - Footer: 'Download App' button present, Adltrack branding with Activity icon confirmed. ✅ Test 4 - Navigation: 'Find Care Now' navigates to /agencies page which shows with grid background and agency cards. All requirements from review request successfully verified and working."
+  - agent: "testing"
+    message: "WARM BROWN/NATURE THEME TESTING COMPLETED: ❌ CRITICAL ISSUES FOUND - Homepage using HeroSection3 component with background image instead of expected warm brown theme. The PageBackground component with radial gradient exists in code but is overridden by HeroSection3. Navigation missing pill-shaped bg-black/40 container. Footer missing stone-800 background. However, stone-800 buttons, amber-500 stars, stone-200 form borders, and stone-100 card borders are working correctly. MAIN ISSUE: Homepage shows background image instead of warm theme - needs to use PageBackground component instead of HeroSection3."
