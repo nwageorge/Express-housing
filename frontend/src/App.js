@@ -613,62 +613,10 @@ const HomePage = () => {
   );
 };
 
-// Login Page - Warm Nature Theme
+// Login Page - Using New Auth Component
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const response = await axios.post(`${API}/auth/login`, { email, password });
-      login(response.data.access_token, response.data.user);
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.response?.data?.detail || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <PageBackground className="flex items-center justify-center p-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-stone-100">
-          <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 bg-stone-800 rounded-xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
-              </div>
-            </Link>
-            <h1 className="text-2xl font-bold text-stone-800">Welcome Back</h1>
-            <p className="text-stone-500 mt-2">Sign in to your Adltrack account</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {error && <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">{error}</div>}
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" placeholder="you@example.com" required data-testid="login-email" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition" placeholder="••••••••" required data-testid="login-password" />
-            </div>
-            <button type="submit" disabled={loading} className="w-full py-3 bg-stone-800 text-white rounded-xl font-semibold hover:bg-stone-700 transition-all disabled:opacity-50" data-testid="login-submit">
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-          <p className="text-center mt-6 text-stone-500">Don't have an account? <Link to="/signup" className="text-stone-800 font-medium hover:underline">Sign up</Link></p>
-        </div>
-      </motion.div>
-    </PageBackground>
+  return <AuthComponent mode="login" />;
+};
   );
 };
 
