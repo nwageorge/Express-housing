@@ -186,9 +186,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "New Adltrack Homepage with ShuffleHero"
-    - "ShuffleGrid Component Animation"
-    - "Adltrack Branding Update"
+    - "Apple Spotlight Search Feature"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
