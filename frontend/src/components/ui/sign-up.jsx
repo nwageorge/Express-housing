@@ -214,6 +214,7 @@ const UserTypeSelection = ({ selectedType, onSelect }) => (
 // --- MAIN AUTH COMPONENT ---
 export const AuthComponent = ({ mode = 'signup' }) => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [userType, setUserType] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
