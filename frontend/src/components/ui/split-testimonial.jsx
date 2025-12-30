@@ -7,6 +7,14 @@ import { ArrowUpRight } from "lucide-react"
 const testimonials = [
   {
     id: 1,
+    quote: "Before ADLTrack, families didn't always understand how much we actually do. Now everything I complete is tracked and time-stamped. It protects caregivers like me and builds trust with families.",
+    name: "Aisha K.",
+    role: "Certified Caregiver",
+    company: "Philadelphia, PA",
+    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=500&fit=crop",
+  },
+  {
+    id: 2,
     quote: "Living in another state made it hard to know what was really happening day to day. With ADLTrack, I can see when my dad's meds are given and when his caregiver arrives. I finally feel involved again, without constantly calling.",
     name: "Jasmine T.",
     role: "Daughter",
@@ -14,20 +22,12 @@ const testimonials = [
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop",
   },
   {
-    id: 2,
+    id: 3,
     quote: "ADLTrack completely changed how we manage accountability. We can now see caregiver punctuality, task completion, and patterns over time. It's helped us improve quality, reduce complaints, and retain our best caregivers.",
     name: "Michael R.",
     role: "Agency Director",
     company: "Newark, NJ",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop",
-  },
-  {
-    id: 3,
-    quote: "Before ADLTrack, families didn't always understand how much we actually do. Now everything I complete is tracked and time-stamped. It protects caregivers like me and builds trust with families.",
-    name: "Aisha K.",
-    role: "Certified Caregiver",
-    company: "Philadelphia, PA",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=500&fit=crop",
   },
   {
     id: 4,

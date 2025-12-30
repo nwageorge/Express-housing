@@ -384,9 +384,8 @@ const TestimonialsSection = () => {
   return (
     <section className="py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 mb-12">
-        <h2 className="text-3xl font-bold text-center text-stone-800 mb-4">What Families Say</h2>
         <p className="text-stone-500 text-center max-w-2xl mx-auto mb-12">
-          Join thousands of families who trust Adltrack for their in-home care needs
+          Join thousands of families and Agencies who trust Adltrack for their in-home care services
         </p>
       </div>
       <TestimonialsSplit />
