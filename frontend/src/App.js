@@ -210,7 +210,7 @@ const Navigation = () => {
   );
 };
 
-// Agency Card Component - Airbnb Style (Compact)
+// Agency Card Component - Exact Airbnb Style
 import { GlareCard } from "@/components/ui/glare-card";
 
 const AgencyCard = ({ agency, index }) => {
@@ -219,66 +219,80 @@ const AgencyCard = ({ agency, index }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.3 }}
+      transition={{ delay: index * 0.03, duration: 0.25 }}
       className="group cursor-pointer"
       onClick={() => navigate(`/agencies/${agency.id}`)}
       data-testid={`agency-card-${agency.id}`}
     >
-      {/* Image Container - Airbnb aspect ratio */}
-      <div className="relative aspect-square rounded-xl overflow-hidden mb-2">
+      {/* Image Container - Airbnb 4:3 aspect ratio with rounded corners */}
+      <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-2">
         <img
           src={agency.image_url}
           alt={agency.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
         />
         
-        {/* Wishlist Button */}
+        {/* Guest Favorite Badge - Top Left (Airbnb style) */}
+        {agency.is_verified && (
+          <div className="absolute top-2 left-2 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-xs font-semibold text-stone-800 shadow-sm flex items-center gap-1">
+            <Award className="w-3 h-3" />
+            Guest favorite
+          </div>
+        )}
+        
+        {/* Wishlist Heart - Top Right (Airbnb style) */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             toggleWishlist(agency.id);
           }}
-          className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center z-10"
+          className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center z-10 hover:scale-110 transition-transform"
           data-testid={`wishlist-btn-${agency.id}`}
         >
           <Heart
-            className={`w-6 h-6 transition-colors drop-shadow-md ${
-              isWishlisted(agency.id) ? "fill-red-500 text-red-500" : "fill-black/50 text-white stroke-2"
+            className={`w-6 h-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] transition-colors ${
+              isWishlisted(agency.id) 
+                ? "fill-red-500 text-red-500" 
+                : "fill-black/40 text-white stroke-[1.5]"
             }`}
           />
         </button>
 
-        {/* Verified Badge */}
-        {agency.is_verified && (
-          <div className="absolute top-2 left-2 px-2 py-1 bg-white rounded-md text-xs font-medium text-stone-700 shadow-sm">
-            Verified
-          </div>
-        )}
+        {/* Image carousel dots indicator (Airbnb style) */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+          {[0,1,2,3,4].map((dot, i) => (
+            <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/50'}`} />
+          ))}
+        </div>
       </div>
       
-      {/* Content - Airbnb style minimal text */}
-      <div className="space-y-0.5">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium text-[15px] text-stone-900 truncate pr-2">
+      {/* Content - Exact Airbnb typography */}
+      <div className="space-y-0.5 px-0.5">
+        {/* Title Row with Rating */}
+        <div className="flex items-start justify-between gap-1">
+          <h3 className="font-medium text-[15px] text-stone-900 leading-tight line-clamp-1">
             {agency.name}
           </h3>
-          <div className="flex items-center gap-1 flex-shrink-0">
-            <Star className="w-3.5 h-3.5 fill-stone-900 text-stone-900" />
-            <span className="text-sm text-stone-900">{agency.rating}</span>
+          <div className="flex items-center gap-0.5 flex-shrink-0">
+            <Star className="w-3 h-3 fill-stone-900 text-stone-900" />
+            <span className="text-[13px] text-stone-900">{agency.rating}</span>
           </div>
         </div>
         
-        <p className="text-sm text-stone-500 truncate">{agency.city}</p>
+        {/* Location - Gray text */}
+        <p className="text-[14px] text-stone-500 leading-tight">{agency.city}</p>
         
-        <p className="text-sm text-stone-500 truncate">
+        {/* Specialty - Gray text */}
+        <p className="text-[14px] text-stone-500 leading-tight">
           {agency.specialties?.[0]}
         </p>
         
-        <p className="text-[15px] text-stone-900 pt-1">
-          <span className="font-medium">${agency.price_per_hour}</span>
-          <span className="text-stone-500 font-normal"> /hour</span>
+        {/* Price - Bold with unit */}
+        <p className="text-[15px] text-stone-900 pt-0.5">
+          <span className="font-semibold">${agency.price_per_hour}</span>
+          <span className="font-normal text-stone-600"> /hour</span>
         </p>
       </div>
     </motion.div>
