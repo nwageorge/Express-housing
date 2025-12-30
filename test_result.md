@@ -311,3 +311,6 @@ agent_communication:
       - working: "needs_testing"
         agent: "main"
         comment: "Implemented rewards carousel on homepage. Removed Newark, NJ section and replaced with 'Deals of the Day' rewards section featuring 6 offer cards: 5% Cashback, Build Your Credit, 2X Points Week, Up to $200 OFF Family Plan, $100 Referral Bonus, and Free Month Loyalty reward. Uses OfferCarousel component with scrollable cards showing images, tags, titles, descriptions, brand logos, and promo codes."
+      - working: "testing_in_progress"
+        agent: "testing"
+        comment: "Starting comprehensive testing of the new Deals of the Day rewards carousel. Will test: homepage load, city sections verification (only 3 cities, no Newark NJ), rewards section visibility, 6 offer cards display, card structure, carousel functionality, and hover animations."
