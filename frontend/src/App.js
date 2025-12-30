@@ -617,8 +617,6 @@ const HomePage = () => {
 const LoginPage = () => {
   return <AuthComponent mode="login" />;
 };
-  );
-};
 
 // Signup Page - Using New Auth Component
 const SignupPage = () => {
