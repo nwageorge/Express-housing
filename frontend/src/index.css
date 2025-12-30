@@ -2,14 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Airbnb-style font stack - Cereal/Circular lookalike */
 body {
     margin: 0;
     font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+        "Circular", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue",
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+    line-height: 1.43;
+    color: #222222;
+}
+
+/* Airbnb typography scale */
+h1 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.375;
+}
+
+@media (min-width: 640px) {
+    body {
+        font-size: 14px;
+    }
+    h1 {
+        font-size: 32px;
+    }
+    h2 {
+        font-size: 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    h1 {
+        font-size: 48px;
+    }
+    h2 {
+        font-size: 26px;
+    }
+}
+
+/* Hide scrollbar for carousel */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 code {
