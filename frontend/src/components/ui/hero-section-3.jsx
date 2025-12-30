@@ -76,10 +76,7 @@ export default function HeroSection3({
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
         <div className="container mx-auto h-screen flex items-center px-6 md:px-8">
-          <div className="w-full md:w-1/2 lg:w-2/5">
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">{title}</h1>
-            <p className="text-md text-gray-300 max-w-md mb-8">{subtitle}</p>
-          </div>
+          {/* Clean hero - no text overlay */}
         </div>
       </main>
     </div>
