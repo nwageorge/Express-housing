@@ -254,6 +254,18 @@ test_plan:
         agent: "testing"
         comment: "CRITICAL THEME ISSUES FOUND: ❌ Homepage using HeroSection3 with background image instead of warm brown theme. ❌ Navigation missing bg-black/40 pill-shaped container. ❌ Warm radial gradient (radial-gradient(125% 125% at 50% 10%, #faf8f5 40%, #a8998a 100%)) not visible on most pages. ❌ Footer missing stone-800 background class. ✅ Stone-800 buttons and text colors working. ✅ Amber-500 star ratings working. ✅ Form inputs have stone-200 borders. ✅ Contact info cards have stone-100 borders. ✅ Footer logo has amber-600 background. MAJOR ISSUE: Homepage shows background image instead of warm theme - HeroSection3 component overriding PageBackground."
 
+  - task: "Apple Spotlight Search Feature"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/ui/apple-spotlight.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented Apple Spotlight search component with search bar visibility, dropdown functionality with location options, search filtering, shortcut buttons on hover (Elderly Care, Pediatric, 24-Hour Care, Skilled Nursing), and integration with agencies page search."
+
 agent_communication:
   - agent: "main"
     message: "Implemented Booking.com-style agency profiles. Test: 1) Agency list page shows caregiving photos and $15-$18/hr pricing, 2) Click agency to see detail page with 5-photo grid gallery, 3) Click 'View all photos' to open fullscreen gallery with navigation, 4) Scroll down to see Care Services, Certifications, and Family Reviews with star ratings and relationship info, 5) Booking sidebar with 'Book Free Consultation' button."
