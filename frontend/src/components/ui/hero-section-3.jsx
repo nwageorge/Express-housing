@@ -88,19 +88,6 @@ export default function HeroSection3({
           </div>
         </div>
       </main>
-
-      <footer className="absolute inset-x-0 bottom-0 p-6 md:p-8">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="text-sm">{versionText}</div>
-          <Link 
-            to="/contact"
-            aria-label="Chat" 
-            className="bg-white/10 backdrop-blur-sm rounded-full h-12 w-12 flex items-center justify-center hover:bg-white/20 transition-colors"
-          >
-            <ChatIcon />
-          </Link>
-        </div>
-      </footer>
     </div>
   );
 }
