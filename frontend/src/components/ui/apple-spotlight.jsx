@@ -229,12 +229,13 @@ const CareSearchSpotlight = ({ className }) => {
 
         <AnimatePresence>
           {isOpen && filteredResults.length > 0 && (
-          <SearchResultsContainer
-            searchResults={filteredResults}
-            onHover={setHoveredSearchResult}
-            onSelect={handleSelectResult}
-          />
-        )}
+            <SearchResultsContainer
+              searchResults={filteredResults}
+              onHover={setHoveredSearchResult}
+              onSelect={handleSelectResult}
+            />
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
