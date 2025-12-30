@@ -8,6 +8,7 @@ import { Heart, Star, MapPin, Clock, Shield, Phone, Mail, ChevronLeft, ChevronRi
 import React from "react";
 import { HeroSection as NewHeroSection } from "@/components/ui/hero-section";
 import { TestimonialsSplit } from "@/components/ui/split-testimonial";
+import { CareSearchSpotlight } from "@/components/ui/apple-spotlight";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
