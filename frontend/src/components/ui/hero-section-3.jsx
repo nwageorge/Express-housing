@@ -156,9 +156,8 @@ export default function HeroSection3({
         className="w-full bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        {/* Mobile: text positioned lower (60% from top), Desktop: centered */}
         <div className="container mx-auto h-screen flex items-center px-4 sm:px-6 md:px-8">
-          <div className="w-full md:w-1/2 lg:w-2/5 mt-[35vh] sm:mt-0">
+          <div className="w-full md:w-1/2 lg:w-2/5 mt-[20vh] sm:mt-0">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 drop-shadow-lg">
               Transparent Care For Your Loved Ones
             </h1>
