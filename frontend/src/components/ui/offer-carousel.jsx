@@ -32,19 +32,10 @@ const OfferCard = React.forwardRef(({ offer }, ref) => (
         <p className="text-sm text-stone-500">{offer.description}</p>
       </div>
       
-      {/* Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-stone-200">
-        <div className="flex items-center gap-3">
-          <img src={offer.brandLogoSrc} alt={`${offer.brandName} logo`} className="w-8 h-8 rounded-full bg-stone-100 object-cover" />
-          <div>
-            <p className="text-xs font-semibold text-stone-800">{offer.brandName}</p>
-            {offer.promoCode && (
-              <p className="text-xs text-stone-500">{offer.promoCode}</p>
-            )}
-          </div>
-        </div>
-        <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 transform transition-transform duration-300 group-hover:rotate-[-45deg] group-hover:bg-stone-800 group-hover:text-white">
-          <ArrowRight className="w-4 h-4" />
+      {/* Simple Arrow Button */}
+      <div className="flex items-center justify-end pt-4">
+        <div className="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 transform transition-transform duration-300 group-hover:rotate-[-45deg] group-hover:bg-stone-800 group-hover:text-white">
+          <ArrowRight className="w-5 h-5" />
         </div>
       </div>
     </div>
