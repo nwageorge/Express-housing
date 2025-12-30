@@ -300,3 +300,14 @@ agent_communication:
     message: "ADLTRACK AUTHENTICATION TESTING COMPLETED: ✅ ALL 4/4 AUTHENTICATION TESTS PASSED SUCCESSFULLY. ✅ Test 1 - Client Signup: POST /api/auth/signup with client role creates user successfully, returns access_token and user object with correct email, name, role, and UUID. ✅ Test 2 - Login Flow: POST /api/auth/login with same credentials authenticates successfully, returns valid JWT token and user data. ✅ Test 3 - Dashboard Access: GET /api/bookings with Bearer token authorization returns 200 status (empty array for new user as expected). ✅ Test 4 - Agency Signup: POST /api/auth/signup with agency role creates agency user successfully, returns access_token. Backend authentication system fully functional with proper JWT token generation, bcrypt password hashing, and protected route access control. All signup, login, and authorization flows working correctly."
   - agent: "testing"
     message: "ADLTRACK SIGNUP AND LOGIN FLOW UI TESTING COMPLETED: ✅ BOTH FLOWS WORKING PERFECTLY. ✅ Signup Flow: Successfully navigated /signup → Selected 'Family Seeking Care' → Clicked Continue → Entered name 'Test User' → Entered unique email testuser1767061878@test.com → Entered password 'password123' → Submitted and redirected to /dashboard with welcome message 'Welcome back, Test User!' and booking stats (0 total, 0 confirmed, 0 pending). ✅ Login Flow: Successfully navigated /login → Entered same email → Entered password → Submitted and redirected to /dashboard with proper authentication state. ✅ UI Components: All form steps working correctly with proper validation, loading animations, glass button effects, and step-by-step progression. ✅ Authentication: JWT tokens properly stored, user context updated, logout functionality working. ✅ Dashboard: Proper user greeting, booking statistics display, and navigation elements present. Both signup and login flows are fully functional with excellent UX."
+  - task: "Rewards Carousel Integration (Bilt-style rewards)"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Implemented rewards carousel on homepage. Removed Newark, NJ section and replaced with 'Deals of the Day' rewards section featuring 6 offer cards: 5% Cashback, Build Your Credit, 2X Points Week, Up to $200 OFF Family Plan, $100 Referral Bonus, and Free Month Loyalty reward. Uses OfferCarousel component with scrollable cards showing images, tags, titles, descriptions, brand logos, and promo codes."
