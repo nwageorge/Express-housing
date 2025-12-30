@@ -342,13 +342,18 @@ const AgencyCarousel = ({ title, agencies, viewAllLink }) => {
         </div>
       </div>
 
+      {/* Card container - 5 cards on desktop, 2 on mobile */}
       <div
         ref={containerRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 sm:-mx-0 sm:px-0"
+        className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2"
         style={{ scrollSnapType: "x mandatory", scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {agencies.map((agency, index) => (
-          <div key={agency.id} className="flex-shrink-0 w-[220px] sm:w-[240px] lg:w-[260px]" style={{ scrollSnapAlign: "start" }}>
+          <div 
+            key={agency.id} 
+            className="flex-shrink-0 w-[calc((100%-12px)/2)] sm:w-[calc((100%-48px)/5)] lg:w-[calc((100%-64px)/5)]" 
+            style={{ scrollSnapAlign: "start" }}
+          >
             <AgencyCard agency={agency} index={index} />
           </div>
         ))}
