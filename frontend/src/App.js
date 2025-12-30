@@ -307,7 +307,7 @@ const AgencyCarousel = ({ title, agencies, viewAllLink }) => {
   const scroll = (direction) => {
     const container = containerRef.current;
     if (container) {
-      const scrollAmount = 280;
+      const scrollAmount = 250;
       const newPosition = direction === "left"
         ? Math.max(0, scrollPosition - scrollAmount)
         : scrollPosition + scrollAmount;
@@ -317,9 +317,9 @@ const AgencyCarousel = ({ title, agencies, viewAllLink }) => {
   };
 
   return (
-    <section className="py-6 sm:py-8">
-      <div className="flex items-center justify-between mb-4 sm:mb-5">
-        <h2 className="text-[22px] sm:text-2xl font-semibold text-stone-900">{title}</h2>
+    <section className="py-4 sm:py-6">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <h2 className="text-lg sm:text-[22px] font-semibold text-stone-900">{title}</h2>
         <div className="flex items-center gap-2">
           <Link
             to={viewAllLink}
@@ -329,13 +329,13 @@ const AgencyCarousel = ({ title, agencies, viewAllLink }) => {
           </Link>
           <button
             onClick={() => scroll("left")}
-            className="w-8 h-8 bg-white border border-stone-300 rounded-full flex items-center justify-center hover:border-stone-400 hover:shadow-sm transition"
+            className="w-7 h-7 bg-white border border-stone-300 rounded-full flex items-center justify-center hover:border-stone-400 hover:shadow-sm transition disabled:opacity-30"
           >
             <ChevronLeft className="w-4 h-4 text-stone-600" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-8 h-8 bg-white border border-stone-300 rounded-full flex items-center justify-center hover:border-stone-400 hover:shadow-sm transition"
+            className="w-7 h-7 bg-white border border-stone-300 rounded-full flex items-center justify-center hover:border-stone-400 hover:shadow-sm transition disabled:opacity-30"
           >
             <ChevronRight className="w-4 h-4 text-stone-600" />
           </button>
@@ -344,11 +344,11 @@ const AgencyCarousel = ({ title, agencies, viewAllLink }) => {
 
       <div
         ref={containerRef}
-        className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 sm:-mx-0 sm:px-0"
+        className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 sm:-mx-0 sm:px-0"
         style={{ scrollSnapType: "x mandatory", scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {agencies.map((agency, index) => (
-          <div key={agency.id} className="flex-shrink-0 w-[260px] sm:w-[280px]" style={{ scrollSnapAlign: "start" }}>
+          <div key={agency.id} className="flex-shrink-0 w-[220px] sm:w-[240px] lg:w-[260px]" style={{ scrollSnapAlign: "start" }}>
             <AgencyCard agency={agency} index={index} />
           </div>
         ))}
