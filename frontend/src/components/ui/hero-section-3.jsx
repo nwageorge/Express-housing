@@ -85,21 +85,6 @@ export default function HeroSection3({
           <div className="w-full md:w-1/2 lg:w-2/5">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-4">{title}</h1>
             <p className="text-md text-gray-300 max-w-md mb-8">{subtitle}</p>
-            {ctaLink ? (
-              <Link 
-                to={ctaLink}
-                className="inline-block bg-white text-black font-bold px-8 py-3 rounded-md hover:bg-gray-200 transition-colors"
-              >
-                {ctaText}
-              </Link>
-            ) : (
-              <button 
-                onClick={onCtaClick}
-                className="bg-white text-black font-bold px-8 py-3 rounded-md hover:bg-gray-200 transition-colors"
-              >
-                {ctaText}
-              </button>
-            )}
           </div>
         </div>
       </main>
