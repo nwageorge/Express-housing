@@ -8,6 +8,7 @@ import { AnimatePresence, motion, useInView } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '@/App';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
