@@ -572,8 +572,8 @@ const HomePage = () => {
       {/* New Hero Section with integrated header */}
       <NewHeroSection />
       
-      {/* Search Spotlight Section - visible on first view for mobile */}
-      <div className="relative -mt-8 sm:-mt-20 z-20 pb-4 sm:pb-8">
+      {/* Search Spotlight Section - moved up closer to hands on mobile */}
+      <div className="relative -mt-32 sm:-mt-20 z-20 pb-4 sm:pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <CareSearchSpotlight />
         </div>
