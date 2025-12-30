@@ -525,7 +525,83 @@ const HomePage = () => {
     fetchAgencies();
   }, []);
 
-  const cities = ["Philadelphia, PA", "Washington, D.C.", "Pittsburgh, PA", "Newark, NJ"];
+  const cities = ["Philadelphia, PA", "Washington, D.C.", "Pittsburgh, PA"];
+
+  // Rewards/Cashback Offers - Bilt-style rewards for on-time care payments
+  const rewardsOffers = [
+    {
+      id: 1,
+      imageSrc: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?q=80&w=2071&auto=format&fit=crop",
+      imageAlt: "Cashback rewards",
+      tag: "Cashback",
+      title: "5% Cashback",
+      description: "Earn 5% back on your first month of care payments.",
+      brandLogoSrc: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=40&h=40&fit=crop",
+      brandName: "Adltrack Rewards",
+      promoCode: "FIRSTCARE5",
+      href: "#rewards",
+    },
+    {
+      id: 2,
+      imageSrc: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2011&auto=format&fit=crop",
+      imageAlt: "Credit building",
+      tag: "Credit Builder",
+      title: "Build Your Credit",
+      description: "On-time care payments reported to all 3 credit bureaus.",
+      brandLogoSrc: "https://images.unsplash.com/photo-1560472355-536de3962603?w=40&h=40&fit=crop",
+      brandName: "Credit Boost",
+      promoCode: "AUTO-REPORT",
+      href: "#credit",
+    },
+    {
+      id: 3,
+      imageSrc: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=2070&auto=format&fit=crop",
+      imageAlt: "Reward points",
+      tag: "Points",
+      title: "2X Points Week",
+      description: "Earn double points on all care bookings this week.",
+      brandLogoSrc: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=40&h=40&fit=crop",
+      brandName: "Adltrack Points",
+      promoCode: "DOUBLE2X",
+      href: "#points",
+    },
+    {
+      id: 4,
+      imageSrc: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070&auto=format&fit=crop",
+      imageAlt: "Family savings",
+      tag: "Family Plan",
+      title: "Up to $200 OFF",
+      description: "Save on multi-family member care packages.",
+      brandLogoSrc: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=40&h=40&fit=crop",
+      brandName: "Family Saver",
+      promoCode: "FAMILY200",
+      href: "#family",
+    },
+    {
+      id: 5,
+      imageSrc: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2070&auto=format&fit=crop",
+      imageAlt: "Referral bonus",
+      tag: "Referral",
+      title: "$100 Referral Bonus",
+      description: "Refer a friend and both get $100 care credit.",
+      brandLogoSrc: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=40&h=40&fit=crop",
+      brandName: "Refer & Earn",
+      promoCode: "REFER100",
+      href: "#referral",
+    },
+    {
+      id: 6,
+      imageSrc: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=2070&auto=format&fit=crop",
+      imageAlt: "Loyalty rewards",
+      tag: "Loyalty",
+      title: "Free Month Reward",
+      description: "12 months on-time? Get your 13th month free!",
+      brandLogoSrc: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=40&h=40&fit=crop",
+      brandName: "Loyalty Club",
+      promoCode: "LOYAL13",
+      href: "#loyalty",
+    },
+  ];
 
   return (
     <PageBackground>
@@ -560,6 +636,17 @@ const HomePage = () => {
             );
           })
         )}
+
+        {/* Rewards Section - Bilt-style rewards for care payments */}
+        <section className="py-12">
+          <div className="flex items-end justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-stone-800 mb-2">Deals of the Day</h2>
+              <p className="text-stone-500">Earn cashback, points & build credit when you pay for care on time</p>
+            </div>
+          </div>
+          <OfferCarousel offers={rewardsOffers} />
+        </section>
       </div>
 
       <TestimonialsSection />
@@ -633,7 +720,7 @@ const AgenciesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
 
-  const cities = ["Philadelphia, PA", "Washington, D.C.", "Pittsburgh, PA", "Newark, NJ"];
+  const cities = ["Philadelphia, PA", "Washington, D.C.", "Pittsburgh, PA"];
   const specialties = ["Elderly Care", "Pediatric Care", "Post-Surgery Recovery", "24-Hour Care", "Dementia Care", "Skilled Nursing"];
 
   useEffect(() => {
