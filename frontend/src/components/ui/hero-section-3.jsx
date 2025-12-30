@@ -76,7 +76,14 @@ export default function HeroSection3({
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
         <div className="container mx-auto h-screen flex items-center px-6 md:px-8">
-          {/* Clean hero - no text overlay */}
+          <div className="w-full md:w-1/2 lg:w-2/5">
+            <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6 drop-shadow-lg">
+              Transparent Care For Your Loved Ones
+            </h1>
+            <p className="text-lg text-white/90 max-w-lg leading-relaxed drop-shadow-md">
+              Connect with verified, professional in-home care agencies using Adltrack to support elderly care, pediatric services, and specialized health needs.
+            </p>
+          </div>
         </div>
       </main>
     </div>
