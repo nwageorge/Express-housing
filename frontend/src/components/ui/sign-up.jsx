@@ -248,8 +248,8 @@ export const AuthComponent = ({ mode = 'signup' }) => {
     setModalStatus('loading');
     try {
       const response = await axios.post(`${API}/auth/login`, { email, password });
-      localStorage.setItem('token', response.data.access_token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Use the AuthContext login function
+      login(response.data.access_token, response.data.user);
       fireSideCanons();
       setModalStatus('success');
       setTimeout(() => navigate('/dashboard'), 1500);
@@ -268,8 +268,8 @@ export const AuthComponent = ({ mode = 'signup' }) => {
         password,
         role: userType === 'agency' ? 'agency' : 'client'
       });
-      localStorage.setItem('token', response.data.access_token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Use the AuthContext login function
+      login(response.data.access_token, response.data.user);
       const loadingStepsCount = modalSteps.length - 1;
       const totalDuration = loadingStepsCount * TEXT_LOOP_INTERVAL * 1000;
       setTimeout(() => {
