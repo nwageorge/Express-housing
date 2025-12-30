@@ -285,15 +285,15 @@ const AgencyCard = ({ agency, index }) => {
   );
 };
 
-// Agency Carousel Component
-const AgencyCarousel = ({ title, subtitle, agencies, viewAllLink }) => {
+// Agency Carousel Component - Airbnb Style
+const AgencyCarousel = ({ title, agencies, viewAllLink }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const containerRef = React.useRef(null);
 
   const scroll = (direction) => {
     const container = containerRef.current;
     if (container) {
-      const scrollAmount = 320;
+      const scrollAmount = 280;
       const newPosition = direction === "left"
         ? Math.max(0, scrollPosition - scrollAmount)
         : scrollPosition + scrollAmount;
@@ -303,42 +303,38 @@ const AgencyCarousel = ({ title, subtitle, agencies, viewAllLink }) => {
   };
 
   return (
-    <section className="py-12">
-      <div className="flex items-end justify-between mb-8">
-        <div>
-          <h2 className="text-3xl font-bold text-stone-800 mb-2">{title}</h2>
-          {subtitle && <p className="text-stone-500">{subtitle}</p>}
-        </div>
-        <div className="flex items-center gap-3">
+    <section className="py-6 sm:py-8">
+      <div className="flex items-center justify-between mb-4 sm:mb-5">
+        <h2 className="text-[22px] sm:text-2xl font-semibold text-stone-900">{title}</h2>
+        <div className="flex items-center gap-2">
           <Link
             to={viewAllLink}
-            className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-stone-100 hover:bg-stone-200 rounded-full text-stone-700 font-medium transition-colors"
+            className="hidden sm:block text-sm font-medium text-stone-900 hover:underline"
           >
-            View All
-            <ChevronRight className="w-4 h-4" />
+            Show all
           </Link>
           <button
             onClick={() => scroll("left")}
-            className="w-10 h-10 bg-white border border-stone-200 rounded-full flex items-center justify-center hover:bg-stone-50 hover:border-stone-300 transition shadow-sm"
+            className="w-8 h-8 bg-white border border-stone-300 rounded-full flex items-center justify-center hover:border-stone-400 hover:shadow-sm transition"
           >
-            <ChevronLeft className="w-5 h-5 text-stone-600" />
+            <ChevronLeft className="w-4 h-4 text-stone-600" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="w-10 h-10 bg-white border border-stone-200 rounded-full flex items-center justify-center hover:bg-stone-50 hover:border-stone-300 transition shadow-sm"
+            className="w-8 h-8 bg-white border border-stone-300 rounded-full flex items-center justify-center hover:border-stone-400 hover:shadow-sm transition"
           >
-            <ChevronRight className="w-5 h-5 text-stone-600" />
+            <ChevronRight className="w-4 h-4 text-stone-600" />
           </button>
         </div>
       </div>
 
       <div
         ref={containerRef}
-        className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 -mx-2 px-2"
-        style={{ scrollSnapType: "x mandatory" }}
+        className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 sm:-mx-0 sm:px-0"
+        style={{ scrollSnapType: "x mandatory", scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {agencies.map((agency, index) => (
-          <div key={agency.id} className="flex-shrink-0 w-72" style={{ scrollSnapAlign: "start" }}>
+          <div key={agency.id} className="flex-shrink-0 w-[260px] sm:w-[280px]" style={{ scrollSnapAlign: "start" }}>
             <AgencyCard agency={agency} index={index} />
           </div>
         ))}
