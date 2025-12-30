@@ -573,7 +573,7 @@ const HomePage = () => {
       <NewHeroSection />
       
       {/* Search Spotlight Section - closer to hands on mobile */}
-      <div className="relative -mt-28 sm:-mt-20 z-20 pb-4 sm:pb-8">
+      <div className="relative -mt-28 sm:-mt-20 z-20 pb-12 sm:pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <CareSearchSpotlight />
         </div>
