@@ -781,9 +781,11 @@ const SignupPage = () => {
 // Agencies Page - Warm Nature Theme
 const AgenciesPage = () => {
   const [agencies, setAgencies] = useState([]);
+  const [allAgencies, setAllAgencies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
 
   const cities = ["Philadelphia, PA", "Washington, D.C.", "Pittsburgh, PA", "Newark, NJ"];
@@ -792,19 +794,18 @@ const AgenciesPage = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const cityParam = params.get("city");
+    const specialtyParam = params.get("specialty");
+    const searchParam = params.get("search");
     if (cityParam) setSelectedCity(cityParam);
+    if (specialtyParam) setSelectedSpecialty(specialtyParam);
+    if (searchParam) setSearchQuery(searchParam);
   }, [location]);
 
   useEffect(() => {
     const fetchAgencies = async () => {
       try {
-        let url = `${API}/agencies`;
-        const params = new URLSearchParams();
-        if (selectedCity) params.append("city", selectedCity);
-        if (selectedSpecialty) params.append("specialty", selectedSpecialty);
-        if (params.toString()) url += `?${params.toString()}`;
-        const response = await axios.get(url);
-        setAgencies(response.data);
+        const response = await axios.get(`${API}/agencies`);
+        setAllAgencies(response.data);
       } catch (error) {
         console.error("Error fetching agencies:", error);
       } finally {
@@ -812,7 +813,33 @@ const AgenciesPage = () => {
       }
     };
     fetchAgencies();
-  }, [selectedCity, selectedSpecialty]);
+  }, []);
+
+  // Filter agencies based on city, specialty, and search query
+  useEffect(() => {
+    let filtered = [...allAgencies];
+    
+    if (selectedCity) {
+      filtered = filtered.filter(a => a.city === selectedCity);
+    }
+    
+    if (selectedSpecialty) {
+      filtered = filtered.filter(a => a.specialties?.includes(selectedSpecialty));
+    }
+    
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(a => 
+        a.name?.toLowerCase().includes(query) ||
+        a.city?.toLowerCase().includes(query) ||
+        a.location?.toLowerCase().includes(query) ||
+        a.bio?.toLowerCase().includes(query) ||
+        a.specialties?.some(s => s.toLowerCase().includes(query))
+      );
+    }
+    
+    setAgencies(filtered);
+  }, [allAgencies, selectedCity, selectedSpecialty, searchQuery]);
 
   return (
     <PageBackground>
@@ -824,6 +851,21 @@ const AgenciesPage = () => {
             <p className="text-stone-500">Browse verified care agencies in your area</p>
           </div>
 
+          {/* Search Input */}
+          <div className="mb-6">
+            <div className="relative max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+              <input
+                type="text"
+                placeholder="Search by city, zip code, or care type..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-white rounded-xl border border-stone-200 focus:border-stone-400 focus:ring-4 focus:ring-stone-100 outline-none transition shadow-sm"
+                data-testid="search-input"
+              />
+            </div>
+          </div>
+
           <div className="flex flex-wrap gap-4 mb-8">
             <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} className="px-4 py-3 bg-white rounded-xl border border-stone-200 focus:border-stone-400 outline-none shadow-sm" data-testid="filter-city">
               <option value="">All Cities</option>
@@ -833,6 +875,14 @@ const AgenciesPage = () => {
               <option value="">All Specialties</option>
               {specialties.map((s) => (<option key={s} value={s}>{s}</option>))}
             </select>
+            {(selectedCity || selectedSpecialty || searchQuery) && (
+              <button 
+                onClick={() => { setSelectedCity(""); setSelectedSpecialty(""); setSearchQuery(""); }}
+                className="px-4 py-3 bg-stone-100 hover:bg-stone-200 rounded-xl text-stone-600 font-medium transition"
+              >
+                Clear Filters
+              </button>
+            )}
           </div>
 
           {loading ? (
