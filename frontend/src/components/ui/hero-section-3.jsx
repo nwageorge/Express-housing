@@ -156,19 +156,15 @@ export default function HeroSection3({
         className="w-full bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        {/* Desktop: centered vertically, Mobile: positioned at bottom */}
-        <div className="container mx-auto min-h-[70vh] sm:min-h-screen flex items-end sm:items-center pb-8 sm:pb-0 px-4 sm:px-6 md:px-8">
-          <div className="w-full sm:w-full md:w-1/2 lg:w-2/5">
-            {/* Title */}
-            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-2 sm:mb-6 drop-shadow-lg">
+        {/* Mobile: text positioned lower (60% from top), Desktop: centered */}
+        <div className="container mx-auto h-screen flex items-center px-4 sm:px-6 md:px-8">
+          <div className="w-full md:w-1/2 lg:w-2/5 mt-[35vh] sm:mt-0">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 drop-shadow-lg">
               Transparent Care For Your Loved Ones
             </h1>
-            {/* Subtitle - More visible on mobile with background */}
-            <div className="bg-black/50 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none rounded-xl p-3 sm:p-0">
-              <p className="text-sm sm:text-base md:text-lg text-white leading-relaxed">
-                Connect with verified, professional in-home care agencies using Adltrack to support elderly care, pediatric services, and specialized health needs.
-              </p>
-            </div>
+            <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-lg leading-relaxed drop-shadow-md">
+              Connect with verified, professional in-home care agencies using Adltrack to support elderly care, pediatric services, and specialized health needs.
+            </p>
           </div>
         </div>
       </main>
