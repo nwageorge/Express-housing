@@ -531,10 +531,10 @@ const HomePage = () => {
       {/* New Hero Section with integrated header */}
       <NewHeroSection />
       
-      {/* Search Spotlight Section */}
-      <div className="relative -mt-24 z-20 pb-12">
+      {/* Search Spotlight Section - positioned on the dividing line */}
+      <div className="relative -mt-12 z-20 pb-8">
         <div className="max-w-7xl mx-auto px-6">
-          <CareSearchSpotlight className="mb-8" />
+          <CareSearchSpotlight />
         </div>
       </div>
       

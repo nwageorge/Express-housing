@@ -181,9 +181,7 @@ const SearchResultsContainer = ({ searchResults, onHover, onSelect }) => {
 
 const CareSearchSpotlight = ({ className }) => {
   const navigate = useNavigate();
-  const [hovered, setHovered] = useState(false);
   const [hoveredSearchResult, setHoveredSearchResult] = useState(null);
-  const [hoveredShortcut, setHoveredShortcut] = useState(null);
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -198,29 +196,6 @@ const CareSearchSpotlight = ({ className }) => {
       navigate('/agencies');
     }
   };
-
-  const shortcuts = [
-    {
-      label: 'Elderly Care',
-      icon: <Heart />,
-      specialty: 'Elderly Care'
-    },
-    {
-      label: 'Pediatric',
-      icon: <Users />,
-      specialty: 'Pediatric Care'
-    },
-    {
-      label: '24-Hour Care',
-      icon: <Clock />,
-      specialty: '24-Hour Care'
-    },
-    {
-      label: 'Skilled Nursing',
-      icon: <Shield />,
-      specialty: 'Skilled Nursing'
-    }
-  ];
 
   // Location-based search results
   const locationResults = [
@@ -263,101 +238,38 @@ const CareSearchSpotlight = ({ className }) => {
     navigate(`/agencies?city=${encodeURIComponent(result.city)}`);
   };
 
-  const handleShortcutClick = (shortcut) => {
-    navigate(`/agencies?specialty=${encodeURIComponent(shortcut.specialty)}`);
-  };
-
   return (
-    <div className={cn("w-full max-w-3xl mx-auto", className)}>
-      <SVGFilter />
-
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => {
-          setHovered(false);
-          setHoveredShortcut(null);
-        }}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        className={cn(
-          'w-full flex items-center justify-end gap-4 z-20 group',
-          '[&>div]:bg-white/90 [&>div]:backdrop-blur-xl [&>div]:text-stone-800 [&>div]:rounded-full',
-          '[&_svg]:size-7 [&_svg]:stroke-[1.4]'
-        )}
+    <div className={cn("w-full max-w-2xl mx-auto", className)}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        style={{ borderRadius: '24px' }}
+        className="w-full flex flex-col items-center justify-start z-10 relative shadow-2xl overflow-hidden border border-stone-200 bg-white/95 backdrop-blur-xl"
       >
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            layoutId="search-input-container"
-            transition={{
-              layout: {
-                duration: 0.5,
-                type: 'spring',
-                bounce: 0.2
-              }
-            }}
-            style={{
-              borderRadius: '30px'
-            }}
-            className="h-full w-full flex flex-col items-center justify-start z-10 relative shadow-xl overflow-hidden border border-stone-200"
-          >
-            <SpotlightInput
-              placeholder={
-                hoveredShortcut !== null
-                  ? shortcuts[hoveredShortcut].label
-                  : hoveredSearchResult !== null
-                  ? filteredResults[hoveredSearchResult]?.label || 'Search'
-                  : 'Search by city or zip code...'
-              }
-              placeholderClassName={
-                hoveredSearchResult !== null ? 'text-stone-800 bg-white' : 'text-stone-400'
-              }
-              hidePlaceholder={!(hoveredSearchResult !== null || !searchValue)}
-              value={searchValue}
-              onChange={handleSearchValueChange}
-              onSubmit={handleSearch}
-            />
+        <SpotlightInput
+          placeholder={
+            hoveredSearchResult !== null
+              ? filteredResults[hoveredSearchResult]?.label || 'Search by city or zip code...'
+              : 'Search by city or zip code...'
+          }
+          placeholderClassName={
+            hoveredSearchResult !== null ? 'text-stone-800' : 'text-stone-400'
+          }
+          hidePlaceholder={searchValue.length > 0}
+          value={searchValue}
+          onChange={handleSearchValueChange}
+          onSubmit={handleSearch}
+        />
 
-            {(searchValue || isFocused || hovered) && filteredResults.length > 0 && (
-              <SearchResultsContainer
-                searchResults={filteredResults}
-                onHover={setHoveredSearchResult}
-                onSelect={handleSelectResult}
-              />
-            )}
-          </motion.div>
-          
-          {hovered &&
-            !searchValue &&
-            shortcuts.map((shortcut, index) => (
-              <motion.div
-                key={`shortcut-${index}`}
-                onMouseEnter={() => setHoveredShortcut(index)}
-                layout
-                initial={{ scale: 0.7, x: -1 * (64 * (index + 1)) }}
-                animate={{ scale: 1, x: 0 }}
-                exit={{
-                  scale: 0.7,
-                  x:
-                    1 *
-                    (16 * (shortcuts.length - index - 1) + 64 * (shortcuts.length - index - 1))
-                }}
-                transition={{
-                  duration: 0.8,
-                  type: 'spring',
-                  bounce: 0.2,
-                  delay: index * 0.05
-                }}
-                className="rounded-full cursor-pointer"
-              >
-                <ShortcutButton 
-                  icon={shortcut.icon} 
-                  label={shortcut.label}
-                  onClick={() => handleShortcutClick(shortcut)}
-                />
-              </motion.div>
-            ))}
-        </AnimatePresence>
-      </div>
+        {(searchValue || isFocused) && filteredResults.length > 0 && (
+          <SearchResultsContainer
+            searchResults={filteredResults}
+            onHover={setHoveredSearchResult}
+            onSelect={handleSelectResult}
+          />
+        )}
+      </motion.div>
     </div>
   );
 };
