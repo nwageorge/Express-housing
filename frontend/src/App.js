@@ -531,6 +531,13 @@ const HomePage = () => {
       {/* New Hero Section with integrated header */}
       <NewHeroSection />
       
+      {/* Search Spotlight Section */}
+      <div className="relative -mt-24 z-20 pb-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <CareSearchSpotlight className="mb-8" />
+        </div>
+      </div>
+      
       <div className="max-w-7xl mx-auto px-6">
         {loading ? (
           <div className="py-20 text-center">
