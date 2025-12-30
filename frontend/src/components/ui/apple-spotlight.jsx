@@ -191,10 +191,20 @@ const CareSearchSpotlight = ({ className }) => {
 
   const handleSelectResult = (result) => {
     navigate(`/agencies?city=${encodeURIComponent(result.city)}`);
+    setIsOpen(false);
   };
 
   return (
-    <div className={cn("w-full max-w-2xl mx-auto", className)}>
+    <div 
+      className={cn("w-full max-w-2xl mx-auto", className)}
+      onFocus={() => setIsOpen(true)}
+      onBlur={(e) => {
+        // Don't close if clicking inside the component
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+          setTimeout(() => setIsOpen(false), 200);
+        }
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -217,7 +227,8 @@ const CareSearchSpotlight = ({ className }) => {
           onSubmit={handleSearch}
         />
 
-        {(searchValue || isFocused) && filteredResults.length > 0 && (
+        <AnimatePresence>
+          {isOpen && filteredResults.length > 0 && (
           <SearchResultsContainer
             searchResults={filteredResults}
             onHover={setHoveredSearchResult}
