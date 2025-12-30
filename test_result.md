@@ -292,6 +292,18 @@ test_plan:
         agent: "testing"
         comment: "COMPREHENSIVE AIRBNB-STYLE UI TESTING COMPLETED: ✅ Desktop (1920px): Agency cards are 280px width (within 260-280px range) with square aspect ratio images. Typography confirmed - agency names 15px, city headers 24px, price text 15px with '/hour' in lighter color. 'Show all' links visible next to city headers. Deals of the Day section has 6 perfect square images (260x260px). ✅ Mobile (375px): Hamburger menu icon functional, opens with all expected items (Find Care, How It Works, Agencies, Contact, Sign In, Get Started). Navigation works - 'Find Care' goes to /agencies successfully. Agency cards display properly in horizontally scrollable container. Deals section visible with square images. ✅ Typography: Airbnb-style smaller, cleaner fonts implemented correctly. ✅ Compact rewards carousel with square images working. Minor: Carousel navigation buttons not found but scrolling works."
 
+  - task: "Mobile Hero Section Improvements"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/ui/hero-section-3.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "MOBILE HERO SECTION TESTING COMPLETED: ❌ CRITICAL ISSUE: Search bar NOT visible without scrolling on mobile (375px) - violates requirement that it should be visible WITHOUT scrolling. ✅ Subtitle has dark background (bg-black/40 backdrop-blur-sm) for readability. ✅ Hero text 'Transparent Care For Your Loved Ones' positioned at bottom (y=510px, not covering person's face). ✅ Philadelphia, PA section beginning visible (y=768px). ✅ Desktop (1440px) layout working correctly - hero text on left side, navigation at top. MAIN ISSUE: Mobile search bar requires scrolling to be visible, failing the primary requirement."
+
 agent_communication:
   - agent: "main"
     message: "Implemented Booking.com-style agency profiles. Test: 1) Agency list page shows caregiving photos and $15-$18/hr pricing, 2) Click agency to see detail page with 5-photo grid gallery, 3) Click 'View all photos' to open fullscreen gallery with navigation, 4) Scroll down to see Care Services, Certifications, and Family Reviews with star ratings and relationship info, 5) Booking sidebar with 'Book Free Consultation' button."
