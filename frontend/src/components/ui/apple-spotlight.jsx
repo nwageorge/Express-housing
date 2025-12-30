@@ -136,10 +136,11 @@ const CareSearchSpotlight = ({ className }) => {
   const navigate = useNavigate();
   const [hoveredSearchResult, setHoveredSearchResult] = useState(null);
   const [searchValue, setSearchValue] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSearchValueChange = (value) => {
     setSearchValue(value);
+    setIsOpen(true);
   };
 
   const handleSearch = () => {
@@ -148,6 +149,7 @@ const CareSearchSpotlight = ({ className }) => {
     } else {
       navigate('/agencies');
     }
+    setIsOpen(false);
   };
 
   // Location-based search results
