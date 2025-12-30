@@ -10,6 +10,7 @@ import { HeroSection as NewHeroSection } from "@/components/ui/hero-section";
 import { TestimonialsSplit } from "@/components/ui/split-testimonial";
 import { CareSearchSpotlight } from "@/components/ui/apple-spotlight";
 import { AuthComponent } from "@/components/ui/sign-up";
+import { OfferCarousel } from "@/components/ui/offer-carousel";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
