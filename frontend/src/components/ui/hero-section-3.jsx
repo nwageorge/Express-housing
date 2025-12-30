@@ -157,14 +157,14 @@ export default function HeroSection3({
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
         {/* Desktop: centered vertically, Mobile: positioned at bottom */}
-        <div className="container mx-auto min-h-[85vh] sm:min-h-screen flex items-end sm:items-center pb-16 sm:pb-0 px-4 sm:px-6 md:px-8">
+        <div className="container mx-auto min-h-[70vh] sm:min-h-screen flex items-end sm:items-center pb-8 sm:pb-0 px-4 sm:px-6 md:px-8">
           <div className="w-full sm:w-full md:w-1/2 lg:w-2/5">
             {/* Title */}
-            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-3 sm:mb-6 drop-shadow-lg">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-2 sm:mb-6 drop-shadow-lg">
               Transparent Care For Your Loved Ones
             </h1>
             {/* Subtitle - More visible on mobile with background */}
-            <div className="bg-black/40 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none rounded-xl p-3 sm:p-0 mb-2 sm:mb-0">
+            <div className="bg-black/50 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none rounded-xl p-3 sm:p-0">
               <p className="text-sm sm:text-base md:text-lg text-white leading-relaxed">
                 Connect with verified, professional in-home care agencies using Adltrack to support elderly care, pediatric services, and specialized health needs.
               </p>
