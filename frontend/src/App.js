@@ -581,62 +581,60 @@ const HomePage = () => {
           })
         )}
 
-        {/* Rewards Section - Bilt-style rewards for care payments */}
-        <section className="py-12">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-stone-800 mb-2">Deals of the Day</h2>
-              <p className="text-stone-500">Earn cashback, points & build credit when you pay for care on time</p>
-            </div>
+        {/* Rewards Section - Airbnb style */}
+        <section className="py-6 sm:py-8">
+          <div className="flex items-center justify-between mb-4 sm:mb-5">
+            <h2 className="text-[22px] sm:text-2xl font-semibold text-stone-900">Deals of the Day</h2>
           </div>
+          <p className="text-sm text-stone-500 mb-4">Earn cashback, points & build credit when you pay for care on time</p>
           <OfferCarousel offers={rewardsOffers} />
         </section>
       </div>
 
       <TestimonialsSection />
 
-      {/* Footer */}
-      <footer className="bg-stone-800 text-stone-400 py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-white" />
+      {/* Footer - Airbnb style */}
+      <footer className="bg-stone-100 border-t border-stone-200 py-10 sm:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
+            <div className="col-span-2 md:col-span-1">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 bg-stone-700 rounded-lg flex items-center justify-center">
+                  <Activity className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">Adltrack</span>
+                <span className="text-base font-semibold text-stone-900">Adltrack</span>
               </div>
-              <p className="text-sm leading-relaxed">
+              <p className="text-sm text-stone-500 leading-relaxed">
                 Connecting families with compassionate, professional in-home caregivers.
               </p>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Services</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link to="/agencies" className="hover:text-white transition">Elderly Care</Link></li>
-                <li><Link to="/agencies" className="hover:text-white transition">Pediatric Care</Link></li>
-                <li><Link to="/agencies" className="hover:text-white transition">Post-Surgery Care</Link></li>
-                <li><Link to="/agencies" className="hover:text-white transition">24-Hour Care</Link></li>
+              <h4 className="text-sm font-semibold text-stone-900 mb-3">Services</h4>
+              <ul className="space-y-2">
+                <li><Link to="/agencies" className="text-sm text-stone-500 hover:text-stone-900 hover:underline transition">Elderly Care</Link></li>
+                <li><Link to="/agencies" className="text-sm text-stone-500 hover:text-stone-900 hover:underline transition">Pediatric Care</Link></li>
+                <li><Link to="/agencies" className="text-sm text-stone-500 hover:text-stone-900 hover:underline transition">Post-Surgery Care</Link></li>
+                <li><Link to="/agencies" className="text-sm text-stone-500 hover:text-stone-900 hover:underline transition">24-Hour Care</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link to="/faq" className="hover:text-white transition">FAQ</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition">Contact Us</Link></li>
-                <li><Link to="/agencies" className="hover:text-white transition">Find Care</Link></li>
+              <h4 className="text-sm font-semibold text-stone-900 mb-3">Company</h4>
+              <ul className="space-y-2">
+                <li><Link to="/faq" className="text-sm text-stone-500 hover:text-stone-900 hover:underline transition">How It Works</Link></li>
+                <li><Link to="/contact" className="text-sm text-stone-500 hover:text-stone-900 hover:underline transition">Contact Us</Link></li>
+                <li><Link to="/agencies" className="text-sm text-stone-500 hover:text-stone-900 hover:underline transition">Find Care</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Contact</h4>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> 1-800-ADL-TRACK</li>
-                <li className="flex items-center gap-2"><Mail className="w-4 h-4" /> support@adltrack.com</li>
+              <h4 className="text-sm font-semibold text-stone-900 mb-3">Contact</h4>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-sm text-stone-500"><Phone className="w-4 h-4" /> 1-800-ADL-TRACK</li>
+                <li className="flex items-center gap-2 text-sm text-stone-500"><Mail className="w-4 h-4" /> support@adltrack.com</li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-stone-700 pt-8 text-center text-sm">
-            <p>© 2025 Adltrack. All rights reserved.</p>
+          <div className="border-t border-stone-200 pt-6 text-center">
+            <p className="text-xs text-stone-500">© 2025 Adltrack. All rights reserved.</p>
           </div>
         </div>
       </footer>
