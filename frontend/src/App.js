@@ -97,7 +97,7 @@ const PageBackground = ({ children, className = "" }) => {
   );
 };
 
-// Navigation Component - Warm Nature Theme
+// Navigation Component - Airbnb Style
 const Navigation = () => {
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -114,40 +114,40 @@ const Navigation = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-stone-50/95 backdrop-blur-md shadow-lg" : "bg-transparent"
+        isScrolled ? "bg-white shadow-sm border-b border-gray-100" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-stone-700 rounded-xl flex items-center justify-center">
-              <Activity className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-stone-700 rounded-xl flex items-center justify-center">
+              <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-stone-800">Adltrack</span>
+            <span className="text-lg sm:text-xl font-semibold text-stone-800">Adltrack</span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link to="/agencies" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-agencies">
+          <div className="hidden md:flex items-center gap-6">
+            <Link to="/agencies" className="text-sm text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-agencies">
               Find Care
             </Link>
-            <Link to="/faq" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-faq">
-              FAQ
+            <Link to="/faq" className="text-sm text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-faq">
+              How It Works
             </Link>
-            <Link to="/contact" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-contact">
+            <Link to="/contact" className="text-sm text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-contact">
               Contact
             </Link>
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             {user ? (
               <>
-                <Link to="/dashboard" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-dashboard">
+                <Link to="/dashboard" className="text-sm text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-dashboard">
                   Dashboard
                 </Link>
                 <button
                   onClick={logout}
-                  className="flex items-center gap-2 px-4 py-2 text-stone-600 hover:text-red-600 transition"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-stone-600 hover:text-red-600 transition"
                   data-testid="logout-btn"
                 >
                   <LogOut className="w-4 h-4" />
@@ -156,12 +156,12 @@ const Navigation = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-login">
+                <Link to="/login" className="text-sm text-stone-600 hover:text-stone-900 transition font-medium" data-testid="nav-login">
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-6 py-2.5 bg-stone-800 text-white rounded-full font-medium hover:bg-stone-700 transition-all"
+                  className="px-4 py-2 bg-stone-800 text-white rounded-lg text-sm font-medium hover:bg-stone-700 transition-all"
                   data-testid="nav-signup"
                 >
                   Get Started
@@ -171,33 +171,34 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <button className="md:hidden p-2 hover:bg-stone-100 rounded-full transition" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X className="w-5 h-5 text-stone-700" /> : <Menu className="w-5 h-5 text-stone-700" />}
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Full Screen Overlay */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-4 pb-4 border-t border-stone-200"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="md:hidden fixed inset-x-0 top-[56px] bg-white border-t border-gray-100 shadow-lg z-50"
             >
-              <div className="flex flex-col gap-4 pt-4">
-                <Link to="/agencies" className="text-stone-600 hover:text-stone-900 transition">Find Care</Link>
-                <Link to="/faq" className="text-stone-600 hover:text-stone-900 transition">FAQ</Link>
-                <Link to="/contact" className="text-stone-600 hover:text-stone-900 transition">Contact</Link>
+              <div className="flex flex-col py-2">
+                <Link to="/agencies" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-base text-stone-700 hover:bg-stone-50 transition font-medium">Find Care</Link>
+                <Link to="/faq" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-base text-stone-700 hover:bg-stone-50 transition font-medium">How It Works</Link>
+                <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-base text-stone-700 hover:bg-stone-50 transition font-medium">Contact</Link>
+                <div className="border-t border-gray-100 my-2"></div>
                 {user ? (
                   <>
-                    <Link to="/dashboard" className="text-stone-600 hover:text-stone-900 transition">Dashboard</Link>
-                    <button onClick={logout} className="text-left text-red-600">Logout</button>
+                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-base text-stone-700 hover:bg-stone-50 transition font-medium">Dashboard</Link>
+                    <button onClick={() => { logout(); setIsMenuOpen(false); }} className="px-6 py-3 text-base text-left text-red-600 hover:bg-red-50 transition font-medium">Logout</button>
                   </>
                 ) : (
                   <>
-                    <Link to="/login" className="text-stone-600 hover:text-stone-900 transition">Sign In</Link>
-                    <Link to="/signup" className="text-stone-800 font-medium">Get Started</Link>
+                    <Link to="/login" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-base text-stone-700 hover:bg-stone-50 transition font-medium">Sign In</Link>
+                    <Link to="/signup" onClick={() => setIsMenuOpen(false)} className="mx-4 my-2 px-4 py-2.5 bg-stone-800 text-white rounded-lg text-base text-center font-medium hover:bg-stone-700 transition">Get Started</Link>
                   </>
                 )}
               </div>
