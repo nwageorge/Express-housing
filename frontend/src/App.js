@@ -611,7 +611,6 @@ const HomePage = () => {
               <AgencyCarousel
                 key={city}
                 title={city}
-                subtitle={`${cityAgencies.length} trusted care agencies`}
                 agencies={cityAgencies}
                 viewAllLink={`/agencies?city=${encodeURIComponent(city)}`}
               />
