@@ -38,7 +38,7 @@ export default function HeroSection3({
 
   return (
     <div className="min-h-screen w-full antialiased text-white relative">
-      <header className="absolute inset-x-0 top-0 p-4 sm:p-6 md:p-8 z-10">
+      <header className="absolute inset-x-0 top-0 p-4 sm:p-6 md:p-8 z-20">
         <div className="container mx-auto flex justify-between items-center">
           <Link to="/" className="text-xl sm:text-2xl md:text-3xl font-semibold drop-shadow-lg">{logoText}</Link>
           
