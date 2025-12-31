@@ -419,7 +419,7 @@ async def seed_data():
             "price_per_hour": 16,
             "rating": 4.9,
             "review_count": 124,
-            "image_url": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&h=450&fit=crop&q=80",
+            "image_url": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -447,7 +447,7 @@ async def seed_data():
             "price_per_hour": 18,
             "rating": 4.8,
             "review_count": 89,
-            "image_url": "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -474,7 +474,7 @@ async def seed_data():
             "price_per_hour": 15,
             "rating": 4.7,
             "review_count": 156,
-            "image_url": "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1447452001602-7090c7ab2db3?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -501,7 +501,7 @@ async def seed_data():
             "price_per_hour": 17,
             "rating": 4.6,
             "review_count": 67,
-            "image_url": "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -528,7 +528,7 @@ async def seed_data():
             "price_per_hour": 15,
             "rating": 4.8,
             "review_count": 98,
-            "image_url": "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1581579438747-104c53d7fbc4?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -555,7 +555,7 @@ async def seed_data():
             "price_per_hour": 18,
             "rating": 4.9,
             "review_count": 112,
-            "image_url": "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -582,7 +582,7 @@ async def seed_data():
             "price_per_hour": 17,
             "rating": 4.5,
             "review_count": 45,
-            "image_url": "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1543333995-a78aea2eee50?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -609,7 +609,7 @@ async def seed_data():
             "price_per_hour": 18,
             "rating": 4.9,
             "review_count": 178,
-            "image_url": "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -636,7 +636,7 @@ async def seed_data():
             "price_per_hour": 16,
             "rating": 4.7,
             "review_count": 134,
-            "image_url": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&h=450&fit=crop",
+            "image_url": "https://images.unsplash.com/photo-1509909756405-be0199881695?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -662,7 +662,7 @@ async def seed_data():
             "price_per_hour": 18,
             "rating": 4.8,
             "review_count": 67,
-            "image_url": "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -688,7 +688,7 @@ async def seed_data():
             "price_per_hour": 15,
             "rating": 4.9,
             "review_count": 145,
-            "image_url": "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -714,7 +714,7 @@ async def seed_data():
             "price_per_hour": 18,
             "rating": 4.8,
             "review_count": 89,
-            "image_url": "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -740,7 +740,7 @@ async def seed_data():
             "price_per_hour": 16,
             "rating": 4.6,
             "review_count": 56,
-            "image_url": "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1517732306149-e8f829eb588a?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -767,7 +767,7 @@ async def seed_data():
             "price_per_hour": 15,
             "rating": 4.8,
             "review_count": 201,
-            "image_url": "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -794,7 +794,7 @@ async def seed_data():
             "price_per_hour": 16,
             "rating": 4.7,
             "review_count": 145,
-            "image_url": "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1527613426441-4da17471b66d?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -820,7 +820,7 @@ async def seed_data():
             "price_per_hour": 17,
             "rating": 4.9,
             "review_count": 189,
-            "image_url": "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1551190822-a9333d879b1f?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -846,7 +846,7 @@ async def seed_data():
             "price_per_hour": 15,
             "rating": 4.6,
             "review_count": 112,
-            "image_url": "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -872,7 +872,7 @@ async def seed_data():
             "price_per_hour": 15,
             "rating": 4.7,
             "review_count": 78,
-            "image_url": "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600",
+            "image_url": "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -899,7 +899,7 @@ async def seed_data():
             "price_per_hour": 15,
             "rating": 4.5,
             "review_count": 167,
-            "image_url": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&h=450&fit=crop&q=80",
+            "image_url": "https://images.unsplash.com/photo-1504439468489-c8920d796a29?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
