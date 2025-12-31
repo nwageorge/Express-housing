@@ -26,6 +26,12 @@ const CloseIcon = () => (
 // Hero carousel slides - micro-video style with text overlays
 const heroSlides = [
   {
+    id: 0,
+    image: "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    title: "Proof of Care, Not Promises.",
+    subtitle: "Transparent care for your loved ones",
+  },
+  {
     id: 1,
     image: "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=1400&h=900&fit=crop&q=80",
     title: "See Care As It Happens.",
