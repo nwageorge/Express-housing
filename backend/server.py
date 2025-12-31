@@ -528,7 +528,7 @@ async def seed_data():
             "price_per_hour": 15,
             "rating": 4.8,
             "review_count": 98,
-            "image_url": "https://images.unsplash.com/photo-1581579438747-104c53d7fbc4?w=600&h=450&fit=crop&q=80",
+            "image_url": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&h=450&fit=crop&q=80",
             "gallery_images": [
                 "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
                 "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
