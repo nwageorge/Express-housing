@@ -37,7 +37,7 @@ export default function HeroSection3({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="h-[63vh] sm:h-[50vh] md:h-[60vh] w-full antialiased text-white relative">
+    <div className="h-[68vh] sm:h-[50vh] md:h-[60vh] w-full antialiased text-white relative">
       <header className="absolute inset-x-0 top-0 p-4 sm:p-6 md:p-8 z-20">
         <div className="container mx-auto flex justify-between items-center">
           <Link to="/" className="text-xl sm:text-2xl md:text-3xl font-semibold drop-shadow-lg">{logoText}</Link>
