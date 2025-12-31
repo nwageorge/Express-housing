@@ -161,10 +161,10 @@ export default function HeroSection3({
         
         <div className="container mx-auto h-screen flex items-center px-4 sm:px-6 md:px-8 relative z-10">
           <div className="w-full md:w-1/2 lg:w-2/5 mt-[30vh] sm:mt-0">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 drop-shadow-lg">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 text-white/90 drop-shadow-lg">
               Transparent Care For Your Loved Ones
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-lg leading-relaxed drop-shadow-md">
+            <p className="text-sm sm:text-base md:text-lg text-white max-w-lg leading-relaxed drop-shadow-md font-medium">
               Connect with verified, professional in-home care agencies using Adltrack to support elderly care, pediatric services, and specialized health needs.
             </p>
           </div>
