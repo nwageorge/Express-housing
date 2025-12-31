@@ -153,14 +153,14 @@ export default function HeroSection3({
       </header>
 
       <main
-        className="w-full min-h-screen bg-cover bg-center bg-no-repeat relative"
+        className="w-full h-full bg-cover bg-center bg-no-repeat relative"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
         {/* Gradient overlay to blend with background */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/90 pointer-events-none" />
         
-        <div className="container mx-auto h-screen flex items-center px-4 sm:px-6 md:px-8 relative z-10">
-          <div className="w-full md:w-1/2 lg:w-2/5 mt-[30vh] sm:mt-0">
+        <div className="container mx-auto h-full flex items-center px-4 sm:px-6 md:px-8 relative z-10">
+          <div className="w-full md:w-1/2 lg:w-2/5 mt-[10vh] sm:mt-[15vh] md:mt-0">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 text-white drop-shadow-lg">
               Transparent Care For Your Loved Ones
             </h1>
