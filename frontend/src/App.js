@@ -84,11 +84,11 @@ const WishlistProvider = ({ children }) => {
 const PageBackground = ({ children, className = "" }) => {
   return (
     <div className={`min-h-screen w-full relative ${className}`}>
-      {/* Radial Gradient Background - Warm Stone/Nature Theme */}
+      {/* Airbnb-style clean bright white background */}
       <div
         className="fixed inset-0 z-0"
         style={{
-          background: "radial-gradient(125% 125% at 50% 10%, #faf8f5 40%, #a8998a 100%)",
+          background: "#FFFFFF",
         }}
       />
       {/* Content */}
