@@ -164,7 +164,7 @@ export default function HeroSection3({
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-4 sm:mb-6 text-white drop-shadow-lg">
               Transparent Care For Your Loved Ones
             </h1>
-            <p className="text-sm sm:text-base md:text-lg max-w-lg leading-relaxed drop-shadow-md font-medium" style={{ color: 'rgb(180, 210, 220)' }}>
+            <p className="text-sm sm:text-base md:text-lg max-w-lg leading-relaxed font-medium" style={{ color: 'rgb(144, 190, 180)', textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>
               Connect with verified, professional in-home care agencies using Adltrack to support elderly care, pediatric services, and specialized health needs.
             </p>
           </div>
