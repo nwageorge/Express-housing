@@ -613,7 +613,7 @@ const HomePage = () => {
       <TestimonialsSection />
 
       {/* Footer - Airbnb style */}
-      <footer className="bg-stone-100 border-t border-stone-200 py-10 sm:py-12">
+      <footer className="bg-gray-50 border-t border-gray-100 py-10 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
             <div className="col-span-2 md:col-span-1">
