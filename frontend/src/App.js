@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Heart, Star, MapPin, Clock, Shield, Phone, Mail, ChevronLeft, ChevronRight, Menu, X, Search, Calendar, User, LogOut, Users, CheckCircle, Award, Sparkles, Building2, Image, MessageSquare, BadgeCheck, Camera, Activity, Download } from "lucide-react";
 import React from "react";
-import { HeroSection as NewHeroSection } from "@/components/ui/hero-section";
+import CinematicScrol from "@/components/ui/scroll-triggered-video-hero";
 import { TestimonialsSplit } from "@/components/ui/split-testimonial";
 import { CareSearchSpotlight } from "@/components/ui/apple-spotlight";
 import { AuthComponent } from "@/components/ui/sign-up";
@@ -569,11 +569,11 @@ const HomePage = () => {
 
   return (
     <PageBackground>
-      {/* New Hero Section with integrated header */}
-      <NewHeroSection />
+      {/* Scroll-triggered cinematic video hero */}
+      <CinematicScrol />
       
-      {/* Search Spotlight Section - closer to hands on mobile */}
-      <div className="relative -mt-28 sm:-mt-20 z-20 pb-12 sm:pb-8">
+      {/* Search Spotlight Section */}
+      <div className="relative z-20 pt-12 pb-12 sm:pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <CareSearchSpotlight />
         </div>

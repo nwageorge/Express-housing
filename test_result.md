@@ -374,3 +374,15 @@ agent_communication:
       - working: true
         agent: "main"
         comment: "Changed hero height from h-[65vh]/50vh/60vh to h-screen (100vh on all breakpoints). Repositioned slide indicators (bottom-40 sm:bottom-32) and progress bar (bottom-36 sm:bottom-28) so they are not hidden behind the search spotlight that overlaps the hero bottom. Verified via screenshots: hero = exactly viewport height, search bar visible at bottom of first screen, Philadelphia PA section starts just below the fold (y=1114 vs 1080 viewport) and appears on scroll."
+
+  - task: "Scroll-triggered cinematic video hero (replaces homepage hero)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ui/scroll-triggered-video-hero.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Integrated user-provided CinematicScrol component (exact replica, TS types stripped for JS project) at /components/ui/scroll-triggered-video-hero.jsx. Replaced <NewHeroSection /> on homepage with <CinematicScrol />. Search spotlight negative margin (-mt-28) changed to pt-12 since overlap was designed for old hero. Verified: 3 chapter scroll sections (300vh sticky video), text reveals, fixed bottom chapter nav pill with progress ring, rest of homepage intact. NOTE: demo video URLs (ik.imagekit.io/kqmrslzuq) return HTTP 429 rate-limit from this server - videos may show black background if host keeps throttling; component code is exact per user request."
