@@ -122,7 +122,7 @@ export default function HeroSection3({
 
   return (
     <div 
-      className="h-[65vh] sm:h-[50vh] md:h-[60vh] w-full antialiased text-white relative group"
+      className="h-screen w-full antialiased text-white relative group"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
@@ -313,7 +313,7 @@ export default function HeroSection3({
         </button>
 
         {/* Slide indicators */}
-        <div className="absolute bottom-16 sm:bottom-8 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+        <div className="absolute bottom-40 sm:bottom-32 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
           {heroSlides.map((_, index) => (
             <button
               key={index}
@@ -328,7 +328,7 @@ export default function HeroSection3({
         </div>
 
         {/* Progress bar */}
-        <div className="absolute bottom-12 sm:bottom-4 left-4 right-4 sm:left-8 sm:right-8 h-0.5 bg-white/20 rounded-full z-20 overflow-hidden">
+        <div className="absolute bottom-36 sm:bottom-28 left-4 right-4 sm:left-8 sm:right-8 h-0.5 bg-white/20 rounded-full z-20 overflow-hidden">
           <motion.div
             key={currentSlide}
             initial={{ width: "0%" }}

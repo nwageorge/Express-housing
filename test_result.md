@@ -362,3 +362,15 @@ agent_communication:
       - working: true
         agent: "testing"
         comment: "COMPREHENSIVE AIRBNB-STYLE AGENCY CARDS TESTING COMPLETED: ✅ Desktop View (1920px): Found 37 agency cards with perfect 4:3 aspect ratio (landscape images, not square), 34 'Guest favorite' badges visible on verified agencies (top-left with award icon), 36 heart icons in top-right corner for wishlist functionality, carousel dots at bottom of each image (5 dots per card), card info displays Name + Rating, Location, Specialty, Price/hour correctly, approximately 4 cards per row (within expected 5-6 range). ✅ Mobile View (375px): Cards maintain 4:3 aspect ratio, all elements visible (Guest favorite badges, hearts, dots), cards are horizontally scrollable, typography is readable and properly sized. ✅ Click Functionality: Card click navigation works perfectly - clicking card navigates to agency detail page (/agencies/[id]), heart icon toggles wishlist correctly (turns red when favorited: fill-red-500 text-red-500). All Airbnb-style agency card requirements fully implemented and working as specified in review request."
+
+  - task: "Full-screen hero with Philadelphia section below the fold"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ui/hero-section-3.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Changed hero height from h-[65vh]/50vh/60vh to h-screen (100vh on all breakpoints). Repositioned slide indicators (bottom-40 sm:bottom-32) and progress bar (bottom-36 sm:bottom-28) so they are not hidden behind the search spotlight that overlaps the hero bottom. Verified via screenshots: hero = exactly viewport height, search bar visible at bottom of first screen, Philadelphia PA section starts just below the fold (y=1114 vs 1080 viewport) and appears on scroll."

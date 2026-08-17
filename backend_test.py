@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 # Get backend URL from frontend env
-BACKEND_URL = "https://careconnect-253.preview.emergentagent.com/api"
+BACKEND_URL = "https://fullscreen-hero-2.preview.emergentagent.com/api"
 
 def test_client_signup():
     """Test 1: Client Signup Flow"""
