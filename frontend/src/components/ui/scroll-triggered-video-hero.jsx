@@ -10,7 +10,8 @@ const chapters = [
     id: '01',
     title: 'The Origin',
     subtitle: 'Where silence begins',
-    videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/1.mp4',
+    videoUrl: '/videos/care-1.mp4',
+    webmUrl: '/videos/care-1.webm',
     theme: 'dark',
     description: 'The moment where motion is born from stillness. Watch the first frame of a story that has not yet been written.',
   },
@@ -18,7 +19,8 @@ const chapters = [
     id: '02',
     title: 'Velocity',
     subtitle: 'Moving at lightspeed',
-    videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/2.mp4?updatedAt=1766414784088',
+    videoUrl: '/videos/care-2.mp4',
+    webmUrl: '/videos/care-2.webm',
     theme: 'dark',
     description: 'City lights blur into streaks of memory as the world accelerates around you. Every frame a new direction.',
   },
@@ -26,7 +28,8 @@ const chapters = [
     id: '03',
     title: 'Immersion',
     subtitle: 'Beneath the surface',
-    videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/3.mp4?updatedAt=1766415070663',
+    videoUrl: '/videos/care-3.mp4',
+    webmUrl: '/videos/care-3.webm',
     theme: 'light',
     description: 'You drift below the noise into a quiet, weightless space. Sound fades, colors thicken, and focus returns.',
   },
@@ -86,13 +89,15 @@ const VideoBackground = ({ currentChapterIndex }) => {
           className="absolute inset-0 h-full w-full"
         >
           <video
-            src={chapter.videoUrl}
             className="h-full w-full object-cover"
             autoPlay
             muted
             loop
             playsInline
-          />
+          >
+            <source src={chapter.videoUrl} type="video/mp4" />
+            <source src={chapter.webmUrl} type="video/webm" />
+          </video>
           <div className="absolute inset-0 bg-black/40" />
         </motion.div>
       ))}

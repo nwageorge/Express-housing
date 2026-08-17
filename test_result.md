@@ -386,3 +386,15 @@ agent_communication:
       - working: true
         agent: "main"
         comment: "Integrated user-provided CinematicScrol component (exact replica, TS types stripped for JS project) at /components/ui/scroll-triggered-video-hero.jsx. Replaced <NewHeroSection /> on homepage with <CinematicScrol />. Search spotlight negative margin (-mt-28) changed to pt-12 since overlap was designed for old hero. Verified: 3 chapter scroll sections (300vh sticky video), text reveals, fixed bottom chapter nav pill with progress ring, rest of homepage intact. NOTE: demo video URLs (ik.imagekit.io/kqmrslzuq) return HTTP 429 rate-limit from this server - videos may show black background if host keeps throttling; component code is exact per user request."
+
+  - task: "Reliable local care-themed hero videos (replace rate-limited demo clips)"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/ui/scroll-triggered-video-hero.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Replaced rate-limited ik.imagekit.io demo videos with 3 care-themed Mixkit clips downloaded locally to /app/frontend/public/videos/ (care-1/2/3 .mp4 + .webm). Video element now uses dual <source> tags (mp4 primary for real browsers, webm fallback). Verified in browser: all 3 videos readyState=4, autoplaying, 1280x720, chapter crossfades and nav pill working, homepage sections intact. Zero external video dependency - hero always plays."
