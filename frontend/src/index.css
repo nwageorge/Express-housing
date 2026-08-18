@@ -2,196 +2,135 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Kaigo-style font stack - Clean modern sans-serif */
-@import url('https://api.fontshare.com/v2/css?f[]=clash-grotesk@400,500,600,700&display=swap');
+/* Express Housing - Flatlogic ecommerce design DNA */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
 
-/* Airbnb-style clean bright white background */
 html {
-    background-color: #FFFFFF;
+    background-color: #ffffff;
+    scroll-behavior: smooth;
 }
 
 body {
     margin: 0;
-    font-family:
-        "Clash Grotesk", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue",
-        sans-serif;
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 16px;
-    line-height: 1.4;
-    color: rgb(34, 34, 34);
-    letter-spacing: -0.01em;
-    background-color: #FFFFFF;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #212529;
+    background-color: #ffffff;
 }
 
-/* Kaigo typography scale */
-h1 {
-    font-family: "Clash Grotesk", sans-serif;
-    font-size: 32px;
+:root {
+    --eh-primary: #bd744c;
+    --eh-primary-dark: #a5633f;
+    --eh-muted: #6c757d;
+}
+
+.eh-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* Flatlogic-style primary button */
+.btn-eh {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--eh-primary);
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    padding: 0.85rem 1.75rem;
+    border-radius: 2px;
+    transition: background 0.2s ease;
+    border: 1px solid var(--eh-primary);
+    cursor: pointer;
+}
+.btn-eh:hover { background: var(--eh-primary-dark); border-color: var(--eh-primary-dark); }
+.btn-eh:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-eh-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: #212529;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    padding: 0.85rem 1.75rem;
+    border-radius: 2px;
+    border: 1px solid #212529;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.btn-eh-outline:hover { background: #212529; color: #fff; }
+.btn-eh-outline.on-dark { color: #fff; border-color: #fff; }
+.btn-eh-outline.on-dark:hover { background: #fff; color: #212529; }
+
+/* Section headers - flatlogic centered style */
+.section-title {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.75rem;
+    color: #212529;
+    margin-bottom: 0.75rem;
+}
+.section-sub {
+    text-align: center;
+    color: var(--eh-muted);
+    max-width: 560px;
+    margin: 0 auto 2.5rem;
+    font-size: 0.95rem;
     font-weight: 400;
-    line-height: 100%;
-    letter-spacing: -0.02em;
-    color: rgb(31, 36, 38);
+}
+.eyebrow {
+    text-transform: uppercase;
+    color: var(--eh-primary);
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    font-size: 0.72rem;
 }
 
-h2 {
-    font-family: "Clash Grotesk", sans-serif;
-    font-size: 28px;
-    font-weight: 400;
-    line-height: 100%;
-    color: rgb(31, 36, 38);
+/* Form inputs */
+.input-eh {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-family: "Montserrat", sans-serif;
+    color: #212529;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+.input-eh:focus { border-color: var(--eh-primary); }
+.label-eh {
+    display: block;
+    text-transform: uppercase;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #212529;
+    margin-bottom: 0.4rem;
 }
 
-h3 {
-    font-family: "Clash Grotesk", sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 120%;
-    color: rgb(31, 36, 38);
+/* Carousel fade */
+@keyframes ehFadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+.eh-slide-content { animation: ehFadeIn 0.7s ease both; }
 
-p {
-    font-family: "Clash Grotesk", sans-serif;
-    font-weight: 400;
-    line-height: 140%;
-    color: rgb(95, 101, 105);
-}
-
-/* Muted/secondary text color */
-.text-muted {
-    color: rgb(95, 101, 105);
-}
-
-/* Primary dark text */
-.text-primary-dark {
-    color: rgb(31, 36, 38);
-}
-
-@media (min-width: 640px) {
-    h1 {
-        font-size: 48px;
-    }
-    h2 {
-        font-size: 32px;
-    }
-}
-
-@media (min-width: 1024px) {
-    h1 {
-        font-size: 60px;
-    }
-    h2 {
-        font-size: 28px;
-    }
-}
-
-/* Hide scrollbar for carousel */
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-code {
-    font-family:
-        source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
-@layer base {
-    :root {
-        --background: 30 20% 98%;
-        --foreground: 30 10% 10%;
-        --card: 30 15% 99%;
-        --card-foreground: 30 10% 10%;
-        --popover: 30 15% 99%;
-        --popover-foreground: 30 10% 10%;
-        --primary: 30 30% 25%;
-        --primary-foreground: 30 10% 98%;
-        --secondary: 30 15% 93%;
-        --secondary-foreground: 30 30% 25%;
-        --muted: 30 15% 93%;
-        --muted-foreground: 30 10% 45%;
-        --accent: 30 20% 90%;
-        --accent-foreground: 30 30% 20%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 30 15% 85%;
-        --input: 30 15% 88%;
-        --ring: 30 30% 30%;
-        --chart-1: 30 76% 50%;
-        --chart-2: 35 58% 45%;
-        --chart-3: 25 50% 35%;
-        --chart-4: 40 70% 55%;
-        --chart-5: 20 80% 60%;
-        --radius: 0.5rem;
-    }
-    .dark {
-        --background: 0 0% 3.9%;
-        --foreground: 0 0% 98%;
-        --card: 0 0% 3.9%;
-        --card-foreground: 0 0% 98%;
-        --popover: 0 0% 3.9%;
-        --popover-foreground: 0 0% 98%;
-        --primary: 0 0% 98%;
-        --primary-foreground: 0 0% 9%;
-        --secondary: 0 0% 14.9%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 0 0% 14.9%;
-        --muted-foreground: 0 0% 63.9%;
-        --accent: 0 0% 14.9%;
-        --accent-foreground: 0 0% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 0 0% 14.9%;
-        --input: 0 0% 14.9%;
-        --ring: 0 0% 83.1%;
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
-        --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
-    }
-}
-
-@layer base {
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
-}
-
-@layer base {
-    [data-debug-wrapper="true"] {
-        display: contents !important;
-    }
-
-    [data-debug-wrapper="true"] > * {
-        margin-left: inherit;
-        margin-right: inherit;
-        margin-top: inherit;
-        margin-bottom: inherit;
-        padding-left: inherit;
-        padding-right: inherit;
-        padding-top: inherit;
-        padding-bottom: inherit;
-        column-gap: inherit;
-        row-gap: inherit;
-        gap: inherit;
-        border-left-width: inherit;
-        border-right-width: inherit;
-        border-top-width: inherit;
-        border-bottom-width: inherit;
-        border-left-style: inherit;
-        border-right-style: inherit;
-        border-top-style: inherit;
-        border-bottom-style: inherit;
-        border-left-color: inherit;
-        border-right-color: inherit;
-        border-top-color: inherit;
-        border-bottom-color: inherit;
-    }
-}
+::-webkit-scrollbar { width: 10px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #cbd0d6; border-radius: 6px; }
+::-webkit-scrollbar-track { background: #f4f5f7; }

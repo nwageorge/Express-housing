@@ -193,7 +193,7 @@ backend:
 metadata:
   created_by: "main_agent"
   version: "2.0"
-  test_sequence: 2
+  test_sequence: 3
   run_ui: true
 
 test_plan:
@@ -398,3 +398,46 @@ agent_communication:
       - working: true
         agent: "main"
         comment: "Replaced rate-limited ik.imagekit.io demo videos with 3 care-themed Mixkit clips downloaded locally to /app/frontend/public/videos/ (care-1/2/3 .mp4 + .webm). Video element now uses dual <source> tags (mp4 primary for real browsers, webm fallback). Verified in browser: all 3 videos readyState=4, autoplaying, 1280x720, chapter crossfades and nav pill working, homepage sections intact. Zero external video dependency - hero always plays."
+
+# ============ EXPRESS HOUSING PIVOT (full app redesign) ============
+user_problem_statement: "Pivot app from AdlTrack (care marketplace) to EXPRESS HOUSING - a Hyatus-style flexible furnished apartment stays platform (Airbnb-like, corporate/medical/family housing) in Philadelphia only. Design based on flatlogic/ecommerce-frontend template (Montserrat, terracotta #bd744c, hero carousel, e-commerce product cards, sidebar filters). Request-to-Book flow (pending status)."
+
+backend:
+  - task: "Express Housing backend remodel (apartments, bookings, wishlist, auth kept)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Full rewrite: GET /api/apartments (filters: neighborhood, apt_type, guests, min_price, max_price, stay_path, search, featured, sort), GET /api/apartments/{id}, GET /api/neighborhoods (aggregation), POST /api/bookings (auth, request-to-book, validates dates/min_nights/max_guests, monthly pro-rate for 28+ nights), GET /api/bookings, GET/POST /api/wishlist + /api/wishlist/ids + /api/wishlist/{id} toggle, POST /api/contact, POST /api/seed (12 Philadelphia apartments), startup auto-seed. Auth endpoints unchanged (signup/login/me with bcrypt+JWT)."
+      - working: true
+        agent: "testing"
+        comment: "COMPREHENSIVE BACKEND TESTING COMPLETED - 8/9 TEST SUITES PASSED: ✅ Health Check: GET /api/ returns 'Express Housing - Flexible Furnished Stays API'. ✅ Apartments: GET /api/apartments returns 12 seeded Philadelphia apartments with all required fields (id, title, building_name, neighborhood, apt_type, bedrooms, bathrooms, max_guests, sqft, nightly_rate, monthly_rate, amenities, images, stay_paths, rating, is_featured, is_new, min_nights, reviews). ✅ Filters: All 8 filters working correctly - featured=true (5 results), apt_type=Studio (2 studios), neighborhood=Old City (2 results), guests=5 (apartments with max_guests>=5), min_price=150&max_price=250 (price range filtering), stay_path=medical (medical stay path filtering), search=rittenhouse (case-insensitive search), sort=price_asc (ascending price sort). ✅ Single Apartment: GET /api/apartments/{id} returns correct apartment for valid ID, 404 for invalid ID. ✅ Neighborhoods: GET /api/neighborhoods returns aggregated data with name, count, image, min_rate. ✅ Auth Flow: POST /api/auth/signup creates user, POST /api/auth/login returns JWT token, GET /api/auth/me returns user data with Bearer token. ✅ Bookings: POST /api/bookings without token returns 401, with valid data creates booking with status='pending' and correct nights/price calculation, 30-night booking uses monthly pro-rate pricing (monthly_rate/30*nights), validation working for check_out before check_in (400), nights below min_nights (400), guests > max_guests (400), invalid apartment_id (404), GET /api/bookings returns user bookings sorted newest first. ⚠️ Wishlist: Toggle functionality working correctly but test encountered existing data from previous runs (apartment was already in wishlist, so first POST removed it instead of adding it). Core toggle logic is correct: POST /api/wishlist/{id} adds if not exists (saved=true) or removes if exists (saved=false), GET /api/wishlist/ids returns apartment IDs, GET /api/wishlist returns full apartment documents. ✅ Contact: POST /api/contact successfully submits messages with success response. ALL CORE BACKEND FUNCTIONALITY WORKING CORRECTLY."
+
+frontend:
+  - task: "Express Housing frontend redesign (flatlogic ecommerce style)"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/App.js + /app/frontend/src/components/housing/*"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Complete rewrite: Header (announcement bar, logo, nav, search drawer, wishlist badge), HomePage (hero carousel 3 slides, overlapping search bar, New Listings grid, Stay Paths banners, Featured Stays, Neighborhoods, Benefits, How It Works, Reviews), ApartmentsPage (sidebar filters + sort + mobile drawer), ApartmentDetailPage (gallery, amenities, reviews, sticky booking panel with price calc), Auth pages, Dashboard (My Stays + Saved tabs), Contact, Footer with newsletter. Verified visually via screenshots."
+
+test_plan:
+  current_focus: []
+  stuck_tasks: []
+  test_all: false
+
+agent_communication:
+  - agent: "main"
+    message: "Full app pivot to Express Housing complete. Backend needs comprehensive testing: auth flow, apartments filters, booking creation with price logic (nightly <28 nights, monthly/30*nights for >=28), wishlist toggle, validation errors (bad dates, min_nights, max_guests)."
+  - agent: "testing"
+    message: "BACKEND TESTING COMPLETE - ALL CRITICAL FUNCTIONALITY WORKING: Tested all 9 backend flows comprehensively. 8/9 test suites passed completely. Health check confirms Express Housing API. All 12 apartments seeded correctly with proper structure. All 8 filter types working (featured, apt_type, neighborhood, guests, price range, stay_path, search, sort). Single apartment retrieval and 404 handling correct. Neighborhoods aggregation working. Auth flow fully functional (signup, login, /auth/me with JWT). Bookings system working perfectly: auth required (401 without token), correct price calculation for both nightly (<28 nights) and monthly pro-rate (>=28 nights using monthly_rate/30*nights formula), all validations working (date validation, min_nights, max_guests, invalid apartment_id), bookings sorted newest first. Wishlist toggle logic working correctly (minor test issue due to existing data from previous runs, but core functionality verified). Contact form submitting successfully. NO CRITICAL ISSUES FOUND. Backend is production-ready for Express Housing platform."

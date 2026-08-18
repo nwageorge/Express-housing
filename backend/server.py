@@ -8,7 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 import bcrypt
 import jwt
 from jwt.exceptions import InvalidTokenError
@@ -22,16 +22,12 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # JWT Secret
-JWT_SECRET = os.environ.get('JWT_SECRET', 'homehealthcare2024secretkey')
+JWT_SECRET = os.environ.get('JWT_SECRET', 'expresshousing2025secretkey')
 JWT_ALGORITHM = 'HS256'
 
-# Create the main app without a prefix
-app = FastAPI()
-
-# Create a router with the /api prefix
+app = FastAPI(title="Express Housing API")
 api_router = APIRouter(prefix="/api")
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -43,7 +39,7 @@ class UserBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
     email: str
     name: str
-    role: str = "client"  # client or agency
+    role: str = "guest"
     phone: Optional[str] = None
 
 class UserCreate(UserBase):
@@ -53,111 +49,59 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-class User(UserBase):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    user: dict
-
-class AgencyReview(BaseModel):
+class ApartmentBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    user_name: str
-    rating: int
-    comment: str
-    date: str
-    care_type: str  # e.g., "Elderly Care", "Post-Surgery"
-    relationship: str  # e.g., "Daughter", "Son", "Spouse"
-
-class AgencyBase(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    name: str
-    bio: str
-    description: str = ""  # Longer description for detail page
-    location: str
-    city: str
-    experience_years: int
-    certifications: List[str] = []
-    specialties: List[str] = []
-    price_per_hour: float
-    rating: float = 4.5
+    title: str
+    building_name: str
+    neighborhood: str
+    city: str = "Philadelphia, PA"
+    address: str = ""
+    apt_type: str  # Studio, 1 Bedroom, 2 Bedroom, 3 Bedroom, Penthouse
+    bedrooms: int
+    bathrooms: float
+    max_guests: int
+    sqft: int
+    nightly_rate: float
+    monthly_rate: float
+    description: str = ""
+    amenities: List[str] = []
+    images: List[str] = []
+    stay_paths: List[str] = []  # corporate, medical, family
+    rating: float = 4.8
     review_count: int = 0
-    image_url: str  # Main/primary image
-    gallery_images: List[str] = []  # Multiple images: office, caregivers, care scenes
-    is_verified: bool = False
+    is_featured: bool = False
     is_new: bool = False
-    total_caregivers: int = 10
-    years_in_business: int = 5
-    families_served: int = 100
-    reviews: List[dict] = []  # Embedded reviews from families
+    min_nights: int = 2
+    reviews: List[dict] = []
 
-class Agency(AgencyBase):
+class Apartment(ApartmentBase):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    user_id: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class ServiceBase(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    name: str
-    description: str
-    duration_hours: int = 1
-    price: float
-
-class Service(ServiceBase):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    agency_id: str
 
 class BookingCreate(BaseModel):
-    agency_id: str
-    service_type: str
-    date: str
-    time_slot: str
+    apartment_id: str
+    check_in: str   # YYYY-MM-DD
+    check_out: str  # YYYY-MM-DD
+    guests: int = 1
+    purpose: str = "leisure"  # business, medical, family, relocation, leisure
     notes: Optional[str] = None
-    patient_name: str
-    patient_age: Optional[int] = None
-    care_needs: Optional[str] = None
 
 class Booking(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
-    agency_id: str
-    service_type: str
-    date: str
-    time_slot: str
+    apartment_id: str
+    apartment_title: str = ""
+    apartment_image: str = ""
+    neighborhood: str = ""
+    check_in: str
+    check_out: str
+    nights: int = 1
+    guests: int = 1
+    purpose: str = "leisure"
     notes: Optional[str] = None
-    patient_name: str
-    patient_age: Optional[int] = None
-    care_needs: Optional[str] = None
     status: str = "pending"  # pending, confirmed, completed, cancelled
     total_price: float = 0.0
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class ReviewCreate(BaseModel):
-    agency_id: str
-    rating: int
-    comment: str
-
-class Review(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    user_id: str
-    user_name: str
-    agency_id: str
-    rating: int
-    comment: str
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class ContactMessage(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    name: str
-    email: str
-    subject: str
-    message: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ContactCreate(BaseModel):
@@ -177,7 +121,7 @@ def create_token(user_id: str, email: str) -> str:
     payload = {
         'user_id': user_id,
         'email': email,
-        'exp': datetime.now(timezone.utc).timestamp() + 86400 * 7  # 7 days
+        'exp': datetime.now(timezone.utc).timestamp() + 86400 * 7
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
@@ -197,814 +141,396 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
 # ===== ROUTES =====
 @api_router.get("/")
 async def root():
-    return {"message": "NurseNow - In-Home Care Marketplace API"}
+    return {"message": "Express Housing - Flexible Furnished Stays API"}
 
-# Auth Routes
+# --- Auth ---
 @api_router.post("/auth/signup")
 async def signup(user_data: UserCreate):
     existing = await db.users.find_one({"email": user_data.email})
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
-    user_id = str(uuid.uuid4())
-    user_doc = {
-        "id": user_id,
-        "email": user_data.email,
-        "name": user_data.name,
-        "role": user_data.role,
-        "phone": user_data.phone,
-        "password": hash_password(user_data.password),
-        "created_at": datetime.now(timezone.utc).isoformat()
+    user_dict = user_data.model_dump()
+    password = user_dict.pop("password")
+    user = {
+        **user_dict,
+        "id": str(uuid.uuid4()),
+        "password_hash": hash_password(password),
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
-    await db.users.insert_one(user_doc)
-    
-    token = create_token(user_id, user_data.email)
-    user_response = {k: v for k, v in user_doc.items() if k not in ['password', '_id']}
-    return {"access_token": token, "token_type": "bearer", "user": user_response}
+    await db.users.insert_one(user)
+    token = create_token(user["id"], user["email"])
+    safe_user = {k: v for k, v in user.items() if k not in ("password_hash", "_id")}
+    return {"access_token": token, "token_type": "bearer", "user": safe_user}
 
 @api_router.post("/auth/login")
 async def login(credentials: UserLogin):
     user = await db.users.find_one({"email": credentials.email})
-    if not user or not verify_password(credentials.password, user['password']):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    token = create_token(user['id'], user['email'])
-    user_response = {k: v for k, v in user.items() if k not in ['password', '_id']}
-    return {"access_token": token, "token_type": "bearer", "user": user_response}
+    if not user or not verify_password(credentials.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    token = create_token(user["id"], user["email"])
+    safe_user = {k: v for k, v in user.items() if k not in ("password_hash", "_id")}
+    return {"access_token": token, "token_type": "bearer", "user": safe_user}
 
 @api_router.get("/auth/me")
 async def get_me(user: dict = Depends(get_current_user)):
-    return {k: v for k, v in user.items() if k != 'password'}
+    return {k: v for k, v in user.items() if k != "password_hash"}
 
-# Agency Routes
-@api_router.get("/agencies")
-async def get_agencies(city: Optional[str] = None, specialty: Optional[str] = None):
+# --- Apartments ---
+@api_router.get("/apartments")
+async def get_apartments(
+    neighborhood: Optional[str] = None,
+    apt_type: Optional[str] = None,
+    guests: Optional[int] = None,
+    min_price: Optional[float] = None,
+    max_price: Optional[float] = None,
+    stay_path: Optional[str] = None,
+    search: Optional[str] = None,
+    featured: Optional[bool] = None,
+    sort: Optional[str] = None,
+):
     query = {}
-    if city:
-        query["city"] = city
-    if specialty:
-        query["specialties"] = {"$in": [specialty]}
-    
-    agencies = await db.agencies.find(query, {"_id": 0}).to_list(100)
-    return agencies
-
-@api_router.get("/agencies/{agency_id}")
-async def get_agency(agency_id: str):
-    agency = await db.agencies.find_one({"id": agency_id}, {"_id": 0})
-    if not agency:
-        raise HTTPException(status_code=404, detail="Agency not found")
-    
-    # Reviews are now embedded in the agency document
-    # No need to fetch from a separate collection
-    return agency
-    
-    # Get services
-    services = await db.services.find({"agency_id": agency_id}, {"_id": 0}).to_list(20)
-    agency["services"] = services
-    
-    return agency
-
-@api_router.post("/agencies")
-async def create_agency(agency_data: AgencyBase, user: dict = Depends(get_current_user)):
-    if user.get('role') != 'agency':
-        raise HTTPException(status_code=403, detail="Only agency accounts can create profiles")
-    
-    agency_id = str(uuid.uuid4())
-    agency_doc = {
-        "id": agency_id,
-        "user_id": user['id'],
-        **agency_data.model_dump(),
-        "created_at": datetime.now(timezone.utc).isoformat()
+    if neighborhood:
+        query["neighborhood"] = neighborhood
+    if apt_type:
+        query["apt_type"] = apt_type
+    if guests:
+        query["max_guests"] = {"$gte": guests}
+    if stay_path:
+        query["stay_paths"] = stay_path
+    if featured is not None:
+        query["is_featured"] = featured
+    price_q = {}
+    if min_price is not None:
+        price_q["$gte"] = min_price
+    if max_price is not None:
+        price_q["$lte"] = max_price
+    if price_q:
+        query["nightly_rate"] = price_q
+    if search:
+        query["$or"] = [
+            {"title": {"$regex": search, "$options": "i"}},
+            {"neighborhood": {"$regex": search, "$options": "i"}},
+            {"building_name": {"$regex": search, "$options": "i"}},
+            {"description": {"$regex": search, "$options": "i"}},
+        ]
+    sort_map = {
+        "price_asc": ("nightly_rate", 1),
+        "price_desc": ("nightly_rate", -1),
+        "rating": ("rating", -1),
+        "newest": ("created_at", -1),
     }
-    await db.agencies.insert_one(agency_doc)
-    return {"id": agency_id, **agency_doc}
+    cursor = db.apartments.find(query, {"_id": 0})
+    if sort in sort_map:
+        cursor = cursor.sort([sort_map[sort]])
+    apartments = await cursor.to_list(200)
+    return apartments
 
-# Booking Routes
+@api_router.get("/apartments/{apartment_id}")
+async def get_apartment(apartment_id: str):
+    apt = await db.apartments.find_one({"id": apartment_id}, {"_id": 0})
+    if not apt:
+        raise HTTPException(status_code=404, detail="Apartment not found")
+    return apt
+
+@api_router.get("/neighborhoods")
+async def get_neighborhoods():
+    pipeline = [
+        {"$group": {"_id": "$neighborhood", "count": {"$sum": 1}, "image": {"$first": {"$arrayElemAt": ["$images", 0]}}, "min_rate": {"$min": "$nightly_rate"}}},
+        {"$sort": {"count": -1}},
+    ]
+    rows = await db.apartments.aggregate(pipeline).to_list(50)
+    return [{"name": r["_id"], "count": r["count"], "image": r["image"], "min_rate": r["min_rate"]} for r in rows]
+
+# --- Bookings (Request to Book) ---
 @api_router.post("/bookings")
 async def create_booking(booking_data: BookingCreate, user: dict = Depends(get_current_user)):
-    agency = await db.agencies.find_one({"id": booking_data.agency_id}, {"_id": 0})
-    if not agency:
-        raise HTTPException(status_code=404, detail="Agency not found")
-    
-    booking_id = str(uuid.uuid4())
-    booking_doc = {
-        "id": booking_id,
-        "user_id": user['id'],
-        "agency_id": booking_data.agency_id,
-        "service_type": booking_data.service_type,
-        "date": booking_data.date,
-        "time_slot": booking_data.time_slot,
-        "notes": booking_data.notes,
-        "patient_name": booking_data.patient_name,
-        "patient_age": booking_data.patient_age,
-        "care_needs": booking_data.care_needs,
-        "total_price": agency.get('price_per_hour', 50),
-        "status": "pending",
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    await db.bookings.insert_one(booking_doc)
-    # Return without _id
-    return {k: v for k, v in booking_doc.items() if k != '_id'}
+    apt = await db.apartments.find_one({"id": booking_data.apartment_id}, {"_id": 0})
+    if not apt:
+        raise HTTPException(status_code=404, detail="Apartment not found")
+    try:
+        ci = date.fromisoformat(booking_data.check_in)
+        co = date.fromisoformat(booking_data.check_out)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid dates. Use YYYY-MM-DD")
+    nights = (co - ci).days
+    if nights < 1:
+        raise HTTPException(status_code=400, detail="Check-out must be after check-in")
+    if nights < apt.get("min_nights", 1):
+        raise HTTPException(status_code=400, detail=f"Minimum stay is {apt.get('min_nights', 1)} nights")
+    if booking_data.guests > apt.get("max_guests", 1):
+        raise HTTPException(status_code=400, detail=f"Maximum {apt.get('max_guests', 1)} guests for this apartment")
+    # Monthly pro-rated pricing for stays of 28+ nights
+    if nights >= 28:
+        total = round(apt["monthly_rate"] / 30 * nights, 2)
+    else:
+        total = round(apt["nightly_rate"] * nights, 2)
+    booking = Booking(
+        user_id=user["id"],
+        apartment_id=apt["id"],
+        apartment_title=apt["title"],
+        apartment_image=apt["images"][0] if apt.get("images") else "",
+        neighborhood=apt.get("neighborhood", ""),
+        check_in=booking_data.check_in,
+        check_out=booking_data.check_out,
+        nights=nights,
+        guests=booking_data.guests,
+        purpose=booking_data.purpose,
+        notes=booking_data.notes,
+        status="pending",
+        total_price=total,
+    )
+    doc = booking.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    await db.bookings.insert_one(dict(doc))
+    return doc
 
 @api_router.get("/bookings")
 async def get_bookings(user: dict = Depends(get_current_user)):
-    bookings = await db.bookings.find({"user_id": user['id']}, {"_id": 0}).to_list(100)
-    
-    # Enrich with agency info
-    for booking in bookings:
-        agency = await db.agencies.find_one({"id": booking.get('agency_id')}, {"_id": 0})
-        if agency:
-            booking['agency'] = agency
-    
+    bookings = await db.bookings.find({"user_id": user["id"]}, {"_id": 0}).sort([("created_at", -1)]).to_list(100)
     return bookings
 
 @api_router.get("/bookings/{booking_id}")
 async def get_booking(booking_id: str, user: dict = Depends(get_current_user)):
-    booking = await db.bookings.find_one({"id": booking_id, "user_id": user['id']}, {"_id": 0})
+    booking = await db.bookings.find_one({"id": booking_id, "user_id": user["id"]}, {"_id": 0})
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
     return booking
 
-# Review Routes
-@api_router.post("/reviews")
-async def create_review(review_data: ReviewCreate, user: dict = Depends(get_current_user)):
-    agency = await db.agencies.find_one({"id": review_data.agency_id})
-    if not agency:
-        raise HTTPException(status_code=404, detail="Agency not found")
-    
-    review_id = str(uuid.uuid4())
-    review_doc = {
-        "id": review_id,
-        "user_id": user['id'],
-        "user_name": user.get('name', 'Anonymous'),
-        **review_data.model_dump(),
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    await db.reviews.insert_one(review_doc)
-    
-    # Update agency rating
-    all_reviews = await db.reviews.find({"agency_id": review_data.agency_id}).to_list(1000)
-    avg_rating = sum(r['rating'] for r in all_reviews) / len(all_reviews)
-    await db.agencies.update_one(
-        {"id": review_data.agency_id},
-        {"$set": {"rating": round(avg_rating, 1), "review_count": len(all_reviews)}}
-    )
-    
-    return review_doc
+# --- Wishlist ---
+@api_router.get("/wishlist")
+async def get_wishlist(user: dict = Depends(get_current_user)):
+    items = await db.wishlist.find({"user_id": user["id"]}, {"_id": 0}).to_list(200)
+    apt_ids = [i["apartment_id"] for i in items]
+    apartments = await db.apartments.find({"id": {"$in": apt_ids}}, {"_id": 0}).to_list(200)
+    return apartments
 
-@api_router.get("/reviews/{agency_id}")
-async def get_reviews(agency_id: str):
-    reviews = await db.reviews.find({"agency_id": agency_id}, {"_id": 0}).to_list(100)
-    return reviews
+@api_router.post("/wishlist/{apartment_id}")
+async def toggle_wishlist(apartment_id: str, user: dict = Depends(get_current_user)):
+    existing = await db.wishlist.find_one({"user_id": user["id"], "apartment_id": apartment_id})
+    if existing:
+        await db.wishlist.delete_one({"user_id": user["id"], "apartment_id": apartment_id})
+        return {"saved": False}
+    await db.wishlist.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "apartment_id": apartment_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return {"saved": True}
 
-# Contact Routes
+@api_router.get("/wishlist/ids")
+async def get_wishlist_ids(user: dict = Depends(get_current_user)):
+    items = await db.wishlist.find({"user_id": user["id"]}, {"_id": 0, "apartment_id": 1}).to_list(200)
+    return [i["apartment_id"] for i in items]
+
+# --- Contact ---
 @api_router.post("/contact")
 async def submit_contact(contact_data: ContactCreate):
-    contact_id = str(uuid.uuid4())
-    contact_doc = {
-        "id": contact_id,
-        **contact_data.model_dump(),
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    await db.contact_messages.insert_one(contact_doc)
-    return {"message": "Thank you for your message. We will get back to you soon!"}
+    doc = contact_data.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    doc["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.contact_messages.insert_one(dict(doc))
+    return {"success": True, "message": "Thanks for reaching out. Our team will reply within 24 hours."}
 
-@api_router.get("/contact/messages")
-async def get_contact_messages(user: dict = Depends(get_current_user)):
-    if user.get('role') != 'admin':
-        raise HTTPException(status_code=403, detail="Admin access required")
-    messages = await db.contact_messages.find({}, {"_id": 0}).to_list(100)
-    return messages
+# ===== SEED DATA =====
+# Image pools (curated via vision expert)
+LR = [
+    "https://images.unsplash.com/photo-1618221469555-7f3ad97540d6?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1658218635253-64728f6234be?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1564078516393-cf04bd966897?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.pexels.com/photos/6492391/pexels-photo-6492391.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "https://images.pexels.com/photos/6636314/pexels-photo-6636314.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+]
+BR = [
+    "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1562438668-bcf0ca6578f0?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.pexels.com/photos/34574606/pexels-photo-34574606.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+]
+KT = [
+    "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1484154218962-a197022b5858?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1617228069096-4638a7ffc906?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    "https://images.unsplash.com/photo-1556911220-bff31c812dba?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+]
+HERO = [
+    "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?crop=entropy&cs=srgb&fm=jpg&q=85&w=1600",
+    "https://images.unsplash.com/photo-1518733057094-95b53143d2a7?crop=entropy&cs=srgb&fm=jpg&q=85&w=1600",
+    "https://images.unsplash.com/photo-1686056040370-b5e5c06c4273?crop=entropy&cs=srgb&fm=jpg&q=85&w=1600",
+]
 
-# Seed Data Route - Initialize agencies with enhanced data
+AMEN_CORE = ["Fully furnished", "Gigabit Wi-Fi", "Fully-equipped kitchen", "Keypad self check-in", "4K Smart TV", "In-unit washer & dryer"]
+
+def _rev(name, rating, comment, purpose, date_str):
+    return {"id": str(uuid.uuid4()), "user_name": name, "rating": rating, "comment": comment, "purpose": purpose, "date": date_str}
+
+SEED_APARTMENTS = [
+    {
+        "title": "The Franklin Residences 1BR", "building_name": "The Franklin", "neighborhood": "Old City",
+        "address": "834 Chestnut St", "apt_type": "1 Bedroom", "bedrooms": 1, "bathrooms": 1, "max_guests": 2, "sqft": 720,
+        "nightly_rate": 159, "monthly_rate": 3400,
+        "description": "A polished one-bedroom in the heart of Old City, steps from Independence Hall. Dedicated workspace, gigabit Wi-Fi, and a building gym make this a favorite for business travelers who want history outside their door.",
+        "amenities": AMEN_CORE + ["Dedicated workspace", "24-hour fitness center", "Elevator"],
+        "images": [LR[0], BR[0], KT[0], LR[3]], "stay_paths": ["corporate"], "rating": 4.9, "review_count": 42,
+        "is_featured": True, "min_nights": 2,
+        "reviews": [
+            _rev("Marcus T.", 5, "Check-in was seamless and the workspace setup saved my week. Better than any hotel.", "Business", "May 2025"),
+            _rev("Elena R.", 5, "Beautiful apartment, walkable to everything in Old City.", "Leisure", "April 2025"),
+        ],
+    },
+    {
+        "title": "Rittenhouse Square Luxe 2BR", "building_name": "The Rittenhouse Collection", "neighborhood": "Rittenhouse Square",
+        "address": "1900 Walnut St", "apt_type": "2 Bedroom", "bedrooms": 2, "bathrooms": 2, "max_guests": 4, "sqft": 1100,
+        "nightly_rate": 249, "monthly_rate": 5200,
+        "description": "Designer two-bedroom overlooking Rittenhouse Square with a chef's kitchen, marble baths, and a resident lounge. Ideal for relocations and executive stays that need room to breathe.",
+        "amenities": AMEN_CORE + ["Doorman", "24-hour fitness center", "Rooftop terrace", "Dedicated workspace"],
+        "images": [LR[3], BR[1], KT[1], LR[1]], "stay_paths": ["corporate", "family"], "rating": 4.9, "review_count": 57,
+        "is_featured": True, "min_nights": 3,
+        "reviews": [
+            _rev("Priya S.", 5, "Our family of four stayed 6 weeks during a relocation. Felt like home from day one.", "Relocation", "June 2025"),
+            _rev("David K.", 5, "The square outside your window every morning. Unbeatable.", "Business", "May 2025"),
+        ],
+    },
+    {
+        "title": "Center City Skyline Studio", "building_name": "One Liberty Place Residences", "neighborhood": "Center City",
+        "address": "1650 Market St", "apt_type": "Studio", "bedrooms": 0, "bathrooms": 1, "max_guests": 2, "sqft": 520,
+        "nightly_rate": 119, "monthly_rate": 2600,
+        "description": "A bright studio with floor-to-ceiling skyline views in the middle of Center City. Smart layout with a real workspace and a queen bed — everything a solo traveler needs.",
+        "amenities": AMEN_CORE + ["Dedicated workspace", "Elevator", "24-hour fitness center"],
+        "images": [LR[1], BR[2], KT[2]], "stay_paths": ["corporate", "medical"], "rating": 4.7, "review_count": 31,
+        "min_nights": 2,
+        "reviews": [_rev("Jordan M.", 5, "Perfect for my 3-week hospital rotation. Quiet, clean, great Wi-Fi.", "Medical", "March 2025")],
+    },
+    {
+        "title": "Fishtown Artist Loft 1BR", "building_name": "The Frankford Lofts", "neighborhood": "Fishtown",
+        "address": "1401 Frankford Ave", "apt_type": "1 Bedroom", "bedrooms": 1, "bathrooms": 1, "max_guests": 3, "sqft": 850,
+        "nightly_rate": 139, "monthly_rate": 2900,
+        "description": "Exposed brick, 14-foot ceilings, and Fishtown's best coffee downstairs. A creative loft minutes from the El, made for longer stays that should not feel corporate.",
+        "amenities": AMEN_CORE + ["Pet friendly", "Rooftop terrace"],
+        "images": [LR[2], BR[3], KT[3], LR[6]], "stay_paths": ["family"], "rating": 4.8, "review_count": 26,
+        "is_new": True, "min_nights": 2,
+        "reviews": [_rev("Sofia L.", 5, "The loft is stunning and the neighborhood is so alive. Extended twice!", "Leisure", "June 2025")],
+    },
+    {
+        "title": "University City Med Stay 1BR", "building_name": "The Radian", "neighborhood": "University City",
+        "address": "3925 Walnut St", "apt_type": "1 Bedroom", "bedrooms": 1, "bathrooms": 1, "max_guests": 2, "sqft": 680,
+        "nightly_rate": 129, "monthly_rate": 2750,
+        "description": "Five minutes from Penn Medicine and CHOP. Comfortable, quiet one-bedroom built for medical travelers, visiting clinicians, and families who need to be close to care.",
+        "amenities": AMEN_CORE + ["Free parking", "Elevator", "24/7 guest support"],
+        "images": [LR[4], BR[0], KT[0]], "stay_paths": ["medical"], "rating": 4.9, "review_count": 48,
+        "is_featured": True, "min_nights": 2,
+        "reviews": [
+            _rev("Anne W.", 5, "We stayed 2 months during my husband's treatment. The team checked in on us constantly. Grateful.", "Medical", "April 2025"),
+            _rev("Dr. Chen", 5, "Booked for a visiting fellowship. Walkable to the hospital, spotless unit.", "Medical", "February 2025"),
+        ],
+    },
+    {
+        "title": "Northern Liberties Penthouse", "building_name": "The Piazza Alta", "neighborhood": "Northern Liberties",
+        "address": "1001 N 2nd St", "apt_type": "Penthouse", "bedrooms": 3, "bathrooms": 2, "max_guests": 6, "sqft": 1600,
+        "nightly_rate": 389, "monthly_rate": 7900,
+        "description": "A three-bedroom penthouse with a private terrace over the Piazza. Pool, gym, and dining downstairs. The flagship Express Housing stay for teams and families.",
+        "amenities": AMEN_CORE + ["Pool", "Rooftop terrace", "24-hour fitness center", "Free parking", "Doorman"],
+        "images": [HERO[1], LR[5], BR[1], KT[1]], "stay_paths": ["corporate", "family"], "rating": 5.0, "review_count": 19,
+        "is_featured": True, "min_nights": 3,
+        "reviews": [_rev("The Grants", 5, "Hosted our whole family for a month. Terrace dinners every night.", "Family", "May 2025")],
+    },
+    {
+        "title": "Society Hill Classic 2BR", "building_name": "Society Hill Towers", "neighborhood": "Society Hill",
+        "address": "200 Locust St", "apt_type": "2 Bedroom", "bedrooms": 2, "bathrooms": 1, "max_guests": 4, "sqft": 980,
+        "nightly_rate": 199, "monthly_rate": 4300,
+        "description": "Cobblestone streets and river views. A classic two-bedroom in one of Philadelphia's most storied neighborhoods, refreshed with modern furnishings throughout.",
+        "amenities": AMEN_CORE + ["Elevator", "24-hour fitness center", "Doorman"],
+        "images": [LR[5], BR[2], KT[2], LR[0]], "stay_paths": ["family", "corporate"], "rating": 4.8, "review_count": 34,
+        "min_nights": 2,
+        "reviews": [_rev("Hannah B.", 5, "Waking up near the waterfront was the highlight of our relocation.", "Relocation", "March 2025")],
+    },
+    {
+        "title": "Logan Square Executive 1BR", "building_name": "The Alexander", "neighborhood": "Logan Square",
+        "address": "1601 Vine St", "apt_type": "1 Bedroom", "bedrooms": 1, "bathrooms": 1, "max_guests": 2, "sqft": 750,
+        "nightly_rate": 169, "monthly_rate": 3600,
+        "description": "Steps from the Comcast towers and the Parkway museums. An executive one-bedroom with in-building workspace and a serious gym — built for the business week and the weekend after.",
+        "amenities": AMEN_CORE + ["Dedicated workspace", "In-building workspace", "24-hour fitness center", "Doorman"],
+        "images": [LR[6], BR[3], KT[3]], "stay_paths": ["corporate"], "rating": 4.8, "review_count": 29,
+        "min_nights": 2,
+        "reviews": [_rev("Tom H.", 5, "My company books this unit every quarter now. Consistent, professional, easy.", "Business", "June 2025")],
+    },
+    {
+        "title": "Manayunk Riverside 2BR", "building_name": "The Isle", "neighborhood": "Manayunk",
+        "address": "4601 Flat Rock Rd", "apt_type": "2 Bedroom", "bedrooms": 2, "bathrooms": 2, "max_guests": 5, "sqft": 1050,
+        "nightly_rate": 179, "monthly_rate": 3800,
+        "description": "Riverside two-bedroom along the towpath with Main Street's restaurants a short stroll away. Free parking and space to spread out make this a family favorite.",
+        "amenities": AMEN_CORE + ["Free parking", "Pool", "Pet friendly"],
+        "images": [LR[7], BR[0], KT[1], LR[2]], "stay_paths": ["family"], "rating": 4.7, "review_count": 22,
+        "is_new": True, "min_nights": 2,
+        "reviews": [_rev("The Nguyens", 5, "Kids loved the pool, we loved the towpath runs. Perfect month.", "Family", "May 2025")],
+    },
+    {
+        "title": "Graduate Hospital Family 3BR", "building_name": "The Southwark", "neighborhood": "Graduate Hospital",
+        "address": "2001 South St", "apt_type": "3 Bedroom", "bedrooms": 3, "bathrooms": 2, "max_guests": 6, "sqft": 1400,
+        "nightly_rate": 289, "monthly_rate": 6100,
+        "description": "A rare three-bedroom with a real dining table for eight, a washer-dryer, and three quiet bedrooms. Built for family recovery stays, renovations, and long visits.",
+        "amenities": AMEN_CORE + ["Free parking", "Elevator", "24/7 guest support"],
+        "images": [LR[3], BR[1], KT[0], LR[4]], "stay_paths": ["family", "medical"], "rating": 4.9, "review_count": 27,
+        "min_nights": 3,
+        "reviews": [_rev("Renee C.", 5, "Three real bedrooms saved us during our home renovation. Flexible checkout too.", "Family", "April 2025")],
+    },
+    {
+        "title": "Old City Boutique Studio", "building_name": "The Bank Building", "neighborhood": "Old City",
+        "address": "421 Chestnut St", "apt_type": "Studio", "bedrooms": 0, "bathrooms": 1, "max_guests": 2, "sqft": 480,
+        "nightly_rate": 109, "monthly_rate": 2400,
+        "description": "A thoughtfully designed studio inside a converted 19th-century bank. Original details, brand-new everything else. The best value stay in Old City.",
+        "amenities": AMEN_CORE + ["Elevator"],
+        "images": [LR[4], BR[2], KT[3]], "stay_paths": ["corporate", "medical"], "rating": 4.8, "review_count": 38,
+        "is_new": True, "min_nights": 2,
+        "reviews": [_rev("Isabelle F.", 5, "Gorgeous building, unbeatable location, fair price. Will return.", "Leisure", "June 2025")],
+    },
+    {
+        "title": "Center City Corporate 2BR", "building_name": "The Metropolitan", "neighborhood": "Center City",
+        "address": "117 N 15th St", "apt_type": "2 Bedroom", "bedrooms": 2, "bathrooms": 2, "max_guests": 4, "sqft": 1150,
+        "nightly_rate": 269, "monthly_rate": 5600,
+        "description": "Two bedrooms, two workspaces, one block from City Hall. Our most-booked corporate unit, with a conference-ready dining table and blackout shades for jet-lagged mornings.",
+        "amenities": AMEN_CORE + ["Dedicated workspace", "In-building workspace", "Doorman", "24-hour fitness center"],
+        "images": [HERO[0], BR[3], KT[2], LR[7]], "stay_paths": ["corporate"], "rating": 4.9, "review_count": 51,
+        "is_featured": True, "min_nights": 3,
+        "reviews": [
+            _rev("Sarah J.", 5, "Our consultants rotate through this unit monthly. Zero complaints ever.", "Business", "June 2025"),
+            _rev("Ahmed Z.", 5, "International relocation made painless. The team even stocked the fridge.", "Relocation", "May 2025"),
+        ],
+    },
+]
+
+async def seed_apartments():
+    await db.apartments.delete_many({})
+    docs = []
+    for a in SEED_APARTMENTS:
+        apt = Apartment(**a)
+        d = apt.model_dump()
+        d["created_at"] = d["created_at"].isoformat()
+        docs.append(d)
+    await db.apartments.insert_many(docs)
+    return len(docs)
+
 @api_router.post("/seed")
 async def seed_data():
-    # Check if already seeded
-    existing = await db.agencies.count_documents({})
-    if existing > 0:
-        return {"message": "Data already seeded", "count": existing}
-    
-    # Helper function to generate reviews for agencies
-    def generate_reviews(agency_specialties):
-        review_templates = [
-            {"user_name": "Sarah M.", "rating": 5, "comment": "The caregivers from this agency have been absolutely wonderful with my mother. They treat her with dignity and respect, and she looks forward to their visits.", "relationship": "Daughter", "care_type": "Elderly Care"},
-            {"user_name": "Michael T.", "rating": 5, "comment": "After my father's hip surgery, their team was there every step of the way. Professional, punctual, and genuinely caring.", "relationship": "Son", "care_type": "Post-Surgery"},
-            {"user_name": "Jennifer K.", "rating": 4, "comment": "Great communication and flexible scheduling. The caregiver assigned to us became like family.", "relationship": "Daughter", "care_type": "Companionship"},
-            {"user_name": "Robert & Linda P.", "rating": 5, "comment": "We interviewed several agencies before choosing this one. Best decision we made. Mom is thriving!", "relationship": "Family", "care_type": "Elderly Care"},
-            {"user_name": "David W.", "rating": 5, "comment": "The overnight care for my wife has been exceptional. I can finally get some rest knowing she's in good hands.", "relationship": "Spouse", "care_type": "24-Hour Care"},
-            {"user_name": "Patricia H.", "rating": 4, "comment": "Very responsive to our changing needs. When Dad's condition changed, they adjusted the care plan immediately.", "relationship": "Daughter", "care_type": "Chronic Conditions"},
-            {"user_name": "James L.", "rating": 5, "comment": "The dementia care specialists here truly understand the challenges. They've made such a difference for our family.", "relationship": "Son", "care_type": "Dementia Care"},
-            {"user_name": "Elizabeth R.", "rating": 5, "comment": "Compassionate, skilled, and reliable. Everything you want in a home care agency.", "relationship": "Granddaughter", "care_type": "Elderly Care"},
-        ]
-        import random
-        num_reviews = random.randint(4, 6)
-        selected = random.sample(review_templates, num_reviews)
-        for i, review in enumerate(selected):
-            review["id"] = str(uuid.uuid4())
-            review["date"] = f"202{random.randint(3,4)}-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
-        return selected
-    
-    agencies_data = [
-        # Philadelphia, PA - 7 agencies
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Caring Hearts Home Care",
-            "bio": "Award-winning in-home care agency serving Philadelphia families since 2009.",
-            "description": "Caring Hearts Home Care has been a trusted partner for Philadelphia families for over 15 years. Our team of certified caregivers provides personalized, compassionate care that allows your loved ones to maintain their independence and dignity in the comfort of their own home. We specialize in elderly care, post-surgery recovery, and chronic condition management. Every caregiver undergoes rigorous background checks, ongoing training, and is matched carefully to each client's unique needs and personality.",
-            "location": "1234 Market Street, Philadelphia, PA 19107",
-            "city": "Philadelphia, PA",
-            "experience_years": 15,
-            "certifications": ["State Licensed", "Medicare Certified", "ACHC Accredited", "BBB A+ Rating"],
-            "specialties": ["Elderly Care", "Post-Surgery Recovery", "Chronic Conditions", "Companionship"],
-            "price_per_hour": 16,
-            "rating": 4.9,
-            "review_count": 124,
-            "image_url": "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 45,
-            "years_in_business": 15,
-            "families_served": 1200,
-            "reviews": generate_reviews(["Elderly Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Gentle Touch Nursing",
-            "bio": "Specialized pediatric and family care services with registered nurses.",
-            "description": "Gentle Touch Nursing brings hospital-quality care into your home. Our team includes registered nurses and certified nursing assistants dedicated to providing the highest standard of care for children and adults alike. We understand that having a healthcare professional in your home requires trust, which is why we take extra care in selecting and training our staff. From infant care to special needs support, our nurses are equipped to handle complex medical situations with grace and expertise.",
-            "location": "567 Walnut Street, Philadelphia, PA 19106",
-            "city": "Philadelphia, PA",
-            "experience_years": 12,
-            "certifications": ["Pediatric Certified", "State Licensed", "CPR Certified", "First Aid Certified"],
-            "specialties": ["Pediatric Care", "Infant Care", "Special Needs", "Medical Support"],
-            "price_per_hour": 18,
-            "rating": 4.8,
-            "review_count": 89,
-            "image_url": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 32,
-            "years_in_business": 12,
-            "families_served": 850,
-            "reviews": generate_reviews(["Pediatric Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Philadelphia Senior Services",
-            "bio": "Dedicated to enhancing quality of life for seniors with specialized dementia care.",
-            "description": "Philadelphia Senior Services has been the city's premier provider of senior care for two decades. Our specialized programs for dementia and Alzheimer's care set us apart, with caregivers trained in the latest therapeutic approaches. We believe in treating the whole person—mind, body, and spirit—which is why our care plans include not just physical assistance, but also social engagement, mental stimulation, and emotional support. Our compassionate team becomes an extension of your family.",
-            "location": "890 Chestnut Street, Philadelphia, PA 19107",
-            "city": "Philadelphia, PA",
-            "experience_years": 20,
-            "certifications": ["Alzheimer's Certified", "State Licensed", "Bonded & Insured", "Dementia Care Specialist"],
-            "specialties": ["Dementia Care", "Alzheimer's", "Companionship", "Memory Care"],
-            "price_per_hour": 15,
-            "rating": 4.7,
-            "review_count": 156,
-            "image_url": "https://images.unsplash.com/photo-1447452001602-7090c7ab2db3?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 58,
-            "years_in_business": 20,
-            "families_served": 2100,
-            "reviews": generate_reviews(["Dementia Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "HomeWell Care Services",
-            "bio": "Comprehensive home healthcare including skilled nursing and physical therapy.",
-            "description": "HomeWell Care Services provides a complete spectrum of in-home healthcare services throughout greater Philadelphia. Our skilled nursing team can handle everything from medication management to wound care, while our physical and occupational therapists help clients regain mobility and independence. We coordinate closely with physicians and hospitals to ensure seamless transitions from facility to home care, making recovery smoother and more comfortable for everyone involved.",
-            "location": "123 Broad Street, Philadelphia, PA 19102",
-            "city": "Philadelphia, PA",
-            "experience_years": 8,
-            "certifications": ["Medicare Certified", "State Licensed", "Joint Commission Accredited"],
-            "specialties": ["Skilled Nursing", "Physical Therapy", "Personal Care", "Medication Management"],
-            "price_per_hour": 17,
-            "rating": 4.6,
-            "review_count": 67,
-            "image_url": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 28,
-            "years_in_business": 8,
-            "families_served": 520,
-            "reviews": generate_reviews(["Skilled Nursing"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Nurturing Angels Care",
-            "bio": "Round-the-clock care specialists for overnight and 24-hour support.",
-            "description": "Nurturing Angels Care specializes in providing continuous, round-the-clock care for those who need constant supervision and support. Whether you need overnight care so family caregivers can rest, or full 24-hour care for complex medical situations, our angels are there. We understand the stress that comes with caring for a loved one with high needs, and we're committed to providing peace of mind along with exceptional care. Our team works in shifts to ensure fresh, attentive caregivers at all times.",
-            "location": "456 Pine Street, Philadelphia, PA 19106",
-            "city": "Philadelphia, PA",
-            "experience_years": 10,
-            "certifications": ["24/7 Care Certified", "State Licensed", "Background Checked", "Hospice Trained"],
-            "specialties": ["24-Hour Care", "Overnight Care", "Hospice Support", "Respite Care"],
-            "price_per_hour": 15,
-            "rating": 4.8,
-            "review_count": 98,
-            "image_url": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 52,
-            "years_in_business": 10,
-            "families_served": 780,
-            "reviews": generate_reviews(["24-Hour Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Liberty Home Health",
-            "bio": "Wound care specialists and post-operative care experts.",
-            "description": "Liberty Home Health brings clinical expertise to your doorstep. Our team of wound care certified nurses and post-operative care specialists helps patients recover from surgeries, manage complex wounds, and handle IV therapy in the comfort of home. We work directly with surgeons and physicians to follow care protocols precisely, reducing the risk of complications and hospital readmissions. Our goal is to get you back to your normal life as quickly and safely as possible.",
-            "location": "789 Spruce Street, Philadelphia, PA 19107",
-            "city": "Philadelphia, PA",
-            "experience_years": 14,
-            "certifications": ["Wound Care Certified", "State Licensed", "OASIS Certified", "IV Therapy Trained"],
-            "specialties": ["Wound Care", "Post-Op Care", "IV Therapy", "Surgical Recovery"],
-            "price_per_hour": 18,
-            "rating": 4.9,
-            "review_count": 112,
-            "image_url": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 35,
-            "years_in_business": 14,
-            "families_served": 920,
-            "reviews": generate_reviews(["Post-Op Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Keystone Care Partners",
-            "bio": "Mental health and behavioral support specialists.",
-            "description": "Keystone Care Partners provides compassionate care for individuals with psychiatric conditions and developmental disabilities. Our specially trained caregivers understand the unique challenges of mental health care and are skilled in de-escalation techniques, medication reminders, and therapeutic engagement. We believe everyone deserves to live with dignity in their own community, and we're dedicated to making that possible through personalized, supportive care that respects each individual's journey.",
-            "location": "321 Race Street, Philadelphia, PA 19106",
-            "city": "Philadelphia, PA",
-            "experience_years": 6,
-            "certifications": ["Mental Health Certified", "State Licensed", "Behavioral Specialist", "Crisis Intervention Trained"],
-            "specialties": ["Mental Health", "Behavioral Support", "Developmental Care", "Autism Support"],
-            "price_per_hour": 17,
-            "rating": 4.5,
-            "review_count": 45,
-            "image_url": "https://images.unsplash.com/photo-1543333995-a78aea2eee50?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": False,
-            "is_new": True,
-            "total_caregivers": 18,
-            "years_in_business": 6,
-            "families_served": 210,
-            "reviews": generate_reviews(["Mental Health"])
-        },
-        # Washington, D.C. - 6 agencies
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Capitol Care Services",
-            "bio": "Premier in-home care serving distinguished clients in the nation's capital.",
-            "description": "Capitol Care Services is Washington D.C.'s most trusted name in premium home care. We serve a distinguished clientele who expect nothing but the best, and we deliver with caregivers who are not only highly skilled but also discreet and professional. Our concierge-level service includes personalized care plans, flexible scheduling, and caregivers matched not just for skills but for personality and interests. When you choose Capitol Care, you're choosing excellence.",
-            "location": "1600 K Street NW, Washington, DC 20006",
-            "city": "Washington, D.C.",
-            "experience_years": 18,
-            "certifications": ["State Licensed", "CHAP Accredited", "Bonded & Insured", "Executive Background Checked"],
-            "specialties": ["Executive Care", "Elderly Care", "Concierge Services", "Companionship"],
-            "price_per_hour": 18,
-            "rating": 4.9,
-            "review_count": 178,
-            "image_url": "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 65,
-            "years_in_business": 18,
-            "families_served": 1850,
-            "reviews": generate_reviews(["Executive Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "District Home Care",
-            "bio": "Compassionate care for DC residents with multilingual caregivers.",
-            "description": "District Home Care serves Washington's diverse community with caregivers who speak over 15 languages. We understand that cultural sensitivity is crucial to providing effective care, especially for elderly clients who may feel more comfortable communicating in their native language. Our team reflects the rich diversity of our city, and we take pride in matching clients with caregivers who understand their cultural background, dietary preferences, and traditions.",
-            "location": "2020 Pennsylvania Ave NW, Washington, DC 20006",
-            "city": "Washington, D.C.",
-            "experience_years": 11,
-            "certifications": ["Multilingual Staff", "State Licensed", "Cultural Competency Certified"],
-            "specialties": ["Multilingual Care", "Cultural Care", "Elderly Care", "Personal Care"],
-            "price_per_hour": 16,
-            "rating": 4.7,
-            "review_count": 134,
-            "image_url": "https://images.unsplash.com/photo-1509909756405-be0199881695?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 42,
-            "years_in_business": 11,
-            "families_served": 980,
-            "reviews": generate_reviews(["Elderly Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Georgetown Care Specialists",
-            "bio": "Boutique care agency serving Georgetown and Northwest DC.",
-            "description": "Georgetown Care Specialists offers an intimate, boutique approach to home care. We intentionally keep our client roster small so we can provide truly personalized attention to each family we serve. Our caregivers become genuine members of the families they work with, providing not just physical care but emotional support and companionship. We specialize in long-term care relationships where consistency and trust are paramount.",
-            "location": "3200 M Street NW, Washington, DC 20007",
-            "city": "Washington, D.C.",
-            "experience_years": 9,
-            "certifications": ["State Licensed", "Geriatric Care Manager", "Bonded & Insured"],
-            "specialties": ["Long-term Care", "Companionship", "Luxury Care", "Elderly Care"],
-            "price_per_hour": 18,
-            "rating": 4.8,
-            "review_count": 67,
-            "image_url": "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 22,
-            "years_in_business": 9,
-            "families_served": 340,
-            "reviews": generate_reviews(["Companionship"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "National Health Companions",
-            "bio": "Veteran-owned agency serving military families and veterans.",
-            "description": "National Health Companions is proudly veteran-owned and operated, with a special focus on serving those who served. We understand the unique healthcare needs of veterans and military families, from managing service-connected conditions to navigating VA benefits. Many of our caregivers are veterans themselves or military spouses, creating an immediate bond of understanding with our clients. We're honored to give back to those who gave so much for our country.",
-            "location": "1775 I Street NW, Washington, DC 20006",
-            "city": "Washington, D.C.",
-            "experience_years": 13,
-            "certifications": ["VA Approved", "State Licensed", "PTSD Care Certified", "Veteran-Owned"],
-            "specialties": ["Veteran Care", "Military Families", "PTSD Support", "Disability Care"],
-            "price_per_hour": 15,
-            "rating": 4.9,
-            "review_count": 145,
-            "image_url": "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 48,
-            "years_in_business": 13,
-            "families_served": 1120,
-            "reviews": generate_reviews(["Veteran Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Potomac Pediatric Care",
-            "bio": "Specialized pediatric home care for children with complex needs.",
-            "description": "Potomac Pediatric Care provides expert nursing care for children with complex medical conditions. Our pediatric nurses are trained to handle everything from ventilator care to feeding tubes, allowing medically fragile children to thrive at home with their families. We work closely with children's hospitals throughout the DC area to ensure continuity of care, and we provide training and support to family members who want to participate in their child's care.",
-            "location": "4500 Wisconsin Ave NW, Washington, DC 20016",
-            "city": "Washington, D.C.",
-            "experience_years": 15,
-            "certifications": ["Pediatric ICU Certified", "State Licensed", "Ventilator Care Trained", "Children's Hospital Affiliated"],
-            "specialties": ["Pediatric Nursing", "Complex Medical Care", "Ventilator Care", "Special Needs"],
-            "price_per_hour": 18,
-            "rating": 4.8,
-            "review_count": 89,
-            "image_url": "https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 38,
-            "years_in_business": 15,
-            "families_served": 620,
-            "reviews": generate_reviews(["Pediatric Nursing"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "DC Senior Living Support",
-            "bio": "Helping seniors age in place with dignity and independence.",
-            "description": "DC Senior Living Support is dedicated to one mission: helping seniors stay in their homes for as long as safely possible. We provide the support needed for aging in place, from help with daily activities to medication management to fall prevention. Our caregivers are trained in senior-specific techniques and understand the importance of maintaining independence and dignity. We also offer family consultations to help plan for changing care needs over time.",
-            "location": "1200 New Hampshire Ave NW, Washington, DC 20036",
-            "city": "Washington, D.C.",
-            "experience_years": 7,
-            "certifications": ["State Licensed", "Fall Prevention Certified", "Senior Care Specialist"],
-            "specialties": ["Aging in Place", "Fall Prevention", "Daily Living Support", "Medication Management"],
-            "price_per_hour": 16,
-            "rating": 4.6,
-            "review_count": 56,
-            "image_url": "https://images.unsplash.com/photo-1517732306149-e8f829eb588a?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": True,
-            "total_caregivers": 25,
-            "years_in_business": 7,
-            "families_served": 380,
-            "reviews": generate_reviews(["Aging in Place"])
-        },
-        # Pittsburgh, PA - 5 agencies
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Steel City Home Care",
-            "bio": "Pittsburgh's most trusted home care agency since 2005.",
-            "description": "Steel City Home Care has been serving Pittsburgh families for nearly two decades, building a reputation for reliability and excellence. Our roots run deep in this community—many of our caregivers have been with us for over 10 years, providing consistent, familiar faces for our clients. We offer comprehensive care services from light housekeeping and companionship to complex medical support, always with the warmth and friendliness Pittsburgh is known for.",
-            "location": "600 Grant Street, Pittsburgh, PA 15219",
-            "city": "Pittsburgh, PA",
-            "experience_years": 19,
-            "certifications": ["State Licensed", "ACHC Accredited", "Community Service Award"],
-            "specialties": ["Elderly Care", "Companionship", "Light Housekeeping", "Meal Preparation"],
-            "price_per_hour": 15,
-            "rating": 4.8,
-            "review_count": 201,
-            "image_url": "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 72,
-            "years_in_business": 19,
-            "families_served": 2450,
-            "reviews": generate_reviews(["Elderly Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Three Rivers Care Solutions",
-            "bio": "Comprehensive care services for the greater Pittsburgh region.",
-            "description": "Three Rivers Care Solutions serves families throughout the greater Pittsburgh area, from downtown to the surrounding suburbs. We're known for our responsive, flexible approach—when your care needs change, we adapt quickly. Our care coordinators are available 24/7 to handle emergencies, adjust schedules, or answer questions. We believe great care starts with great communication, which is why we provide regular updates to family members and work collaboratively with healthcare providers.",
-            "location": "300 Sixth Avenue, Pittsburgh, PA 15222",
-            "city": "Pittsburgh, PA",
-            "experience_years": 12,
-            "certifications": ["State Licensed", "24/7 Support", "Bonded & Insured"],
-            "specialties": ["Flexible Care", "Emergency Response", "Family Communication", "Regional Coverage"],
-            "price_per_hour": 16,
-            "rating": 4.7,
-            "review_count": 145,
-            "image_url": "https://images.unsplash.com/photo-1527613426441-4da17471b66d?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 55,
-            "years_in_business": 12,
-            "families_served": 1340,
-            "reviews": generate_reviews(["Elderly Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "UPMC Home Health Partners",
-            "bio": "Affiliated with UPMC for seamless hospital-to-home transitions.",
-            "description": "UPMC Home Health Partners works closely with the UPMC health system to provide seamless transitions from hospital to home care. When you're discharged from a UPMC facility, our team is ready to step in immediately with care that follows your physician's orders precisely. Our electronic health records integrate with UPMC systems, so your entire care team stays informed and coordinated. This level of integration means safer, more effective care for you or your loved one.",
-            "location": "200 Lothrop Street, Pittsburgh, PA 15213",
-            "city": "Pittsburgh, PA",
-            "experience_years": 16,
-            "certifications": ["UPMC Affiliated", "Medicare Certified", "Joint Commission Accredited", "EHR Integrated"],
-            "specialties": ["Hospital Transitions", "Skilled Nursing", "Rehabilitation", "Chronic Disease Management"],
-            "price_per_hour": 17,
-            "rating": 4.9,
-            "review_count": 189,
-            "image_url": "https://images.unsplash.com/photo-1551190822-a9333d879b1f?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 85,
-            "years_in_business": 16,
-            "families_served": 2100,
-            "reviews": generate_reviews(["Hospital Transitions"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Allegheny Senior Care",
-            "bio": "Dedicated exclusively to senior care in Allegheny County.",
-            "description": "Allegheny Senior Care focuses exclusively on elderly care, which allows us to develop deep expertise in the unique challenges seniors face. From managing multiple chronic conditions to providing dignified assistance with personal care, our caregivers are true specialists in geriatric care. We also offer specialized programs for couples, allowing both partners to receive coordinated care while staying together in their home.",
-            "location": "425 Sixth Avenue, Pittsburgh, PA 15219",
-            "city": "Pittsburgh, PA",
-            "experience_years": 14,
-            "certifications": ["Geriatric Care Certified", "State Licensed", "Couples Care Program"],
-            "specialties": ["Senior Care", "Couples Care", "Chronic Conditions", "Personal Care"],
-            "price_per_hour": 15,
-            "rating": 4.6,
-            "review_count": 112,
-            "image_url": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551667/pexels-photo-7551667.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 45,
-            "years_in_business": 14,
-            "families_served": 890,
-            "reviews": generate_reviews(["Senior Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Squirrel Hill Home Helpers",
-            "bio": "Neighborhood-focused care in Pittsburgh's East End.",
-            "description": "Squirrel Hill Home Helpers takes a neighborhood approach to home care. We hire caregivers who live in and know the East End communities, creating natural connections with clients who share their neighborhood. This means caregivers who understand local resources, know the best places for outings, and can easily handle transportation to familiar doctors and stores. It's home care that truly feels like home.",
-            "location": "5850 Forbes Avenue, Pittsburgh, PA 15217",
-            "city": "Pittsburgh, PA",
-            "experience_years": 8,
-            "certifications": ["State Licensed", "Community Focused", "Local Background Checks"],
-            "specialties": ["Neighborhood Care", "Transportation", "Community Integration", "Companionship"],
-            "price_per_hour": 15,
-            "rating": 4.7,
-            "review_count": 78,
-            "image_url": "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": True,
-            "total_caregivers": 28,
-            "years_in_business": 8,
-            "families_served": 420,
-            "reviews": generate_reviews(["Companionship"])
-        },
-        # Newark, NJ - 4 agencies
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Garden State Home Care",
-            "bio": "New Jersey's affordable, quality home care solution.",
-            "description": "Garden State Home Care proves that quality care doesn't have to break the bank. We've streamlined our operations to offer competitive rates while maintaining high standards of care. Our caregivers are thoroughly vetted, properly trained, and genuinely caring—we just don't charge premium prices for premium service. Serving families throughout Newark and Northern New Jersey, we make professional home care accessible to everyone who needs it.",
-            "location": "550 Broad Street, Newark, NJ 07102",
-            "city": "Newark, NJ",
-            "experience_years": 11,
-            "certifications": ["State Licensed", "Affordable Care Program", "Bonded & Insured"],
-            "specialties": ["Affordable Care", "Elderly Care", "Daily Living", "Transportation"],
-            "price_per_hour": 15,
-            "rating": 4.5,
-            "review_count": 167,
-            "image_url": "https://images.unsplash.com/photo-1504439468489-c8920d796a29?w=600&h=450&fit=crop&q=80",
-            "gallery_images": [
-                "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551622/pexels-photo-7551622.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 62,
-            "years_in_business": 11,
-            "families_served": 1560,
-            "reviews": generate_reviews(["Affordable Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Newark Community Care",
-            "bio": "By the community, for the community—culturally competent care.",
-            "description": "Newark Community Care was founded with a simple mission: provide culturally competent care that reflects the diverse communities of Newark. Our caregivers speak Portuguese, Spanish, Haitian Creole, and many other languages. More importantly, they understand the cultural traditions, dietary preferences, and family values of the communities they serve. When care feels familiar, it's more effective—and that's what we deliver every day.",
-            "location": "60 Park Place, Newark, NJ 07102",
-            "city": "Newark, NJ",
-            "experience_years": 9,
-            "certifications": ["Cultural Competency Certified", "Multilingual Staff", "Community Partner"],
-            "specialties": ["Cultural Care", "Multilingual", "Community Health", "Family Support"],
-            "price_per_hour": 15,
-            "rating": 4.6,
-            "review_count": 98,
-            "image_url": "https://images.pexels.com/photos/8460072/pexels-photo-8460072.jpeg?auto=compress&cs=tinysrgb&w=600",
-            "gallery_images": [
-                "https://images.pexels.com/photos/7551668/pexels-photo-7551668.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 48,
-            "years_in_business": 9,
-            "families_served": 720,
-            "reviews": generate_reviews(["Cultural Care"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Essex County Care Services",
-            "bio": "Serving all of Essex County with dependable, professional care.",
-            "description": "Essex County Care Services provides reliable home care throughout Essex County, from Newark to the suburbs. We pride ourselves on dependability—when we say a caregiver will arrive at 9 AM, they arrive at 9 AM. Our scheduling system ensures consistent caregivers for each client, building the trust and familiarity that makes care more effective. We also offer backup coverage guarantees, so you're never left without support.",
-            "location": "1085 Raymond Boulevard, Newark, NJ 07102",
-            "city": "Newark, NJ",
-            "experience_years": 13,
-            "certifications": ["State Licensed", "Reliability Guaranteed", "Full County Coverage"],
-            "specialties": ["Reliable Scheduling", "Backup Coverage", "Personal Care", "Elderly Care"],
-            "price_per_hour": 16,
-            "rating": 4.7,
-            "review_count": 134,
-            "image_url": "https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=600",
-            "gallery_images": [
-                "https://images.pexels.com/photos/5206919/pexels-photo-5206919.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/7551617/pexels-photo-7551617.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460059/pexels-photo-8460059.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": False,
-            "total_caregivers": 55,
-            "years_in_business": 13,
-            "families_served": 1180,
-            "reviews": generate_reviews(["Reliable Scheduling"])
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "name": "Brick City Caregivers",
-            "bio": "Newark's newest, most innovative home care agency.",
-            "description": "Brick City Caregivers brings fresh innovation to Newark's home care scene. We use modern technology to improve care—from our app that lets families check in on care visits in real-time, to our AI-powered matching system that pairs caregivers with clients based on personality and interests, not just skills. We're proving that home care can be both high-tech and high-touch, combining the best of both worlds for Newark families.",
-            "location": "744 Broad Street, Newark, NJ 07102",
-            "city": "Newark, NJ",
-            "experience_years": 3,
-            "certifications": ["State Licensed", "Tech-Enabled Care", "Innovation Award"],
-            "specialties": ["Tech-Enabled", "Real-time Updates", "Personalized Matching", "Modern Care"],
-            "price_per_hour": 17,
-            "rating": 4.8,
-            "review_count": 45,
-            "image_url": "https://images.pexels.com/photos/5207100/pexels-photo-5207100.jpeg?auto=compress&cs=tinysrgb&w=600",
-            "gallery_images": [
-                "https://images.pexels.com/photos/8460153/pexels-photo-8460153.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/8460157/pexels-photo-8460157.jpeg?auto=compress&cs=tinysrgb&w=600",
-                "https://images.pexels.com/photos/3768140/pexels-photo-3768140.jpeg?auto=compress&cs=tinysrgb&w=600"
-            ],
-            "is_verified": True,
-            "is_new": True,
-            "total_caregivers": 22,
-            "years_in_business": 3,
-            "families_served": 180,
-            "reviews": generate_reviews(["Tech-Enabled"])
-        }
-    ]
-    
-    for agency in agencies_data:
-        agency["created_at"] = datetime.now(timezone.utc).isoformat()
-    
-    await db.agencies.insert_many(agencies_data)
-    return {"message": "Data seeded successfully", "count": len(agencies_data)}
+    count = await seed_apartments()
+    return {"success": True, "apartments_seeded": count}
 
-# Include the router in the main app
+@app.on_event("startup")
+async def startup_seed():
+    existing = await db.apartments.count_documents({})
+    if existing == 0:
+        count = await seed_apartments()
+        logger.info(f"Seeded {count} apartments on startup")
+
 app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
