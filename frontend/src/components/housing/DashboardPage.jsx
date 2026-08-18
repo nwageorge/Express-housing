@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { CalendarDays, Users, Heart } from "lucide-react";
+import { CalendarDays, Users, Heart, CheckCircle2, XCircle, BadgeCheck, X } from "lucide-react";
 import api from "@/lib/api";
 import { useAuth } from "@/App";
 import ApartmentCard from "@/components/housing/ApartmentCard";
@@ -12,6 +12,12 @@ const STATUS_STYLES = {
   cancelled: "bg-red-50 text-red-600 border-red-200",
 };
 
+const ALERT_CONFIG = {
+  confirmed: { icon: CheckCircle2, cls: "bg-green-50 border-green-200 text-green-800", text: (t) => `Great news — your stay at ${t} was approved! Check your email for confirmation.` },
+  cancelled: { icon: XCircle, cls: "bg-red-50 border-red-200 text-red-700", text: (t) => `Your request for ${t} couldn't be accommodated. Our team emailed you alternatives.` },
+  completed: { icon: BadgeCheck, cls: "bg-gray-50 border-gray-200 text-gray-600", text: (t) => `Your stay at ${t} is complete. We'd love to host you again!` },
+};
+
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -20,6 +26,7 @@ export default function DashboardPage() {
   const [bookings, setBookings] = useState([]);
   const [saved, setSaved] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusAlerts, setStatusAlerts] = useState([]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login");
@@ -32,6 +39,18 @@ export default function DashboardPage() {
       .then(([b, w]) => {
         setBookings(b.data);
         setSaved(w.data);
+        // Guest status alerts: diff against last-seen statuses
+        try {
+          const key = `eh_seen_statuses_${user.id}`;
+          const seen = JSON.parse(localStorage.getItem(key) || "{}");
+          const changes = b.data.filter(
+            (bk) => seen[bk.id] && seen[bk.id] !== bk.status && ALERT_CONFIG[bk.status]
+          );
+          setStatusAlerts(changes);
+          const next = {};
+          b.data.forEach((bk) => { next[bk.id] = bk.status; });
+          localStorage.setItem(key, JSON.stringify(next));
+        } catch { /* noop */ }
       })
       .finally(() => setLoading(false));
   }, [user]);
@@ -42,6 +61,24 @@ export default function DashboardPage() {
     <div className="eh-container mt-10 pb-10" data-testid="dashboard">
       <p className="eyebrow mb-1">My Account</p>
       <h1 className="text-2xl font-bold">Welcome back, {user.name.split(" ")[0]}</h1>
+
+      {/* Status change alerts */}
+      {statusAlerts.length > 0 && (
+        <div className="mt-6 space-y-2" data-testid="status-alerts">
+          {statusAlerts.map((a) => {
+            const cfg = ALERT_CONFIG[a.status];
+            return (
+              <div key={a.id} className={`flex items-start gap-3 border px-4 py-3 text-sm ${cfg.cls}`} data-testid={`status-alert-${a.id}`}>
+                <cfg.icon size={17} className="shrink-0 mt-0.5" />
+                <p className="flex-1">{cfg.text(a.apartment_title)} <span className="opacity-60">({a.check_in} → {a.check_out})</span></p>
+                <button onClick={() => setStatusAlerts((prev) => prev.filter((x) => x.id !== a.id))} aria-label="Dismiss" className="opacity-50 hover:opacity-100">
+                  <X size={15} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-6 border-b border-gray-200 mt-8">

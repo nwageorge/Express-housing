@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { CalendarDays, Users, Mail, CheckCircle2, XCircle, BadgeCheck, Clock, Building2, DollarSign } from "lucide-react";
+import { CalendarDays, Users, Mail, CheckCircle2, XCircle, BadgeCheck, Clock, Building2, DollarSign, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { useAuth } from "@/App";
@@ -14,14 +14,98 @@ const STATUS_STYLES = {
 
 const TABS = ["all", "pending", "confirmed", "completed", "cancelled"];
 
+const pad = (n) => String(n).padStart(2, "0");
+
+function CalendarView({ apartments, bookings }) {
+  const [month, setMonth] = useState(() => {
+    const d = new Date();
+    return { y: d.getFullYear(), m: d.getMonth() }; // m: 0-based
+  });
+
+  const daysInMonth = new Date(month.y, month.m + 1, 0).getDate();
+  const days = [...Array(daysInMonth)].map((_, i) => i + 1);
+  const monthLabel = new Date(month.y, month.m, 1).toLocaleString("en-US", { month: "long", year: "numeric" });
+  const active = bookings.filter((b) => b.status === "pending" || b.status === "confirmed");
+
+  const dayStatus = (aptId, day) => {
+    const ds = `${month.y}-${pad(month.m + 1)}-${pad(day)}`;
+    const bk = active.find((b) => b.apartment_id === aptId && b.check_in <= ds && ds < b.check_out);
+    return bk ? bk.status : null;
+  };
+
+  const shift = (delta) => {
+    setMonth(({ y, m }) => {
+      const d = new Date(y, m + delta, 1);
+      return { y: d.getFullYear(), m: d.getMonth() };
+    });
+  };
+
+  return (
+    <div className="mt-6" data-testid="admin-calendar">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <button onClick={() => shift(-1)} className="w-8 h-8 border border-gray-200 flex items-center justify-center hover:border-[#212529]" aria-label="Previous month" data-testid="calendar-prev">
+            <ChevronLeft size={15} />
+          </button>
+          <p className="font-bold uppercase tracking-wider text-sm min-w-[150px] text-center" data-testid="calendar-month-label">{monthLabel}</p>
+          <button onClick={() => shift(1)} className="w-8 h-8 border border-gray-200 flex items-center justify-center hover:border-[#212529]" aria-label="Next month" data-testid="calendar-next">
+            <ChevronRight size={15} />
+          </button>
+        </div>
+        <div className="flex items-center gap-4 text-[11px] uppercase tracking-wider font-semibold text-gray-500">
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-green-500 inline-block" /> Confirmed</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-amber-400 inline-block" /> Pending</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-gray-100 border border-gray-200 inline-block" /> Open</span>
+        </div>
+      </div>
+
+      <div className="mt-4 overflow-x-auto border border-gray-200">
+        <table className="w-full border-collapse text-xs">
+          <thead>
+            <tr>
+              <th className="sticky left-0 bg-white text-left p-2 border-b border-r border-gray-200 min-w-[180px] font-bold uppercase tracking-wider text-[10px] text-gray-500">Apartment</th>
+              {days.map((d) => (
+                <th key={d} className="p-1 border-b border-gray-200 text-center font-semibold text-gray-400 min-w-[26px]">{d}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {apartments.map((apt) => (
+              <tr key={apt.id} data-testid={`calendar-row-${apt.id}`}>
+                <td className="sticky left-0 bg-white p-2 border-b border-r border-gray-100 font-semibold text-[#212529] whitespace-nowrap max-w-[220px] overflow-hidden text-ellipsis">
+                  {apt.title}
+                  <span className="block text-[10px] text-gray-400 font-normal">{apt.neighborhood}</span>
+                </td>
+                {days.map((d) => {
+                  const st = dayStatus(apt.id, d);
+                  return (
+                    <td
+                      key={d}
+                      title={st ? `${st} · ${monthLabel} ${d}` : `open · ${monthLabel} ${d}`}
+                      className={`border-b border-gray-100 h-8 ${
+                        st === "confirmed" ? "bg-green-500" : st === "pending" ? "bg-amber-400" : "bg-gray-50"
+                      }`}
+                    />
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [emails, setEmails] = useState([]);
+  const [apartments, setApartments] = useState([]);
   const [tab, setTab] = useState("pending");
-  const [view, setView] = useState("bookings"); // bookings | emails
+  const [view, setView] = useState("bookings"); // bookings | calendar | emails
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState(null);
 
@@ -35,14 +119,16 @@ export default function AdminPage() {
   const loadAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [s, b, e] = await Promise.all([
+      const [s, b, e, a] = await Promise.all([
         api.get("/admin/stats"),
         api.get("/admin/bookings"),
         api.get("/admin/emails"),
+        api.get("/apartments"),
       ]);
       setStats(s.data);
       setBookings(b.data);
       setEmails(e.data);
+      setApartments(a.data);
     } catch {
       toast.error("Could not load admin data");
     } finally {
@@ -112,6 +198,13 @@ export default function AdminPage() {
           Stay Requests ({bookings.length})
         </button>
         <button
+          onClick={() => setView("calendar")}
+          className={`pb-3 text-sm font-bold uppercase tracking-wider border-b-2 -mb-px ${view === "calendar" ? "border-[#bd744c] text-[#bd744c]" : "border-transparent text-gray-400 hover:text-[#212529]"}`}
+          data-testid="admin-view-calendar"
+        >
+          Availability Calendar
+        </button>
+        <button
           onClick={() => setView("emails")}
           className={`pb-3 text-sm font-bold uppercase tracking-wider border-b-2 -mb-px ${view === "emails" ? "border-[#bd744c] text-[#bd744c]" : "border-transparent text-gray-400 hover:text-[#212529]"}`}
           data-testid="admin-view-emails"
@@ -124,6 +217,8 @@ export default function AdminPage() {
         <div className="py-20 text-center">
           <div className="animate-spin w-10 h-10 border-4 border-[#bd744c] border-t-transparent rounded-full mx-auto" />
         </div>
+      ) : view === "calendar" ? (
+        <CalendarView apartments={apartments} bookings={bookings} />
       ) : view === "bookings" ? (
         <>
           {/* Status filter chips */}
