@@ -91,6 +91,15 @@ export default function Header() {
             </Link>
             {user ? (
               <div className="hidden md:flex items-center gap-3">
+                {user.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    className="text-[13px] font-bold uppercase tracking-wider text-[#bd744c] hover:underline"
+                    data-testid="header-admin-link"
+                  >
+                    Admin
+                  </Link>
+                )}
                 <Link
                   to="/dashboard"
                   className="flex items-center gap-1.5 text-[13px] font-semibold uppercase tracking-wider hover:text-[#bd744c]"
@@ -151,6 +160,11 @@ export default function Header() {
             ))}
             {user ? (
               <>
+                {user.role === "admin" && (
+                  <NavLink to="/admin" onClick={() => setMobileOpen(false)} className="text-sm font-bold uppercase tracking-wider text-[#bd744c]">
+                    Admin
+                  </NavLink>
+                )}
                 <NavLink to="/dashboard" onClick={() => setMobileOpen(false)} className="text-sm font-semibold uppercase tracking-wider text-[#bd744c]">
                   My Stays
                 </NavLink>

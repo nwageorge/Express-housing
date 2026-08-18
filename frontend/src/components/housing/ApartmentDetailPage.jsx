@@ -19,6 +19,7 @@ export default function ApartmentDetailPage() {
   const { user, wishlistIds, toggleWishlist } = useAuth();
   const [apt, setApt] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [unavailable, setUnavailable] = useState([]);
   const [mainImg, setMainImg] = useState(0);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
@@ -31,7 +32,18 @@ export default function ApartmentDetailPage() {
     api.get(`/apartments/${id}`)
       .then((r) => setApt(r.data))
       .catch(() => setNotFound(true));
+    api.get(`/apartments/${id}/unavailable`)
+      .then((r) => setUnavailable(r.data))
+      .catch(() => setUnavailable([]));
   }, [id]);
+
+  const today = new Date().toISOString().split("T")[0];
+
+  // Date blocking: does the selected range overlap a booked range?
+  const conflict = useMemo(() => {
+    if (!checkIn || !checkOut) return null;
+    return unavailable.find((u) => checkIn < u.check_out && checkOut > u.check_in) || null;
+  }, [checkIn, checkOut, unavailable]);
 
   const nights = useMemo(() => {
     if (!checkIn || !checkOut) return 0;
@@ -58,6 +70,10 @@ export default function ApartmentDetailPage() {
       toast.error(`Minimum stay is ${apt.min_nights} nights`);
       return;
     }
+    if (conflict) {
+      toast.error("Those dates are already booked — please pick different dates");
+      return;
+    }
     setSubmitting(true);
     try {
       await api.post("/bookings", {
@@ -68,7 +84,7 @@ export default function ApartmentDetailPage() {
         purpose,
         notes: notes || null,
       });
-      toast.success("Stay request sent! Our team will confirm within hours.");
+      toast.success("Stay request sent! Confirmation email is on its way.");
       navigate("/dashboard");
     } catch (err) {
       toast.error(err.response?.data?.detail || "Could not send request");
@@ -105,13 +121,23 @@ export default function ApartmentDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
         {/* Gallery + info */}
         <div className="lg:col-span-3">
-          <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+          <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
             <img src={apt.images?.[mainImg]} alt={apt.title} className="w-full h-full object-cover" />
+            {apt.photo_tour?.[mainImg]?.room && (
+              <span className="absolute bottom-3 left-3 bg-[#212529]/85 text-white text-[10px] font-bold uppercase tracking-[0.15em] px-3 py-1.5" data-testid="photo-room-label">
+                {apt.photo_tour[mainImg].room}
+              </span>
+            )}
           </div>
           <div className="grid grid-cols-4 gap-2 mt-2">
             {apt.images?.map((img, i) => (
-              <button key={i} onClick={() => setMainImg(i)} className={`aspect-[4/3] overflow-hidden ${i === mainImg ? "ring-2 ring-[#bd744c]" : "opacity-70 hover:opacity-100"}`}>
+              <button key={i} onClick={() => setMainImg(i)} className={`relative aspect-[4/3] overflow-hidden ${i === mainImg ? "ring-2 ring-[#bd744c]" : "opacity-70 hover:opacity-100"}`}>
                 <img src={img} alt="" className="w-full h-full object-cover" />
+                {apt.photo_tour?.[i]?.room && (
+                  <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[8px] font-bold uppercase tracking-wider py-0.5 text-center">
+                    {apt.photo_tour[i].room}
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -207,13 +233,27 @@ export default function ApartmentDetailPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label-eh">Check-in</label>
-                  <input type="date" className="input-eh" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} data-testid="booking-checkin" />
+                  <input type="date" min={today} className="input-eh" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} data-testid="booking-checkin" />
                 </div>
                 <div>
                   <label className="label-eh">Check-out</label>
-                  <input type="date" className="input-eh" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} data-testid="booking-checkout" />
+                  <input type="date" min={checkIn || today} className="input-eh" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} data-testid="booking-checkout" />
                 </div>
               </div>
+
+              {conflict && (
+                <div className="bg-red-50 border border-red-200 text-red-600 text-xs px-3 py-2.5" data-testid="dates-conflict-warning">
+                  Those dates overlap an existing stay ({conflict.check_in} → {conflict.check_out}). Please choose different dates.
+                </div>
+              )}
+              {unavailable.length > 0 && (
+                <div className="text-[11px] text-gray-400" data-testid="unavailable-list">
+                  <span className="font-bold uppercase tracking-wider text-gray-500">Already booked: </span>
+                  {unavailable.map((u, i) => (
+                    <span key={i}>{u.check_in} → {u.check_out}{i < unavailable.length - 1 ? " · " : ""}</span>
+                  ))}
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="label-eh">Guests</label>
@@ -248,10 +288,10 @@ export default function ApartmentDetailPage() {
                 </div>
               )}
 
-              <button className="btn-eh w-full" onClick={requestBooking} disabled={submitting} data-testid="request-booking-btn">
-                {submitting ? "Sending..." : "Request to Book"}
+              <button className="btn-eh w-full" onClick={requestBooking} disabled={submitting || !!conflict} data-testid="request-booking-btn">
+                {submitting ? "Sending..." : conflict ? "Dates Unavailable" : "Request to Book"}
               </button>
-              <p className="text-[11px] text-gray-400 text-center">No charge yet — our team confirms availability first.</p>
+              <p className="text-[11px] text-gray-400 text-center">No charge yet — our team confirms availability first. You’ll get an email confirmation.</p>
             </div>
           </div>
         </div>

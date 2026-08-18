@@ -73,6 +73,7 @@ class ApartmentBase(BaseModel):
     is_new: bool = False
     min_nights: int = 2
     reviews: List[dict] = []
+    photo_tour: List[dict] = []  # [{url, room}]
 
 class Apartment(ApartmentBase):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -90,6 +91,8 @@ class Booking(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
+    user_name: str = ""
+    user_email: str = ""
     apartment_id: str
     apartment_title: str = ""
     apartment_image: str = ""
@@ -137,6 +140,29 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
         return user
     except InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+async def require_admin(user: dict = Depends(get_current_user)):
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+# ===== EMAIL (MOCKED - logged to db.email_log, visible in admin dashboard) =====
+async def send_email(to_email: str, to_name: str, subject: str, body: str, booking_id: str = None):
+    """MOCKED email sender. Logs the email instead of sending.
+    Swap this function body with a real provider (SendGrid etc.) later."""
+    record = {
+        "id": str(uuid.uuid4()),
+        "to_email": to_email,
+        "to_name": to_name,
+        "subject": subject,
+        "body": body,
+        "booking_id": booking_id,
+        "status": "sent (mocked)",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.email_log.insert_one(dict(record))
+    logger.info(f"[MOCK EMAIL] to={to_email} subject={subject}")
+    return record
 
 # ===== ROUTES =====
 @api_router.get("/")
@@ -259,6 +285,15 @@ async def create_booking(booking_data: BookingCreate, user: dict = Depends(get_c
         raise HTTPException(status_code=400, detail=f"Minimum stay is {apt.get('min_nights', 1)} nights")
     if booking_data.guests > apt.get("max_guests", 1):
         raise HTTPException(status_code=400, detail=f"Maximum {apt.get('max_guests', 1)} guests for this apartment")
+    # Date blocking: reject overlap with existing pending/confirmed bookings
+    conflict = await db.bookings.find_one({
+        "apartment_id": apt["id"],
+        "status": {"$in": ["pending", "confirmed"]},
+        "check_in": {"$lt": booking_data.check_out},
+        "check_out": {"$gt": booking_data.check_in},
+    })
+    if conflict:
+        raise HTTPException(status_code=409, detail="Those dates are no longer available for this apartment")
     # Monthly pro-rated pricing for stays of 28+ nights
     if nights >= 28:
         total = round(apt["monthly_rate"] / 30 * nights, 2)
@@ -266,6 +301,8 @@ async def create_booking(booking_data: BookingCreate, user: dict = Depends(get_c
         total = round(apt["nightly_rate"] * nights, 2)
     booking = Booking(
         user_id=user["id"],
+        user_name=user.get("name", ""),
+        user_email=user.get("email", ""),
         apartment_id=apt["id"],
         apartment_title=apt["title"],
         apartment_image=apt["images"][0] if apt.get("images") else "",
@@ -282,7 +319,21 @@ async def create_booking(booking_data: BookingCreate, user: dict = Depends(get_c
     doc = booking.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
     await db.bookings.insert_one(dict(doc))
+    await send_email(
+        user.get("email", ""), user.get("name", ""),
+        f"Stay request received \u2014 {apt['title']}",
+        f"Hi {user.get('name', '').split(' ')[0]},\n\nWe received your stay request for {apt['title']} in {apt.get('neighborhood', '')} from {booking_data.check_in} to {booking_data.check_out} ({nights} nights, {booking_data.guests} guests). Estimated total: ${total:,.2f}.\n\nOur team will confirm availability within hours.\n\n\u2014 Express Housing",
+        booking.id,
+    )
     return doc
+
+@api_router.get("/apartments/{apartment_id}/unavailable")
+async def get_unavailable_dates(apartment_id: str):
+    bookings = await db.bookings.find(
+        {"apartment_id": apartment_id, "status": {"$in": ["pending", "confirmed"]}},
+        {"_id": 0, "check_in": 1, "check_out": 1},
+    ).to_list(200)
+    return bookings
 
 @api_router.get("/bookings")
 async def get_bookings(user: dict = Depends(get_current_user)):
@@ -322,6 +373,56 @@ async def toggle_wishlist(apartment_id: str, user: dict = Depends(get_current_us
 async def get_wishlist_ids(user: dict = Depends(get_current_user)):
     items = await db.wishlist.find({"user_id": user["id"]}, {"_id": 0, "apartment_id": 1}).to_list(200)
     return [i["apartment_id"] for i in items]
+
+# --- Admin ---
+class StatusUpdate(BaseModel):
+    status: str  # confirmed, cancelled, completed
+
+@api_router.get("/admin/stats")
+async def admin_stats(admin: dict = Depends(require_admin)):
+    pipeline = [{"$group": {"_id": "$status", "count": {"$sum": 1}, "revenue": {"$sum": "$total_price"}}}]
+    rows = await db.bookings.aggregate(pipeline).to_list(20)
+    stats = {"pending": 0, "confirmed": 0, "completed": 0, "cancelled": 0, "revenue": 0}
+    for r in rows:
+        stats[r["_id"]] = r["count"]
+        if r["_id"] in ("confirmed", "completed"):
+            stats["revenue"] += r["revenue"]
+    stats["total"] = sum(stats[k] for k in ("pending", "confirmed", "completed", "cancelled"))
+    stats["apartments"] = await db.apartments.count_documents({})
+    return stats
+
+@api_router.get("/admin/bookings")
+async def admin_bookings(status: Optional[str] = None, admin: dict = Depends(require_admin)):
+    query = {"status": status} if status else {}
+    bookings = await db.bookings.find(query, {"_id": 0}).sort([("created_at", -1)]).to_list(500)
+    return bookings
+
+@api_router.patch("/admin/bookings/{booking_id}")
+async def admin_update_booking(booking_id: str, update: StatusUpdate, admin: dict = Depends(require_admin)):
+    if update.status not in ("confirmed", "cancelled", "completed"):
+        raise HTTPException(status_code=400, detail="Invalid status")
+    booking = await db.bookings.find_one({"id": booking_id}, {"_id": 0})
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    await db.bookings.update_one({"id": booking_id}, {"$set": {"status": update.status}})
+    booking["status"] = update.status
+    first = (booking.get("user_name") or "Guest").split(" ")[0]
+    if update.status == "confirmed":
+        subject = f"Your stay is confirmed \u2014 {booking['apartment_title']}"
+        body = f"Hi {first},\n\nGreat news \u2014 your stay at {booking['apartment_title']} ({booking['neighborhood']}) from {booking['check_in']} to {booking['check_out']} is CONFIRMED.\n\nTotal: ${booking['total_price']:,.2f}. Keypad check-in details arrive 48 hours before arrival.\n\nWelcome to Express Housing!"
+    elif update.status == "cancelled":
+        subject = f"Update on your stay request \u2014 {booking['apartment_title']}"
+        body = f"Hi {first},\n\nUnfortunately we couldn't accommodate your stay at {booking['apartment_title']} from {booking['check_in']} to {booking['check_out']}. Those dates are unavailable.\n\nReply to this email and our team will find you a comparable home.\n\n\u2014 Express Housing"
+    else:
+        subject = f"Thanks for staying with us \u2014 {booking['apartment_title']}"
+        body = f"Hi {first},\n\nYour stay at {booking['apartment_title']} is complete. We'd love to host you again \u2014 returning guests get priority on new listings.\n\n\u2014 Express Housing"
+    await send_email(booking.get("user_email", ""), booking.get("user_name", ""), subject, body, booking_id)
+    return booking
+
+@api_router.get("/admin/emails")
+async def admin_emails(admin: dict = Depends(require_admin)):
+    emails = await db.email_log.find({}, {"_id": 0}).sort([("created_at", -1)]).to_list(200)
+    return emails
 
 # --- Contact ---
 @api_router.post("/contact")
@@ -503,25 +604,55 @@ SEED_APARTMENTS = [
 ]
 
 async def seed_apartments():
+    # Room label mapping for photo tours
+    room_map = {}
+    for u in LR:
+        room_map[u] = "Living Room"
+    for u in BR:
+        room_map[u] = "Bedroom"
+    for u in KT:
+        room_map[u] = "Kitchen"
+    for u in HERO:
+        room_map[u] = "Living Space"
     await db.apartments.delete_many({})
     docs = []
     for a in SEED_APARTMENTS:
         apt = Apartment(**a)
         d = apt.model_dump()
+        # Deterministic id so re-seeding preserves bookings/wishlist references
+        d["id"] = str(uuid.uuid5(uuid.NAMESPACE_DNS, f"expresshousing:{a['title']}"))
+        d["photo_tour"] = [{"url": img, "room": room_map.get(img, "Interior")} for img in d["images"]]
         d["created_at"] = d["created_at"].isoformat()
         docs.append(d)
     await db.apartments.insert_many(docs)
     return len(docs)
 
+async def seed_admin():
+    existing = await db.users.find_one({"email": "admin@expresshousing.com"})
+    if not existing:
+        await db.users.insert_one({
+            "id": str(uuid.uuid4()),
+            "email": "admin@expresshousing.com",
+            "name": "Express Admin",
+            "role": "admin",
+            "phone": None,
+            "password_hash": hash_password("admin2025"),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        })
+        logger.info("Seeded admin user admin@expresshousing.com")
+
 @api_router.post("/seed")
 async def seed_data():
     count = await seed_apartments()
+    await seed_admin()
     return {"success": True, "apartments_seeded": count}
 
 @app.on_event("startup")
 async def startup_seed():
-    existing = await db.apartments.count_documents({})
-    if existing == 0:
+    await seed_admin()
+    sample = await db.apartments.find_one({})
+    # Re-seed if empty or missing photo_tour (schema upgrade)
+    if not sample or "photo_tour" not in sample:
         count = await seed_apartments()
         logger.info(f"Seeded {count} apartments on startup")
 

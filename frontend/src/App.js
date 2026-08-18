@@ -9,6 +9,7 @@ import ApartmentsPage from "@/components/housing/ApartmentsPage";
 import ApartmentDetailPage from "@/components/housing/ApartmentDetailPage";
 import { LoginPage, SignupPage } from "@/components/housing/AuthPages";
 import DashboardPage from "@/components/housing/DashboardPage";
+import AdminPage from "@/components/housing/AdminPage";
 import ContactPage from "@/components/housing/ContactPage";
 import "@/App.css";
 
@@ -97,6 +98,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/admin" element={<AdminPage />} />
               <Route path="/contact" element={<ContactPage />} />
             </Routes>
           </main>

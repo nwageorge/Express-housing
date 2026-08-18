@@ -448,3 +448,34 @@ agent_communication:
     message: "FRONTEND TESTING COMPLETE - ALL 7 FLOWS TESTED AND WORKING: Completed comprehensive testing of all flows from review request. ✅ 1. HOMEPAGE: Hero carousel (3 slides, arrows, dots), search bar with neighborhood filter, New Listings (8 cards), Stay Path banners (3), Featured Stays (4 cards), Neighborhoods (5 cards) - ALL WORKING. ✅ 2. APARTMENTS PAGE: Grid (12 apartments), results count, sidebar filters (Studio, Guests, Price, Sort), clear filters, mobile filters drawer - ALL WORKING. ✅ 3. APARTMENT DETAIL: Gallery (4 images, thumbnail click), amenities, reviews, booking panel, price $/night and $/month - ALL WORKING. ✅ 4. AUTH: Login with guest@expresshousing.com / stay2025, header shows user name and Logout - WORKING. ✅ 5. BOOKING FLOW: Form fields, price breakdown (5 nights), Request to Book, dashboard redirect, PENDING status, correct dates - ALL WORKING. ✅ 6. WISHLIST: Heart button, badge count increase, Dashboard Saved tab - ALL WORKING. ✅ 7. CONTACT: Form submission and clearing - WORKING. NO CRITICAL ISSUES. Express Housing frontend is production-ready."
   - agent: "testing"
     message: "EXPRESS HOUSING FRONTEND TESTING COMPLETE - ALL 7 FLOWS PASSED: homepage (hero carousel, search bar, listings grids, stay paths, neighborhoods), apartments page (all sidebar filters, sort, mobile drawer), detail page (gallery, amenities, reviews, booking panel), auth (guest@expresshousing.com login), booking flow (5-night request, $795 total, PENDING in dashboard), wishlist (save/badge/dashboard tab), contact form. No issues found."
+  - agent: "testing"
+    message: "NEW FEATURES BACKEND TESTING COMPLETE - ALL 5 TEST SUITES PASSED: ✅ 1. ADMIN AUTH: Admin login working (admin@expresshousing.com/admin2025), role=admin verified, GET /api/admin/stats returns 200 with all required fields (pending, confirmed, completed, cancelled, revenue, total, apartments), proper auth enforcement (401 without token, 403 with guest token). ✅ 2. ADMIN BOOKINGS: GET /api/admin/bookings returns all bookings, ?status=pending filter works correctly, PATCH /api/admin/bookings/{id} updates status successfully, confirmation email logged with status='sent (mocked)', all validations working (400 for invalid status, 404 for invalid booking id, 403 for guest token). ✅ 3. DATE BLOCKING: Overlapping bookings correctly rejected with 409 'Those dates are no longer available', non-overlapping bookings succeed, GET /api/apartments/{id}/unavailable returns booked ranges (pending+confirmed only). ✅ 4. PHOTO TOURS: All apartments have photo_tour array with correct structure [{url, room}], photo_tour length matches images length, room labels valid (Living Room, Bedroom, Kitchen, Living Space). ✅ 5. EMAIL LOG (MOCKED): Emails logged on booking creation ('Stay request received') and status changes ('Your stay is confirmed'), status='sent (mocked)', admin-only access enforced (403 for guest). ALL NEW FEATURES WORKING CORRECTLY. NO CRITICAL ISSUES FOUND."
+
+backend:
+  - task: "Admin endpoints + date blocking + photo tours + mocked email log"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "Added: require_admin dependency; admin user seeded (admin@expresshousing.com/admin2025, role=admin); GET /api/admin/stats, GET /api/admin/bookings?status=, PATCH /api/admin/bookings/{id} {status: confirmed|cancelled|completed} (sends mocked email), GET /api/admin/emails; date blocking (409 on overlap with pending/confirmed bookings) + GET /api/apartments/{id}/unavailable; photo_tour [{url,room}] on apartments (deterministic uuid5 ids, auto re-seed on schema upgrade); MOCKED send_email logs to db.email_log on booking create + status changes. Booking now stores user_name/user_email."
+      - working: true
+        agent: "testing"
+        comment: "COMPREHENSIVE BACKEND TESTING COMPLETED - ALL 5 TEST SUITES PASSED: ✅ TEST 1 - ADMIN AUTH: Admin login successful with admin@expresshousing.com/admin2025, token received with role=admin. GET /api/auth/me shows role=admin correctly. GET /api/admin/stats without token returns 401 (correct). GET /api/admin/stats with guest token returns 403 (correct). GET /api/admin/stats with admin token returns 200 with all required fields (pending, confirmed, completed, cancelled, revenue, total, apartments). ✅ TEST 2 - ADMIN BOOKINGS: Created test booking with status=pending. GET /api/admin/bookings returns all bookings (6 bookings found). GET /api/admin/bookings?status=pending filter works correctly (4 pending bookings). PATCH /api/admin/bookings/{id} with status=confirmed updates successfully. Confirmation email 'Your stay is confirmed' found in email log with status='sent (mocked)'. PATCH with invalid status 'foo' returns 400 (correct). PATCH with invalid booking id returns 404 (correct). PATCH with guest token returns 403 (correct). ✅ TEST 3 - DATE BLOCKING: First booking created for 2026-05-01 to 2026-05-06. Overlapping booking (2026-05-03 to 2026-05-08) correctly rejected with 409 'Those dates are no longer available for this apartment'. Non-overlapping booking (2026-05-10 to 2026-05-15) created successfully. GET /api/apartments/{id}/unavailable returns 3 booked ranges (pending+confirmed only). ✅ TEST 4 - PHOTO TOURS: All apartments have photo_tour array with correct structure [{url, room}]. Photo_tour length matches images length. Room labels are valid (Living Room, Bedroom, Kitchen, Living Space). All checked apartments have photo_tour with correct structure. ✅ TEST 5 - EMAIL LOG (MOCKED): Created new booking, 'Stay request received' email found in email log with status='sent (mocked)'. GET /api/admin/emails with guest token returns 403 (correct). ALL CORE BACKEND FUNCTIONALITY WORKING CORRECTLY. NO CRITICAL ISSUES FOUND."
+
+frontend:
+  - task: "Admin dashboard page + date blocking UI + photo tour labels"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/src/components/housing/AdminPage.jsx, ApartmentDetailPage.jsx, Header.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_testing"
+        agent: "main"
+        comment: "AdminPage (/admin): role guard, stats cards, status filter chips, Approve/Decline/Complete buttons, Sent Emails tab with MOCKED banner. Header shows Admin link for admins. Detail page: unavailable date ranges fetched+displayed, overlap conflict warning + disabled button, min date constraints, photo tour room labels on main image + thumbnails. Verified admin dashboard visually via screenshot."

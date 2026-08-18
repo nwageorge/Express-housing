@@ -1,868 +1,425 @@
 #!/usr/bin/env python3
 """
-Express Housing Backend API Test Suite
-Tests all backend endpoints for the Express Housing platform
+Express Housing Backend Test Suite - NEW FEATURES
+Tests: Admin Auth, Admin Bookings, Date Blocking, Photo Tours, Email Log (MOCKED)
 """
 import requests
 import json
 from datetime import datetime, timedelta
 
-# Backend URL from frontend/.env
+# Base URL from frontend/.env
 BASE_URL = "https://fullscreen-hero-2.preview.emergentagent.com/api"
 
 # Test credentials from /app/memory/test_credentials.md
-TEST_EMAIL = "guest@expresshousing.com"
-TEST_PASSWORD = "stay2025"
-TEST_NAME = "Test Guest"
+ADMIN_EMAIL = "admin@expresshousing.com"
+ADMIN_PASSWORD = "admin2025"
+GUEST_EMAIL = "guest@expresshousing.com"
+GUEST_PASSWORD = "stay2025"
 
-# Global token storage
-auth_token = None
-test_apartment_id = None
-test_booking_id = None
+def log(msg):
+    print(f"[TEST] {msg}")
 
-def print_test(name):
-    print(f"\n{'='*80}")
-    print(f"TEST: {name}")
-    print('='*80)
+def test_admin_auth():
+    """Test 1: ADMIN AUTH - Login as admin and verify role, GET /api/admin/stats"""
+    log("=" * 80)
+    log("TEST 1: ADMIN AUTH")
+    log("=" * 80)
+    
+    # 1.1: Admin login
+    log("1.1: Admin login with admin@expresshousing.com/admin2025")
+    resp = requests.post(f"{BASE_URL}/auth/login", json={
+        "email": ADMIN_EMAIL,
+        "password": ADMIN_PASSWORD
+    })
+    assert resp.status_code == 200, f"Admin login failed: {resp.status_code} {resp.text}"
+    data = resp.json()
+    assert "access_token" in data, "No access_token in response"
+    admin_token = data["access_token"]
+    assert data["user"]["role"] == "admin", f"Expected role=admin, got {data['user']['role']}"
+    log(f"✅ Admin login successful, token received, role=admin")
+    
+    # 1.2: GET /api/auth/me with admin token
+    log("1.2: GET /api/auth/me with admin token")
+    resp = requests.get(f"{BASE_URL}/auth/me", headers={"Authorization": f"Bearer {admin_token}"})
+    assert resp.status_code == 200, f"GET /api/auth/me failed: {resp.status_code}"
+    me_data = resp.json()
+    assert me_data["role"] == "admin", f"Expected role=admin in /auth/me, got {me_data['role']}"
+    log(f"✅ GET /api/auth/me shows role=admin")
+    
+    # 1.3: GET /api/admin/stats without token → 401
+    log("1.3: GET /api/admin/stats without token → expect 401")
+    resp = requests.get(f"{BASE_URL}/admin/stats")
+    assert resp.status_code == 401, f"Expected 401 without token, got {resp.status_code}"
+    log(f"✅ GET /api/admin/stats without token returns 401")
+    
+    # 1.4: Guest login and try /api/admin/stats → 403
+    log("1.4: Guest login and GET /api/admin/stats → expect 403")
+    resp = requests.post(f"{BASE_URL}/auth/login", json={
+        "email": GUEST_EMAIL,
+        "password": GUEST_PASSWORD
+    })
+    assert resp.status_code == 200, f"Guest login failed: {resp.status_code}"
+    guest_token = resp.json()["access_token"]
+    
+    resp = requests.get(f"{BASE_URL}/admin/stats", headers={"Authorization": f"Bearer {guest_token}"})
+    assert resp.status_code == 403, f"Expected 403 with guest token, got {resp.status_code}"
+    log(f"✅ GET /api/admin/stats with guest token returns 403")
+    
+    # 1.5: GET /api/admin/stats with admin token → 200 with stats
+    log("1.5: GET /api/admin/stats with admin token → expect 200 with stats")
+    resp = requests.get(f"{BASE_URL}/admin/stats", headers={"Authorization": f"Bearer {admin_token}"})
+    assert resp.status_code == 200, f"GET /api/admin/stats failed: {resp.status_code} {resp.text}"
+    stats = resp.json()
+    required_keys = ["pending", "confirmed", "completed", "cancelled", "revenue", "total", "apartments"]
+    for key in required_keys:
+        assert key in stats, f"Missing key '{key}' in stats response"
+    log(f"✅ GET /api/admin/stats returns 200 with all required fields: {stats}")
+    
+    log("✅ TEST 1 PASSED: ADMIN AUTH\n")
+    return admin_token, guest_token
 
-def print_result(passed, message):
-    status = "✅ PASS" if passed else "❌ FAIL"
-    print(f"{status}: {message}")
-
-def print_response(response):
-    print(f"Status: {response.status_code}")
-    try:
-        print(f"Response: {json.dumps(response.json(), indent=2)}")
-    except:
-        print(f"Response: {response.text}")
-
-# ===== TEST 1: Health Check =====
-def test_health_check():
-    print_test("GET /api/ - Health Check")
-    try:
-        response = requests.get(f"{BASE_URL}/")
-        print_response(response)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if "Express Housing" in data.get("message", ""):
-                print_result(True, "Health check passed - Express Housing API is running")
-                return True
-            else:
-                print_result(False, f"Health check message incorrect: {data.get('message')}")
-                return False
-        else:
-            print_result(False, f"Health check failed with status {response.status_code}")
-            return False
-    except Exception as e:
-        print_result(False, f"Health check error: {str(e)}")
-        return False
-
-# ===== TEST 2: Get All Apartments =====
-def test_get_apartments():
-    print_test("GET /api/apartments - Get All Apartments")
-    global test_apartment_id
-    try:
-        response = requests.get(f"{BASE_URL}/apartments")
-        print_response(response)
-        
-        if response.status_code == 200:
-            apartments = response.json()
-            if len(apartments) == 12:
-                print_result(True, f"Found 12 seeded apartments")
-                
-                # Verify structure of first apartment
-                apt = apartments[0]
-                required_fields = ["id", "title", "building_name", "neighborhood", "apt_type", 
-                                 "bedrooms", "bathrooms", "max_guests", "sqft", "nightly_rate", 
-                                 "monthly_rate", "amenities", "images", "stay_paths", "rating", 
-                                 "is_featured", "is_new", "min_nights", "reviews"]
-                
-                missing_fields = [f for f in required_fields if f not in apt]
-                if missing_fields:
-                    print_result(False, f"Missing fields: {missing_fields}")
-                    return False
-                
-                print_result(True, f"All required fields present in apartment data")
-                test_apartment_id = apt["id"]
-                print(f"Saved test apartment ID: {test_apartment_id}")
-                return True
-            else:
-                print_result(False, f"Expected 12 apartments, got {len(apartments)}")
-                return False
-        else:
-            print_result(False, f"Failed with status {response.status_code}")
-            return False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        return False
-
-# ===== TEST 3: Filter Tests =====
-def test_filters():
-    print_test("GET /api/apartments - Filter Tests")
-    all_passed = True
+def test_admin_bookings(admin_token, guest_token):
+    """Test 2: ADMIN BOOKINGS - GET all bookings, filter by status, PATCH to update status, verify email log"""
+    log("=" * 80)
+    log("TEST 2: ADMIN BOOKINGS")
+    log("=" * 80)
     
-    # Test 3a: Featured filter
-    print("\n--- Filter: featured=true ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments?featured=true")
-        print_response(response)
-        if response.status_code == 200:
-            apartments = response.json()
-            if len(apartments) == 5:
-                print_result(True, f"Featured filter: 5 results")
-            else:
-                print_result(False, f"Featured filter: expected 5, got {len(apartments)}")
-                all_passed = False
-        else:
-            print_result(False, f"Featured filter failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Featured filter error: {str(e)}")
-        all_passed = False
+    # 2.1: Create a fresh booking as guest first (to ensure we have a pending booking)
+    log("2.1: Create a fresh booking as guest (far-future dates to avoid conflicts)")
     
-    # Test 3b: Apartment type filter
-    print("\n--- Filter: apt_type=Studio ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments?apt_type=Studio")
-        print_response(response)
-        if response.status_code == 200:
-            apartments = response.json()
-            studios = [a for a in apartments if a["apt_type"] == "Studio"]
-            if len(studios) == len(apartments) and len(studios) > 0:
-                print_result(True, f"Studio filter: {len(studios)} studios only")
-            else:
-                print_result(False, f"Studio filter: got non-studio apartments")
-                all_passed = False
-        else:
-            print_result(False, f"Studio filter failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Studio filter error: {str(e)}")
-        all_passed = False
+    # Get first apartment
+    resp = requests.get(f"{BASE_URL}/apartments")
+    assert resp.status_code == 200, f"GET /api/apartments failed: {resp.status_code}"
+    apartments = resp.json()
+    assert len(apartments) > 0, "No apartments found"
+    apt = apartments[0]
+    apt_id = apt["id"]
+    log(f"Using apartment: {apt['title']} (id={apt_id})")
     
-    # Test 3c: Neighborhood filter
-    print("\n--- Filter: neighborhood=Old City ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments?neighborhood=Old City")
-        print_response(response)
-        if response.status_code == 200:
-            apartments = response.json()
-            if len(apartments) == 2:
-                print_result(True, f"Old City filter: 2 results")
-            else:
-                print_result(False, f"Old City filter: expected 2, got {len(apartments)}")
-                all_passed = False
-        else:
-            print_result(False, f"Old City filter failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Old City filter error: {str(e)}")
-        all_passed = False
-    
-    # Test 3d: Guests filter
-    print("\n--- Filter: guests=5 ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments?guests=5")
-        print_response(response)
-        if response.status_code == 200:
-            apartments = response.json()
-            valid = all(a["max_guests"] >= 5 for a in apartments)
-            if valid and len(apartments) > 0:
-                print_result(True, f"Guests filter: {len(apartments)} apartments with max_guests >= 5")
-            else:
-                print_result(False, f"Guests filter: invalid results")
-                all_passed = False
-        else:
-            print_result(False, f"Guests filter failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Guests filter error: {str(e)}")
-        all_passed = False
-    
-    # Test 3e: Price range filter
-    print("\n--- Filter: min_price=150&max_price=250 ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments?min_price=150&max_price=250")
-        print_response(response)
-        if response.status_code == 200:
-            apartments = response.json()
-            valid = all(150 <= a["nightly_rate"] <= 250 for a in apartments)
-            if valid and len(apartments) > 0:
-                print_result(True, f"Price filter: {len(apartments)} apartments in $150-$250 range")
-            else:
-                print_result(False, f"Price filter: invalid results")
-                all_passed = False
-        else:
-            print_result(False, f"Price filter failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Price filter error: {str(e)}")
-        all_passed = False
-    
-    # Test 3f: Stay path filter
-    print("\n--- Filter: stay_path=medical ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments?stay_path=medical")
-        print_response(response)
-        if response.status_code == 200:
-            apartments = response.json()
-            valid = all("medical" in a["stay_paths"] for a in apartments)
-            if valid and len(apartments) > 0:
-                print_result(True, f"Stay path filter: {len(apartments)} apartments with medical stay path")
-            else:
-                print_result(False, f"Stay path filter: invalid results")
-                all_passed = False
-        else:
-            print_result(False, f"Stay path filter failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Stay path filter error: {str(e)}")
-        all_passed = False
-    
-    # Test 3g: Search filter
-    print("\n--- Filter: search=rittenhouse ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments?search=rittenhouse")
-        print_response(response)
-        if response.status_code == 200:
-            apartments = response.json()
-            if len(apartments) > 0:
-                print_result(True, f"Search filter: {len(apartments)} apartments matching 'rittenhouse'")
-            else:
-                print_result(False, f"Search filter: no results for 'rittenhouse'")
-                all_passed = False
-        else:
-            print_result(False, f"Search filter failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Search filter error: {str(e)}")
-        all_passed = False
-    
-    # Test 3h: Sort filter
-    print("\n--- Filter: sort=price_asc ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments?sort=price_asc")
-        print_response(response)
-        if response.status_code == 200:
-            apartments = response.json()
-            prices = [a["nightly_rate"] for a in apartments]
-            if prices == sorted(prices):
-                print_result(True, f"Sort filter: apartments sorted by price ascending")
-            else:
-                print_result(False, f"Sort filter: apartments not properly sorted")
-                all_passed = False
-        else:
-            print_result(False, f"Sort filter failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Sort filter error: {str(e)}")
-        all_passed = False
-    
-    return all_passed
-
-# ===== TEST 4: Get Single Apartment =====
-def test_get_apartment_by_id():
-    print_test("GET /api/apartments/{id} - Get Single Apartment")
-    global test_apartment_id
-    
-    if not test_apartment_id:
-        print_result(False, "No test apartment ID available")
-        return False
-    
-    all_passed = True
-    
-    # Test 4a: Valid ID
-    print("\n--- Valid apartment ID ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments/{test_apartment_id}")
-        print_response(response)
-        if response.status_code == 200:
-            apartment = response.json()
-            if apartment["id"] == test_apartment_id:
-                print_result(True, f"Retrieved apartment: {apartment['title']}")
-            else:
-                print_result(False, f"Wrong apartment returned")
-                all_passed = False
-        else:
-            print_result(False, f"Failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    # Test 4b: Invalid ID
-    print("\n--- Invalid apartment ID ---")
-    try:
-        response = requests.get(f"{BASE_URL}/apartments/invalid-id-12345")
-        print_response(response)
-        if response.status_code == 404:
-            print_result(True, f"Invalid ID correctly returns 404")
-        else:
-            print_result(False, f"Invalid ID should return 404, got {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    return all_passed
-
-# ===== TEST 5: Get Neighborhoods =====
-def test_get_neighborhoods():
-    print_test("GET /api/neighborhoods - Get Neighborhoods")
-    try:
-        response = requests.get(f"{BASE_URL}/neighborhoods")
-        print_response(response)
-        
-        if response.status_code == 200:
-            neighborhoods = response.json()
-            if len(neighborhoods) > 0:
-                # Verify structure
-                n = neighborhoods[0]
-                required_fields = ["name", "count", "image", "min_rate"]
-                missing_fields = [f for f in required_fields if f not in n]
-                
-                if missing_fields:
-                    print_result(False, f"Missing fields: {missing_fields}")
-                    return False
-                
-                print_result(True, f"Found {len(neighborhoods)} neighborhoods with correct structure")
-                return True
-            else:
-                print_result(False, f"No neighborhoods returned")
-                return False
-        else:
-            print_result(False, f"Failed with status {response.status_code}")
-            return False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        return False
-
-# ===== TEST 6: Auth Flow =====
-def test_auth_flow():
-    print_test("Auth Flow - Signup/Login/Me")
-    global auth_token
-    all_passed = True
-    
-    # Test 6a: Signup (or use existing account)
-    print("\n--- POST /api/auth/signup ---")
-    try:
-        signup_data = {
-            "email": TEST_EMAIL,
-            "password": TEST_PASSWORD,
-            "name": TEST_NAME,
-            "role": "guest"
-        }
-        response = requests.post(f"{BASE_URL}/auth/signup", json=signup_data)
-        print_response(response)
-        
-        if response.status_code == 200:
-            data = response.json()
-            auth_token = data.get("access_token")
-            print_result(True, f"Signup successful, got token")
-        elif response.status_code == 400 and "already registered" in response.text:
-            print_result(True, f"User already exists, will use login")
-        else:
-            print_result(False, f"Signup failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Signup error: {str(e)}")
-        all_passed = False
-    
-    # Test 6b: Login
-    print("\n--- POST /api/auth/login ---")
-    try:
-        login_data = {
-            "email": TEST_EMAIL,
-            "password": TEST_PASSWORD
-        }
-        response = requests.post(f"{BASE_URL}/auth/login", json=login_data)
-        print_response(response)
-        
-        if response.status_code == 200:
-            data = response.json()
-            auth_token = data.get("access_token")
-            user = data.get("user")
-            if auth_token and user:
-                print_result(True, f"Login successful, user: {user.get('name')}")
-            else:
-                print_result(False, f"Login response missing token or user")
-                all_passed = False
-        else:
-            print_result(False, f"Login failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Login error: {str(e)}")
-        all_passed = False
-    
-    # Test 6c: Get Me
-    print("\n--- GET /api/auth/me ---")
-    if auth_token:
-        try:
-            headers = {"Authorization": f"Bearer {auth_token}"}
-            response = requests.get(f"{BASE_URL}/auth/me", headers=headers)
-            print_response(response)
-            
-            if response.status_code == 200:
-                user = response.json()
-                if user.get("email") == TEST_EMAIL:
-                    print_result(True, f"Auth/me successful, verified user: {user.get('name')}")
-                else:
-                    print_result(False, f"Auth/me returned wrong user")
-                    all_passed = False
-            else:
-                print_result(False, f"Auth/me failed with status {response.status_code}")
-                all_passed = False
-        except Exception as e:
-            print_result(False, f"Auth/me error: {str(e)}")
-            all_passed = False
-    else:
-        print_result(False, f"No auth token available")
-        all_passed = False
-    
-    return all_passed
-
-# ===== TEST 7: Bookings =====
-def test_bookings():
-    print_test("Bookings - Create and Retrieve")
-    global auth_token, test_apartment_id, test_booking_id
-    
-    if not auth_token:
-        print_result(False, "No auth token available")
-        return False
-    
-    if not test_apartment_id:
-        print_result(False, "No test apartment ID available")
-        return False
-    
-    all_passed = True
-    headers = {"Authorization": f"Bearer {auth_token}"}
-    
-    # Test 7a: Create booking without token
-    print("\n--- POST /api/bookings without token (should fail) ---")
-    try:
-        check_in = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
-        check_out = (datetime.now() + timedelta(days=12)).strftime("%Y-%m-%d")
-        booking_data = {
-            "apartment_id": test_apartment_id,
+    # Create booking with far-future dates (2026-03-01 to 2026-03-06)
+    check_in = "2026-03-01"
+    check_out = "2026-03-06"
+    resp = requests.post(f"{BASE_URL}/bookings", 
+        headers={"Authorization": f"Bearer {guest_token}"},
+        json={
+            "apartment_id": apt_id,
             "check_in": check_in,
             "check_out": check_out,
             "guests": 2,
             "purpose": "business"
         }
-        response = requests.post(f"{BASE_URL}/bookings", json=booking_data)
-        print_response(response)
-        
-        if response.status_code == 401:
-            print_result(True, f"Booking without token correctly returns 401")
-        else:
-            print_result(False, f"Booking without token should return 401, got {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
+    )
+    assert resp.status_code == 200, f"Create booking failed: {resp.status_code} {resp.text}"
+    booking = resp.json()
+    booking_id = booking["id"]
+    assert booking["status"] == "pending", f"Expected status=pending, got {booking['status']}"
+    log(f"✅ Created booking {booking_id} with status=pending")
     
-    # Test 7b: Create valid booking (5 nights)
-    print("\n--- POST /api/bookings with valid data (5 nights) ---")
-    try:
-        check_in = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
-        check_out = (datetime.now() + timedelta(days=12)).strftime("%Y-%m-%d")
-        booking_data = {
-            "apartment_id": test_apartment_id,
+    # 2.2: GET /api/admin/bookings (admin) → all bookings
+    log("2.2: GET /api/admin/bookings (admin) → all bookings")
+    resp = requests.get(f"{BASE_URL}/admin/bookings", headers={"Authorization": f"Bearer {admin_token}"})
+    assert resp.status_code == 200, f"GET /api/admin/bookings failed: {resp.status_code}"
+    all_bookings = resp.json()
+    assert isinstance(all_bookings, list), "Expected list of bookings"
+    assert len(all_bookings) > 0, "Expected at least one booking"
+    log(f"✅ GET /api/admin/bookings returns {len(all_bookings)} bookings")
+    
+    # 2.3: GET /api/admin/bookings?status=pending → filter works
+    log("2.3: GET /api/admin/bookings?status=pending → filter works")
+    resp = requests.get(f"{BASE_URL}/admin/bookings?status=pending", headers={"Authorization": f"Bearer {admin_token}"})
+    assert resp.status_code == 200, f"GET /api/admin/bookings?status=pending failed: {resp.status_code}"
+    pending_bookings = resp.json()
+    assert isinstance(pending_bookings, list), "Expected list of bookings"
+    # Verify all returned bookings have status=pending
+    for b in pending_bookings:
+        assert b["status"] == "pending", f"Expected status=pending, got {b['status']}"
+    log(f"✅ GET /api/admin/bookings?status=pending returns {len(pending_bookings)} pending bookings")
+    
+    # 2.4: PATCH /api/admin/bookings/{id} with {"status":"confirmed"} → 200, status updated
+    log(f"2.4: PATCH /api/admin/bookings/{booking_id} with status=confirmed")
+    resp = requests.patch(f"{BASE_URL}/admin/bookings/{booking_id}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"status": "confirmed"}
+    )
+    assert resp.status_code == 200, f"PATCH booking failed: {resp.status_code} {resp.text}"
+    updated_booking = resp.json()
+    assert updated_booking["status"] == "confirmed", f"Expected status=confirmed, got {updated_booking['status']}"
+    log(f"✅ PATCH booking status to confirmed successful")
+    
+    # 2.5: Verify email was logged (GET /api/admin/emails contains "Your stay is confirmed")
+    log("2.5: GET /api/admin/emails → verify confirmation email was logged")
+    resp = requests.get(f"{BASE_URL}/admin/emails", headers={"Authorization": f"Bearer {admin_token}"})
+    assert resp.status_code == 200, f"GET /api/admin/emails failed: {resp.status_code}"
+    emails = resp.json()
+    assert isinstance(emails, list), "Expected list of emails"
+    
+    # Find confirmation email for this booking
+    confirmation_email = None
+    for email in emails:
+        if email.get("booking_id") == booking_id and "Your stay is confirmed" in email.get("subject", ""):
+            confirmation_email = email
+            break
+    
+    assert confirmation_email is not None, f"No confirmation email found for booking {booking_id}"
+    assert confirmation_email["status"] == "sent (mocked)", f"Expected status='sent (mocked)', got {confirmation_email['status']}"
+    log(f"✅ Confirmation email found in email log: {confirmation_email['subject']}")
+    
+    # 2.6: PATCH with invalid status "foo" → 400
+    log("2.6: PATCH with invalid status 'foo' → expect 400")
+    resp = requests.patch(f"{BASE_URL}/admin/bookings/{booking_id}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"status": "foo"}
+    )
+    assert resp.status_code == 400, f"Expected 400 for invalid status, got {resp.status_code}"
+    log(f"✅ PATCH with invalid status returns 400")
+    
+    # 2.7: PATCH with invalid booking id → 404
+    log("2.7: PATCH with invalid booking id → expect 404")
+    resp = requests.patch(f"{BASE_URL}/admin/bookings/invalid-id-12345",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"status": "confirmed"}
+    )
+    assert resp.status_code == 404, f"Expected 404 for invalid booking id, got {resp.status_code}"
+    log(f"✅ PATCH with invalid booking id returns 404")
+    
+    # 2.8: PATCH with guest token → 403
+    log("2.8: PATCH with guest token → expect 403")
+    resp = requests.patch(f"{BASE_URL}/admin/bookings/{booking_id}",
+        headers={"Authorization": f"Bearer {guest_token}"},
+        json={"status": "completed"}
+    )
+    assert resp.status_code == 403, f"Expected 403 with guest token, got {resp.status_code}"
+    log(f"✅ PATCH with guest token returns 403")
+    
+    log("✅ TEST 2 PASSED: ADMIN BOOKINGS\n")
+    return apt_id
+
+def test_date_blocking(guest_token, apt_id):
+    """Test 3: DATE BLOCKING - Overlapping bookings return 409, non-overlapping succeed"""
+    log("=" * 80)
+    log("TEST 3: DATE BLOCKING")
+    log("=" * 80)
+    
+    # 3.1: Create first booking on apartment X for dates D1-D2 (far-future unused dates)
+    log("3.1: Create first booking on apartment (2026-05-01 to 2026-05-06)")
+    check_in_1 = "2026-05-01"
+    check_out_1 = "2026-05-06"
+    resp = requests.post(f"{BASE_URL}/bookings",
+        headers={"Authorization": f"Bearer {guest_token}"},
+        json={
+            "apartment_id": apt_id,
+            "check_in": check_in_1,
+            "check_out": check_out_1,
+            "guests": 2,
+            "purpose": "leisure"
+        }
+    )
+    assert resp.status_code == 200, f"First booking failed: {resp.status_code} {resp.text}"
+    booking_1 = resp.json()
+    log(f"✅ First booking created: {check_in_1} to {check_out_1}")
+    
+    # 3.2: Attempt second booking with overlapping dates (2026-05-03 to 2026-05-08) → 409
+    log("3.2: Attempt overlapping booking (2026-05-03 to 2026-05-08) → expect 409")
+    check_in_2 = "2026-05-03"
+    check_out_2 = "2026-05-08"
+    resp = requests.post(f"{BASE_URL}/bookings",
+        headers={"Authorization": f"Bearer {guest_token}"},
+        json={
+            "apartment_id": apt_id,
+            "check_in": check_in_2,
+            "check_out": check_out_2,
+            "guests": 2,
+            "purpose": "leisure"
+        }
+    )
+    assert resp.status_code == 409, f"Expected 409 for overlapping dates, got {resp.status_code}"
+    assert "no longer available" in resp.text.lower(), f"Expected 'no longer available' message, got: {resp.text}"
+    log(f"✅ Overlapping booking rejected with 409: {resp.json()['detail']}")
+    
+    # 3.3: Non-overlapping dates (2026-05-10 to 2026-05-15) → 200 success
+    log("3.3: Attempt non-overlapping booking (2026-05-10 to 2026-05-15) → expect 200")
+    check_in_3 = "2026-05-10"
+    check_out_3 = "2026-05-15"
+    resp = requests.post(f"{BASE_URL}/bookings",
+        headers={"Authorization": f"Bearer {guest_token}"},
+        json={
+            "apartment_id": apt_id,
+            "check_in": check_in_3,
+            "check_out": check_out_3,
+            "guests": 2,
+            "purpose": "leisure"
+        }
+    )
+    assert resp.status_code == 200, f"Non-overlapping booking failed: {resp.status_code} {resp.text}"
+    booking_3 = resp.json()
+    log(f"✅ Non-overlapping booking created successfully: {check_in_3} to {check_out_3}")
+    
+    # 3.4: GET /api/apartments/{id}/unavailable → contains the booked ranges
+    log(f"3.4: GET /api/apartments/{apt_id}/unavailable → verify booked ranges")
+    resp = requests.get(f"{BASE_URL}/apartments/{apt_id}/unavailable")
+    assert resp.status_code == 200, f"GET unavailable dates failed: {resp.status_code}"
+    unavailable = resp.json()
+    assert isinstance(unavailable, list), "Expected list of unavailable date ranges"
+    
+    # Verify our bookings are in the unavailable list
+    found_booking_1 = False
+    found_booking_3 = False
+    for range_item in unavailable:
+        if range_item["check_in"] == check_in_1 and range_item["check_out"] == check_out_1:
+            found_booking_1 = True
+        if range_item["check_in"] == check_in_3 and range_item["check_out"] == check_out_3:
+            found_booking_3 = True
+    
+    assert found_booking_1, f"First booking range not found in unavailable dates"
+    assert found_booking_3, f"Third booking range not found in unavailable dates"
+    log(f"✅ GET /api/apartments/{apt_id}/unavailable returns {len(unavailable)} booked ranges (pending+confirmed)")
+    
+    log("✅ TEST 3 PASSED: DATE BLOCKING\n")
+
+def test_photo_tours():
+    """Test 4: PHOTO TOURS - Verify apartments have photo_tour array with {url, room}"""
+    log("=" * 80)
+    log("TEST 4: PHOTO TOURS")
+    log("=" * 80)
+    
+    # 4.1: GET /api/apartments → verify photo_tour array exists
+    log("4.1: GET /api/apartments → verify photo_tour array")
+    resp = requests.get(f"{BASE_URL}/apartments")
+    assert resp.status_code == 200, f"GET /api/apartments failed: {resp.status_code}"
+    apartments = resp.json()
+    assert len(apartments) > 0, "No apartments found"
+    
+    # Check first apartment
+    apt = apartments[0]
+    assert "photo_tour" in apt, f"Missing 'photo_tour' field in apartment {apt['id']}"
+    assert isinstance(apt["photo_tour"], list), "photo_tour should be a list"
+    assert len(apt["photo_tour"]) > 0, "photo_tour should not be empty"
+    
+    # Verify structure: [{url, room}]
+    for photo in apt["photo_tour"]:
+        assert "url" in photo, "photo_tour item missing 'url' field"
+        assert "room" in photo, "photo_tour item missing 'room' field"
+        assert isinstance(photo["url"], str), "photo_tour url should be string"
+        assert isinstance(photo["room"], str), "photo_tour room should be string"
+    
+    log(f"✅ Apartment '{apt['title']}' has photo_tour with {len(apt['photo_tour'])} photos")
+    
+    # 4.2: Verify photo_tour length matches images length
+    log("4.2: Verify photo_tour length matches images length")
+    assert len(apt["photo_tour"]) == len(apt["images"]), \
+        f"photo_tour length ({len(apt['photo_tour'])}) != images length ({len(apt['images'])})"
+    log(f"✅ photo_tour length ({len(apt['photo_tour'])}) matches images length")
+    
+    # 4.3: Verify room labels are correct (Living Room, Bedroom, Kitchen, Living Space)
+    log("4.3: Verify room labels")
+    valid_rooms = ["Living Room", "Bedroom", "Kitchen", "Living Space", "Interior"]
+    room_labels = [photo["room"] for photo in apt["photo_tour"]]
+    for room in room_labels:
+        assert room in valid_rooms, f"Invalid room label: {room}"
+    log(f"✅ Room labels are valid: {set(room_labels)}")
+    
+    # 4.4: Check multiple apartments
+    log("4.4: Verify all apartments have photo_tour")
+    for apt in apartments[:5]:  # Check first 5 apartments
+        assert "photo_tour" in apt, f"Apartment {apt['id']} missing photo_tour"
+        assert len(apt["photo_tour"]) == len(apt["images"]), \
+            f"Apartment {apt['id']} photo_tour/images length mismatch"
+    log(f"✅ All checked apartments have photo_tour with correct structure")
+    
+    log("✅ TEST 4 PASSED: PHOTO TOURS\n")
+
+def test_email_log(admin_token, guest_token):
+    """Test 5: EMAIL LOG (MOCKED) - Verify emails are logged on booking creation and status changes"""
+    log("=" * 80)
+    log("TEST 5: EMAIL LOG (MOCKED)")
+    log("=" * 80)
+    
+    # 5.1: Create a new booking as guest → verify email is logged
+    log("5.1: Create new booking as guest → verify 'Stay request received' email")
+    
+    # Get an apartment
+    resp = requests.get(f"{BASE_URL}/apartments")
+    apartments = resp.json()
+    apt = apartments[1]  # Use second apartment to avoid conflicts
+    apt_id = apt["id"]
+    
+    # Create booking with unique far-future dates
+    check_in = "2026-07-01"
+    check_out = "2026-07-05"
+    resp = requests.post(f"{BASE_URL}/bookings",
+        headers={"Authorization": f"Bearer {guest_token}"},
+        json={
+            "apartment_id": apt_id,
             "check_in": check_in,
             "check_out": check_out,
             "guests": 2,
-            "purpose": "business"
+            "purpose": "medical"
         }
-        response = requests.post(f"{BASE_URL}/bookings", json=booking_data, headers=headers)
-        print_response(response)
-        
-        if response.status_code == 200:
-            booking = response.json()
-            test_booking_id = booking.get("id")
-            
-            # Verify booking details
-            if booking.get("status") == "pending":
-                print_result(True, f"Booking status is 'pending'")
-            else:
-                print_result(False, f"Booking status should be 'pending', got {booking.get('status')}")
-                all_passed = False
-            
-            if booking.get("nights") == 5:
-                print_result(True, f"Booking nights calculated correctly: 5")
-            else:
-                print_result(False, f"Booking nights should be 5, got {booking.get('nights')}")
-                all_passed = False
-            
-            # Get apartment to verify price calculation
-            apt_response = requests.get(f"{BASE_URL}/apartments/{test_apartment_id}")
-            if apt_response.status_code == 200:
-                apt = apt_response.json()
-                expected_price = round(apt["nightly_rate"] * 5, 2)
-                if booking.get("total_price") == expected_price:
-                    print_result(True, f"Booking price calculated correctly: ${expected_price}")
-                else:
-                    print_result(False, f"Booking price should be ${expected_price}, got ${booking.get('total_price')}")
-                    all_passed = False
-        else:
-            print_result(False, f"Booking creation failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
+    )
+    assert resp.status_code == 200, f"Create booking failed: {resp.status_code} {resp.text}"
+    booking = resp.json()
+    booking_id = booking["id"]
+    log(f"✅ Created booking {booking_id}")
     
-    # Test 7c: Create long stay booking (30 nights - monthly rate)
-    print("\n--- POST /api/bookings with 30 nights (monthly pro-rate) ---")
-    try:
-        check_in = (datetime.now() + timedelta(days=14)).strftime("%Y-%m-%d")
-        check_out = (datetime.now() + timedelta(days=44)).strftime("%Y-%m-%d")
-        booking_data = {
-            "apartment_id": test_apartment_id,
-            "check_in": check_in,
-            "check_out": check_out,
-            "guests": 2,
-            "purpose": "relocation"
-        }
-        response = requests.post(f"{BASE_URL}/bookings", json=booking_data, headers=headers)
-        print_response(response)
-        
-        if response.status_code == 200:
-            booking = response.json()
-            
-            # Get apartment to verify monthly price calculation
-            apt_response = requests.get(f"{BASE_URL}/apartments/{test_apartment_id}")
-            if apt_response.status_code == 200:
-                apt = apt_response.json()
-                expected_price = round(apt["monthly_rate"] / 30 * 30, 2)
-                if booking.get("total_price") == expected_price:
-                    print_result(True, f"Long stay price calculated with monthly rate: ${expected_price}")
-                else:
-                    print_result(False, f"Long stay price should be ${expected_price}, got ${booking.get('total_price')}")
-                    all_passed = False
-        else:
-            print_result(False, f"Long stay booking failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
+    # 5.2: GET /api/admin/emails (admin) → verify "Stay request received" email exists
+    log("5.2: GET /api/admin/emails → verify 'Stay request received' email")
+    resp = requests.get(f"{BASE_URL}/admin/emails", headers={"Authorization": f"Bearer {admin_token}"})
+    assert resp.status_code == 200, f"GET /api/admin/emails failed: {resp.status_code}"
+    emails = resp.json()
     
-    # Test 7d: Validation - check_out before check_in
-    print("\n--- POST /api/bookings with check_out before check_in (should fail) ---")
-    try:
-        check_in = (datetime.now() + timedelta(days=12)).strftime("%Y-%m-%d")
-        check_out = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
-        booking_data = {
-            "apartment_id": test_apartment_id,
-            "check_in": check_in,
-            "check_out": check_out,
-            "guests": 2
-        }
-        response = requests.post(f"{BASE_URL}/bookings", json=booking_data, headers=headers)
-        print_response(response)
-        
-        if response.status_code == 400:
-            print_result(True, f"Invalid dates correctly return 400")
-        else:
-            print_result(False, f"Invalid dates should return 400, got {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
+    # Find the "Stay request received" email for this booking
+    request_email = None
+    for email in emails:
+        if email.get("booking_id") == booking_id and "Stay request received" in email.get("subject", ""):
+            request_email = email
+            break
     
-    # Test 7e: Validation - nights below min_nights
-    print("\n--- POST /api/bookings with nights below min_nights (should fail) ---")
-    try:
-        check_in = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
-        check_out = (datetime.now() + timedelta(days=8)).strftime("%Y-%m-%d")  # 1 night
-        booking_data = {
-            "apartment_id": test_apartment_id,
-            "check_in": check_in,
-            "check_out": check_out,
-            "guests": 2
-        }
-        response = requests.post(f"{BASE_URL}/bookings", json=booking_data, headers=headers)
-        print_response(response)
-        
-        if response.status_code == 400 and "Minimum stay" in response.text:
-            print_result(True, f"Below min_nights correctly returns 400")
-        else:
-            print_result(False, f"Below min_nights should return 400 with 'Minimum stay' message")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
+    assert request_email is not None, f"No 'Stay request received' email found for booking {booking_id}"
+    assert request_email["status"] == "sent (mocked)", f"Expected status='sent (mocked)', got {request_email['status']}"
+    log(f"✅ 'Stay request received' email found: {request_email['subject']}")
+    log(f"   To: {request_email['to_email']}, Status: {request_email['status']}")
     
-    # Test 7f: Validation - guests > max_guests
-    print("\n--- POST /api/bookings with guests > max_guests (should fail) ---")
-    try:
-        # Get apartment max_guests
-        apt_response = requests.get(f"{BASE_URL}/apartments/{test_apartment_id}")
-        if apt_response.status_code == 200:
-            apt = apt_response.json()
-            max_guests = apt["max_guests"]
-            
-            check_in = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
-            check_out = (datetime.now() + timedelta(days=12)).strftime("%Y-%m-%d")
-            booking_data = {
-                "apartment_id": test_apartment_id,
-                "check_in": check_in,
-                "check_out": check_out,
-                "guests": max_guests + 10  # Exceed max
-            }
-            response = requests.post(f"{BASE_URL}/bookings", json=booking_data, headers=headers)
-            print_response(response)
-            
-            if response.status_code == 400 and "Maximum" in response.text:
-                print_result(True, f"Exceeding max_guests correctly returns 400")
-            else:
-                print_result(False, f"Exceeding max_guests should return 400 with 'Maximum' message")
-                all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
+    # 5.3: GET /api/admin/emails with guest token → 403
+    log("5.3: GET /api/admin/emails with guest token → expect 403")
+    resp = requests.get(f"{BASE_URL}/admin/emails", headers={"Authorization": f"Bearer {guest_token}"})
+    assert resp.status_code == 403, f"Expected 403 with guest token, got {resp.status_code}"
+    log(f"✅ GET /api/admin/emails with guest token returns 403")
     
-    # Test 7g: Validation - bad apartment_id
-    print("\n--- POST /api/bookings with invalid apartment_id (should fail) ---")
-    try:
-        check_in = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
-        check_out = (datetime.now() + timedelta(days=12)).strftime("%Y-%m-%d")
-        booking_data = {
-            "apartment_id": "invalid-apartment-id-12345",
-            "check_in": check_in,
-            "check_out": check_out,
-            "guests": 2
-        }
-        response = requests.post(f"{BASE_URL}/bookings", json=booking_data, headers=headers)
-        print_response(response)
-        
-        if response.status_code == 404:
-            print_result(True, f"Invalid apartment_id correctly returns 404")
-        else:
-            print_result(False, f"Invalid apartment_id should return 404, got {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    # Test 7h: Get user bookings
-    print("\n--- GET /api/bookings (retrieve user bookings) ---")
-    try:
-        response = requests.get(f"{BASE_URL}/bookings", headers=headers)
-        print_response(response)
-        
-        if response.status_code == 200:
-            bookings = response.json()
-            if len(bookings) >= 2:  # We created 2 valid bookings
-                # Verify sorted by newest first
-                dates = [b["created_at"] for b in bookings]
-                if dates == sorted(dates, reverse=True):
-                    print_result(True, f"Retrieved {len(bookings)} bookings, sorted newest first")
-                else:
-                    print_result(False, f"Bookings not sorted newest first")
-                    all_passed = False
-            else:
-                print_result(False, f"Expected at least 2 bookings, got {len(bookings)}")
-                all_passed = False
-        else:
-            print_result(False, f"Get bookings failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    return all_passed
+    log("✅ TEST 5 PASSED: EMAIL LOG (MOCKED)\n")
 
-# ===== TEST 8: Wishlist =====
-def test_wishlist():
-    print_test("Wishlist - Toggle and Retrieve")
-    global auth_token, test_apartment_id
-    
-    if not auth_token:
-        print_result(False, "No auth token available")
-        return False
-    
-    if not test_apartment_id:
-        print_result(False, "No test apartment ID available")
-        return False
-    
-    all_passed = True
-    headers = {"Authorization": f"Bearer {auth_token}"}
-    
-    # Test 8a: Add to wishlist
-    print("\n--- POST /api/wishlist/{apartment_id} (add) ---")
-    try:
-        response = requests.post(f"{BASE_URL}/wishlist/{test_apartment_id}", headers=headers)
-        print_response(response)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if data.get("saved") == True:
-                print_result(True, f"Apartment added to wishlist")
-            else:
-                print_result(False, f"Expected saved=true, got {data.get('saved')}")
-                all_passed = False
-        else:
-            print_result(False, f"Add to wishlist failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    # Test 8b: Remove from wishlist (toggle again)
-    print("\n--- POST /api/wishlist/{apartment_id} (remove) ---")
-    try:
-        response = requests.post(f"{BASE_URL}/wishlist/{test_apartment_id}", headers=headers)
-        print_response(response)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if data.get("saved") == False:
-                print_result(True, f"Apartment removed from wishlist")
-            else:
-                print_result(False, f"Expected saved=false, got {data.get('saved')}")
-                all_passed = False
-        else:
-            print_result(False, f"Remove from wishlist failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    # Test 8c: Add back to wishlist for next tests
-    print("\n--- POST /api/wishlist/{apartment_id} (add again) ---")
-    try:
-        response = requests.post(f"{BASE_URL}/wishlist/{test_apartment_id}", headers=headers)
-        print_response(response)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if data.get("saved") == True:
-                print_result(True, f"Apartment added back to wishlist")
-            else:
-                print_result(False, f"Expected saved=true")
-                all_passed = False
-        else:
-            print_result(False, f"Add to wishlist failed")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    # Test 8d: Get wishlist IDs
-    print("\n--- GET /api/wishlist/ids ---")
-    try:
-        response = requests.get(f"{BASE_URL}/wishlist/ids", headers=headers)
-        print_response(response)
-        
-        if response.status_code == 200:
-            ids = response.json()
-            if test_apartment_id in ids:
-                print_result(True, f"Wishlist IDs retrieved, contains test apartment")
-            else:
-                print_result(False, f"Wishlist IDs missing test apartment")
-                all_passed = False
-        else:
-            print_result(False, f"Get wishlist IDs failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    # Test 8e: Get wishlist apartments
-    print("\n--- GET /api/wishlist (get apartment docs) ---")
-    try:
-        response = requests.get(f"{BASE_URL}/wishlist", headers=headers)
-        print_response(response)
-        
-        if response.status_code == 200:
-            apartments = response.json()
-            if len(apartments) > 0:
-                apt_ids = [a["id"] for a in apartments]
-                if test_apartment_id in apt_ids:
-                    print_result(True, f"Wishlist apartments retrieved, contains test apartment")
-                else:
-                    print_result(False, f"Wishlist apartments missing test apartment")
-                    all_passed = False
-            else:
-                print_result(False, f"Wishlist is empty")
-                all_passed = False
-        else:
-            print_result(False, f"Get wishlist failed with status {response.status_code}")
-            all_passed = False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        all_passed = False
-    
-    return all_passed
-
-# ===== TEST 9: Contact Form =====
-def test_contact():
-    print_test("POST /api/contact - Contact Form")
-    try:
-        contact_data = {
-            "name": "Test User",
-            "email": "test@example.com",
-            "subject": "Test Inquiry",
-            "message": "This is a test message from the automated test suite."
-        }
-        response = requests.post(f"{BASE_URL}/contact", json=contact_data)
-        print_response(response)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if data.get("success") == True:
-                print_result(True, f"Contact form submitted successfully")
-                return True
-            else:
-                print_result(False, f"Contact form response missing success flag")
-                return False
-        else:
-            print_result(False, f"Contact form failed with status {response.status_code}")
-            return False
-    except Exception as e:
-        print_result(False, f"Error: {str(e)}")
-        return False
-
-# ===== MAIN TEST RUNNER =====
 def main():
-    print("\n" + "="*80)
-    print("EXPRESS HOUSING BACKEND API TEST SUITE")
-    print("="*80)
-    print(f"Backend URL: {BASE_URL}")
-    print(f"Test User: {TEST_EMAIL}")
-    print("="*80)
+    """Run all tests"""
+    print("\n" + "=" * 80)
+    print("EXPRESS HOUSING BACKEND TEST SUITE - NEW FEATURES")
+    print("Testing: Admin Auth, Admin Bookings, Date Blocking, Photo Tours, Email Log")
+    print("=" * 80 + "\n")
     
-    results = {}
-    
-    # Run all tests
-    results["Health Check"] = test_health_check()
-    results["Get All Apartments"] = test_get_apartments()
-    results["Apartment Filters"] = test_filters()
-    results["Get Apartment by ID"] = test_get_apartment_by_id()
-    results["Get Neighborhoods"] = test_get_neighborhoods()
-    results["Auth Flow"] = test_auth_flow()
-    results["Bookings"] = test_bookings()
-    results["Wishlist"] = test_wishlist()
-    results["Contact Form"] = test_contact()
-    
-    # Print summary
-    print("\n" + "="*80)
-    print("TEST SUMMARY")
-    print("="*80)
-    
-    passed = sum(1 for v in results.values() if v)
-    total = len(results)
-    
-    for test_name, result in results.items():
-        status = "✅ PASS" if result else "❌ FAIL"
-        print(f"{status}: {test_name}")
-    
-    print("="*80)
-    print(f"TOTAL: {passed}/{total} tests passed")
-    print("="*80)
-    
-    return passed == total
+    try:
+        # Test 1: Admin Auth
+        admin_token, guest_token = test_admin_auth()
+        
+        # Test 2: Admin Bookings
+        apt_id = test_admin_bookings(admin_token, guest_token)
+        
+        # Test 3: Date Blocking
+        test_date_blocking(guest_token, apt_id)
+        
+        # Test 4: Photo Tours
+        test_photo_tours()
+        
+        # Test 5: Email Log (MOCKED)
+        test_email_log(admin_token, guest_token)
+        
+        print("\n" + "=" * 80)
+        print("✅ ALL TESTS PASSED - EXPRESS HOUSING NEW FEATURES WORKING CORRECTLY")
+        print("=" * 80 + "\n")
+        
+    except AssertionError as e:
+        print(f"\n❌ TEST FAILED: {e}\n")
+        raise
+    except Exception as e:
+        print(f"\n❌ UNEXPECTED ERROR: {e}\n")
+        raise
 
 if __name__ == "__main__":
-    success = main()
-    exit(0 if success else 1)
+    main()

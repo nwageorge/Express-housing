@@ -1,4 +1,10 @@
 # Express Housing Test Credentials
+
+## Guest account
 - Email: guest@expresshousing.com
 - Password: stay2025
-(created via signup during testing; use for auth flows)
+
+## Admin account (access /admin dashboard)
+- Email: admin@expresshousing.com
+- Password: admin2025
+- Seeded automatically on backend startup
