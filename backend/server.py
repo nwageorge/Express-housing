@@ -378,6 +378,35 @@ async def get_wishlist_ids(user: dict = Depends(get_current_user)):
 class StatusUpdate(BaseModel):
     status: str  # confirmed, cancelled, completed
 
+class AdminCreate(BaseModel):
+    name: str
+    email: str
+    password: str
+
+@api_router.get("/admin/users")
+async def admin_list_admins(admin: dict = Depends(require_admin)):
+    admins = await db.users.find({"role": "admin"}, {"_id": 0, "password_hash": 0}).to_list(100)
+    return admins
+
+@api_router.post("/admin/users")
+async def admin_create_admin(data: AdminCreate, admin: dict = Depends(require_admin)):
+    if len(data.password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    existing = await db.users.find_one({"email": data.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    new_admin = {
+        "id": str(uuid.uuid4()),
+        "email": data.email,
+        "name": data.name,
+        "role": "admin",
+        "phone": None,
+        "password_hash": hash_password(data.password),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.users.insert_one(dict(new_admin))
+    return {k: v for k, v in new_admin.items() if k not in ("password_hash", "_id")}
+
 @api_router.get("/admin/stats")
 async def admin_stats(admin: dict = Depends(require_admin)):
     pipeline = [{"$group": {"_id": "$status", "count": {"$sum": 1}, "revenue": {"$sum": "$total_price"}}}]

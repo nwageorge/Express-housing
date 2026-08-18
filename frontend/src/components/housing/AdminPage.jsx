@@ -14,6 +14,76 @@ const STATUS_STYLES = {
 
 const TABS = ["all", "pending", "confirmed", "completed", "cancelled"];
 
+function TeamView() {
+  const [admins, setAdmins] = useState([]);
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [creating, setCreating] = useState(false);
+
+  const load = useCallback(() => {
+    api.get("/admin/users").then((r) => setAdmins(r.data)).catch(() => {});
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const createAdmin = async (e) => {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      await api.post("/admin/users", form);
+      toast.success(`Admin account created for ${form.name} — they can now sign in at /login`);
+      setForm({ name: "", email: "", password: "" });
+      load();
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Could not create admin");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return (
+    <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-10" data-testid="admin-team">
+      <div>
+        <h4 className="font-bold uppercase tracking-wide text-sm mb-4 border-b border-gray-100 pb-3">Team Members ({admins.length})</h4>
+        <div className="space-y-3">
+          {admins.map((a) => (
+            <div key={a.id} className="border border-gray-200 p-4 flex items-center gap-3" data-testid={`admin-user-${a.email}`}>
+              <div className="w-10 h-10 bg-[#bd744c]/10 text-[#bd744c] font-bold flex items-center justify-center">
+                {a.name?.[0]}
+              </div>
+              <div>
+                <p className="font-semibold text-sm">{a.name}</p>
+                <p className="text-xs text-gray-400">{a.email}</p>
+              </div>
+              <span className="ml-auto text-[10px] font-bold uppercase tracking-widest bg-[#212529] text-white px-2.5 py-1">Admin</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h4 className="font-bold uppercase tracking-wide text-sm mb-4 border-b border-gray-100 pb-3">Add New Admin</h4>
+        <p className="text-xs text-gray-400 mb-4">New admins sign in through the normal Sign In page and automatically get access to this dashboard.</p>
+        <form onSubmit={createAdmin} className="border border-gray-200 p-6 space-y-4" data-testid="create-admin-form">
+          <div>
+            <label className="label-eh">Full Name</label>
+            <input required className="input-eh" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} data-testid="create-admin-name" />
+          </div>
+          <div>
+            <label className="label-eh">Email</label>
+            <input type="email" required className="input-eh" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} data-testid="create-admin-email" />
+          </div>
+          <div>
+            <label className="label-eh">Password (min 6 chars)</label>
+            <input type="text" required minLength={6} className="input-eh" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} data-testid="create-admin-password" />
+          </div>
+          <button type="submit" className="btn-eh w-full" disabled={creating} data-testid="create-admin-submit">
+            {creating ? "Creating..." : "Create Admin Account"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 const pad = (n) => String(n).padStart(2, "0");
 
 function CalendarView({ apartments, bookings }) {
@@ -211,6 +281,13 @@ export default function AdminPage() {
         >
           Sent Emails ({emails.length})
         </button>
+        <button
+          onClick={() => setView("team")}
+          className={`pb-3 text-sm font-bold uppercase tracking-wider border-b-2 -mb-px ${view === "team" ? "border-[#bd744c] text-[#bd744c]" : "border-transparent text-gray-400 hover:text-[#212529]"}`}
+          data-testid="admin-view-team"
+        >
+          Team
+        </button>
       </div>
 
       {loading ? (
@@ -219,6 +296,8 @@ export default function AdminPage() {
         </div>
       ) : view === "calendar" ? (
         <CalendarView apartments={apartments} bookings={bookings} />
+      ) : view === "team" ? (
+        <TeamView />
       ) : view === "bookings" ? (
         <>
           {/* Status filter chips */}
